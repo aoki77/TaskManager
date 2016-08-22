@@ -9,15 +9,13 @@
 import UIKit
 
 class TaskPop: UIViewController {
-    @IBOutlet weak var popTitleContent: UILabel!
-    @IBOutlet weak var popTimeContent: UILabel!
-    @IBOutlet weak var popDetailContent: UILabel!
-    @IBOutlet weak var editButton: UIButton!
-    
+
     var mainRect = UIScreen.mainScreen().bounds
+    let storyboardtest = UIStoryboard(name: "Main", bundle: nil)
+
+    
     
     override func viewDidLoad() {
-        
         if mainRect.height > mainRect.width {
             self.view.layer.frame = CGRectMake(0, 0, mainRect.width, mainRect.height / 5)
         } else if mainRect.width > mainRect.height {
@@ -56,9 +54,17 @@ class TaskPop: UIViewController {
         editButton.backgroundColor = UIColor.blueColor()
         editButton.layer.masksToBounds = true
         editButton.layer.cornerRadius = 20.0
-        editButton.setTitle("編集", forState: UIControlState.Normal)
         editButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+        editButton.setTitle("編集", forState: UIControlState.Normal)
+        editButton.addTarget(self, action: #selector(TaskPop.ClickButton(_:)), forControlEvents: .TouchUpInside)
         self.view.addSubview(editButton)
+        
+    }
+    
+    internal func ClickButton(sender: UIButton){
+        let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: nil)
+        let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
+        presentViewController(next, animated: true, completion: nil)
     }
 
 }

@@ -89,7 +89,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         dayTime.delegate = self
     }
     
-    //* Gesture処理の制御 */
+    // Gesture処理の制御
     func doGesture(gesture:UIGestureRecognizer){
         if let longPressGesture = gesture as? UILongPressGestureRecognizer{
             longPress(longPressGesture)
@@ -146,15 +146,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
-    //セル長押し時の処理
+    // セル長押し時の処理
     func cellLongPressed(sender : UILongPressGestureRecognizer){
-        //押された位置でcellのpathを取得
+        // 押された位置でcellのpathを取得
         let point = sender.locationInView(TimeLine)
         let indexPath = TimeLine.indexPathForItemAtPoint(point)
         
         if sender.state == UIGestureRecognizerState.Began{
-            //セルが長押しされたときの処理
-            //完了か未完了かを把握して変更する処理をここに記載
+            // セルが長押しされたときの処理
+            // 完了か未完了かを把握して変更する処理をここに記載
             print("\(indexPath!.row + 1)が長押しされました")
         }
     }
@@ -253,7 +253,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // 画面回転時の処理
     override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-        print("test回転")
         viewDidLoad()
         TimeLine.reloadData()
     }
