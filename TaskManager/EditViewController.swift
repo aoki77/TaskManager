@@ -22,7 +22,6 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     @IBOutlet weak var detailText: UITextView!
     @IBOutlet weak var detailRow: UITableViewCell!
     
-
     //　DatePickerの表示状態（初期状態は非表示（false））
     private var pickerShowFlag = [false, false, false]
     
@@ -56,11 +55,14 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         finishPicker.hidden = true
         alertPicker.hidden = true
         
+        // ボタンの初期設定
+        colorSelectButton.setTitleColor(UIColor.yellowColor(), forState: . Normal)
+        colorSelectButton.setTitle("低", forState: .Normal)
+        
         // テキストビューの設定
         detailText.scrollEnabled = false
+        editTable.estimatedRowHeight = 20
         editTable.rowHeight = UITableViewAutomaticDimension
-        
-        
     }
     
     func textViewDidChange(textView: UITextView) {
@@ -160,6 +162,7 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     @IBAction func clickColorSelectButton(sender: UIButton) {
         let controller = ColorTablePop()
         self.presentPopver(controller, sourceView: sender)
+        controller.delegate = self
     }
     
     //
@@ -186,8 +189,9 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     
     // 重要度のボタンの色とテキストを変更する
     func colorButtonChanged(newColor: UIColor, newText: String) {
-        print("delegate")
-        colorSelectButton.backgroundColor = newColor
+        colorSelectButton.setTitleColor(newColor, forState: . Normal)
         colorSelectButton.setTitle(newText, forState: .Normal)
+        // タッチ後にモーダルを閉じる
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
 }
