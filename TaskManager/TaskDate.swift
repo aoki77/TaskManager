@@ -1,0 +1,23 @@
+//
+//  TaskDate.swift
+//  TaskManager
+//
+//  Created by 青木孝乃輔 on 2016/08/24.
+//  Copyright © 2016年 青木孝乃輔. All rights reserved.
+//
+
+import RealmSwift
+
+class TaskDate: Object {
+    dynamic var id = 0
+    dynamic var title = ""
+    dynamic var start_time = NSDate()
+    dynamic var finish_time = NSDate()
+    dynamic var alert_time = NSDate()
+    dynamic var color = 0
+    dynamic var detail = ""
+
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+}

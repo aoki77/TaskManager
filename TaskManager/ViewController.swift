@@ -7,6 +7,13 @@
 //
 
 import UIKit
+import RealmSwift
+
+// デリゲートを宣言
+protocol columnDelegate: class {
+    func cellSelect(columnType: String, rowType: Int)
+}
+
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, UIPopoverPresentationControllerDelegate {
     
@@ -18,6 +25,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet weak var dayTimeWidth: NSLayoutConstraint!
     
+    var delegate: columnDelegate! = nil
+    
     //日付
     let cal = NSCalendar(identifier: NSCalendarIdentifierGregorian)!
     var now = NSDate()
@@ -28,6 +37,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     // 画面全体の幅、高さ
     var rect: CGRect?
     
+    // 色を格納した配列
+    let colors = [UIColor.redColor(), UIColor.orangeColor(), UIColor.yellowColor()]
+    
+    // Realmのインスタンスを取得
+    let realm = try! Realm()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -35,9 +50,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tommorowDate = cal.dateByAddingUnit(.Day, value: 1, toDate: now, options: NSCalendarOptions())!
         yesterdayDate = cal.dateByAddingUnit(.Day, value: -1, toDate: now, options: NSCalendarOptions())!
         
+        
         // 画面全体の幅、高さを取得
         rect = UIScreen.mainScreen().bounds
-
+        
         // 日付の設定
         // ロケールの設定
         formatter.locale = NSLocale(localeIdentifier: "en_US")
@@ -87,6 +103,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         dayTime.dataSource = self
         // Delegateを設定する.
         dayTime.delegate = self
+        
     }
     
     // Gesture処理の制御
@@ -117,12 +134,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     // セルクリック時の処理
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         print("選択しました: \(indexPath.row)")
+        if indexPath.row <= 23 {
+            print("A")
+            print(indexPath.row)
+            delegate?.cellSelect("A", rowType: indexPath.row)
+        } else if 24 <= indexPath.row && indexPath.row <= 47 {
+            print("B")
+            print(indexPath.row - 24)
+            delegate?.cellSelect("B", rowType: indexPath.row - 24)
+        } else if 48 <= indexPath.row && indexPath.row <= 71 {
+            print("C")
+            print(indexPath.row - 48)
+            delegate?.cellSelect("C", rowType: indexPath.row - 48)
+        }
+        
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CustomCell
         let controller = TaskPop()
         self.presentPopover(controller, sourceView: cell)
         
     }
-
+    
     // データの個数を返す
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 72
@@ -130,20 +161,41 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // データを返す
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        //コレクションビューから識別子「TestCell」のセルを取得する。
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CustomCell
+        //コレクションビューから識別子「cell」のセルを取得する。
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath)
         
         //セルの背景色を赤に設定する。
         cell.backgroundColor = UIColor.whiteColor()
         
         //セルのラベルに番号を設定する。
-        cell.time.text = String(indexPath.row + 1)
         
         // セルの羅線の太さを設定
         cell.layer.borderWidth=0.5
         
-        return cell
+        // DB内にデータがある時間のセルを重要度に応じて色を変更する
+        let tasks = realm.objects(TaskDate)
+        let dateformatter = NSDateFormatter()
+        dateformatter.dateFormat = "yyyy/MM/DD"
         
+        for task in tasks{
+            print("name: \(task.start_time)")
+            //日付が同じセルのみを選択
+            if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(now)) == NSComparisonResult.OrderedDescending {
+                print("日付が新しい")
+            } else if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(now)) == NSComparisonResult.OrderedAscending {
+                print("日付が古い")
+            } else {
+                print("日付が同じ")
+                let timefomatter = NSDateFormatter()
+                timefomatter.dateFormat = "HH"
+                if timefomatter.stringFromDate(task.start_time) == String(indexPath.row) {
+                    cell.backgroundColor = colors[task.color]
+                    
+                }
+            }
+        }
+        
+        return cell
     }
     
     // セル長押し時の処理
@@ -185,7 +237,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-     // 左端までセルの線を延ばす
+    // 左端までセルの線を延ばす
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         if(dayTime.respondsToSelector(Selector("setSeparatorInset:"))){
             dayTime.separatorInset = UIEdgeInsetsZero
@@ -199,7 +251,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             cell.layoutMargins = UIEdgeInsetsZero
         }
     }
-
+    
     // スクロール時の処理
     func scrollViewDidScroll(scrollView: UIScrollView) {
         if scrollView == dayTime {
@@ -207,7 +259,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         } else if scrollView == TimeLine {
             dayTime.contentOffset = TimeLine.contentOffset
         }
-
+        
     }
     
     // popover処理
@@ -243,12 +295,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBAction func goTommorow(sender: AnyObject) {
         now = tommorowDate!
         viewDidLoad()
+        TimeLine.reloadData()
     }
     
     // 日付を昨日に更新
     @IBAction func goYesterday(sender: AnyObject) {
         now = yesterdayDate!
         viewDidLoad()
+        TimeLine.reloadData()
     }
     
     // 画面回転時の処理

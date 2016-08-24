@@ -10,7 +10,7 @@ import UIKit
 
 // デリゲートを宣言
 protocol ColorTablePopDelegate: class {
-    func colorButtonChanged(newColor: UIColor, newText: String)
+    func colorButtonChanged(newColor: UIColor, newText: String, newNum: Int)
 }
 
 
@@ -55,7 +55,7 @@ class ColorTablePop: UITableViewController {
     // セルの選択時に呼び出される
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         print("Num: \(indexPath.row)")
-        delegate?.colorButtonChanged(colors[indexPath.row], newText: texts[indexPath.row])
+        delegate?.colorButtonChanged(colors[indexPath.row], newText: texts[indexPath.row], newNum: indexPath.row)
         print("testtesttest")
     }
     

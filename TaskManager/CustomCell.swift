@@ -10,8 +10,6 @@ import UIKit
 
 class CustomCell: UICollectionViewCell {
     
-    @IBOutlet weak var time: UILabel!
-    
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)!
     }

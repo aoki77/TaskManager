@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class EditViewController: UITableViewController, UIPopoverPresentationControllerDelegate, ColorTablePopDelegate {
     
@@ -21,6 +22,7 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     @IBOutlet weak var colorSelectButton: UIButton!
     @IBOutlet weak var detailText: UITextView!
     @IBOutlet weak var detailRow: UITableViewCell!
+    @IBOutlet weak var detailPlaceHolderLabel: UILabel!
     
     //　DatePickerの表示状態（初期状態は非表示（false））
     private var pickerShowFlag = [false, false, false]
@@ -30,6 +32,9 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     
     // Picker表示時のセルの高さ
     var pickerCellHeight: CGFloat?
+    
+    // 色と重要度を把握するための数値（初期値は2（黄色、重要度：低））
+    var colorNum = 2
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,9 +65,13 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         colorSelectButton.setTitle("低", forState: .Normal)
         
         // テキストビューの設定
+        // スクロール禁止
         detailText.scrollEnabled = false
-        editTable.estimatedRowHeight = 20
+        editTable.estimatedRowHeight = 1000
         editTable.rowHeight = UITableViewAutomaticDimension
+
+        
+        detailPlaceHolderLabel.textColor = UIColor.lightGrayColor()
     }
     
     func textViewDidChange(textView: UITextView) {
@@ -188,10 +197,56 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     }
     
     // 重要度のボタンの色とテキストを変更する
-    func colorButtonChanged(newColor: UIColor, newText: String) {
+    func colorButtonChanged(newColor: UIColor, newText: String, newNum: Int) {
         colorSelectButton.setTitleColor(newColor, forState: . Normal)
         colorSelectButton.setTitle(newText, forState: .Normal)
+        colorNum = newNum
+        
         // タッチ後にモーダルを閉じる
         self.dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    //textviewがフォーカスされたら、Labelを非表示
+    func textViewShouldBeginEditing(textView: UITextView) -> Bool {
+        detailPlaceHolderLabel.hidden = true
+        print("detailtest")
+        return true
+    }
+    
+    //textviewからフォーカスが外れて、TextViewが空だったらLabelを再び表示
+    func textViewDidEndEditing(textView: UITextView) {
+        if(detailText.text.isEmpty){
+            detailPlaceHolderLabel.hidden = false
+        }
+    }
+    
+    // 完了ボタンを押されたらその時の値を入力
+    @IBAction func clickCompletButton(sender: UIButton) {
+        
+        let realm = try! Realm()
+        let task = TaskDate()
+        var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
+        
+
+        try! realm.write {
+            task.id = maxId + 1
+            task.title = titleTextField.text!
+            task.start_time = startPicker.date
+            task.finish_time = finishPicker.date
+            task.alert_time = alertPicker.date
+            task.color = colorNum
+            task.detail = detailText.text
+            realm.add(task, update: true)
+        }
+        self.navigationController?.popViewControllerAnimated(true)
+         print(realm.objects(TaskDate))
+        
+        // タイムスケジュール画面に戻る
+        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
+        presentViewController(next, animated: true, completion: nil)
+        
+        
+    }
+    
 }

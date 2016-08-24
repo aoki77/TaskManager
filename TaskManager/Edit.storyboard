@@ -29,6 +29,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <button key="tableFooterView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="KBD-GZ-TmK">
+                            <rect key="frame" x="0.0" y="488" width="600" height="44"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <state key="normal" title="完了"/>
+                            <connections>
+                                <action selector="clickCompletButton:" destination="5UT-Ua-OwL" eventType="touchUpInside" id="X6T-ic-fGv"/>
+                            </connections>
+                        </button>
                         <sections>
                             <tableViewSection headerTitle="編集画面" id="OR0-mH-EZM">
                                 <cells>
@@ -45,11 +53,21 @@
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="BF9-Q3-kua">
-                                                    <rect key="frame" x="101" y="7" width="491" height="30"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits"/>
-                                                </textField>
+                                                <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="NyW-Lk-J0k">
+                                                    <rect key="frame" x="101" y="7" width="203" height="30"/>
+                                                    <subviews>
+                                                        <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="uec-mh-5Wz">
+                                                            <rect key="frame" x="0.0" y="0.0" width="203" height="30"/>
+                                                            <subviews>
+                                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="タイトルを入力してください" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="BF9-Q3-kua">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="203" height="30"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                    <textInputTraits key="textInputTraits"/>
+                                                                </textField>
+                                                            </subviews>
+                                                        </stackView>
+                                                    </subviews>
+                                                </stackView>
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -218,19 +236,33 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="詳細" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d5D-kb-A0q">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="詳細" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d5D-kb-A0q">
                                                     <rect key="frame" x="28" y="11" width="34" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="txQ-HP-3D0">
-                                                    <rect key="frame" x="101" y="-42" width="240" height="128"/>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="txQ-HP-3D0">
+                                                    <rect key="frame" x="96" y="0.0" width="504" height="43"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="詳細を入力してください" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6XG-u7-Izc">
+                                                    <rect key="frame" x="96" y="8" width="187" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="txQ-HP-3D0" firstAttribute="centerY" secondItem="d5D-kb-A0q" secondAttribute="centerY" id="7HU-J3-twP"/>
+                                                <constraint firstItem="txQ-HP-3D0" firstAttribute="leading" secondItem="d5D-kb-A0q" secondAttribute="trailing" constant="34" id="Xyd-Uq-SlO"/>
+                                                <constraint firstItem="txQ-HP-3D0" firstAttribute="centerX" secondItem="tWA-4j-FS9" secondAttribute="centerX" constant="48" id="bc6-ud-rcb"/>
+                                                <constraint firstAttribute="trailing" secondItem="txQ-HP-3D0" secondAttribute="trailing" id="dfw-PA-2rX"/>
+                                                <constraint firstItem="txQ-HP-3D0" firstAttribute="top" secondItem="tWA-4j-FS9" secondAttribute="top" id="krT-bg-ZoX"/>
+                                                <constraint firstAttribute="bottom" secondItem="txQ-HP-3D0" secondAttribute="bottom" id="nGq-8Q-Oar"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
@@ -248,6 +280,7 @@
                         <outlet property="alertLabel" destination="nnf-Ix-7HU" id="30D-la-3G1"/>
                         <outlet property="alertPicker" destination="2Nx-zt-I3M" id="agy-5B-zKM"/>
                         <outlet property="colorSelectButton" destination="ilV-We-K9p" id="dZG-i7-XHE"/>
+                        <outlet property="detailPlaceHolderLabel" destination="6XG-u7-Izc" id="50d-17-4Ou"/>
                         <outlet property="detailRow" destination="4sK-6K-mdV" id="aJV-Ie-w76"/>
                         <outlet property="detailText" destination="txQ-HP-3D0" id="knR-eh-esB"/>
                         <outlet property="editTable" destination="QlL-Go-QCM" id="H9n-8N-tz2"/>
