@@ -8,96 +8,149 @@
 
 import UIKit
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, UIPopoverPresentationControllerDelegate {
+final class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, UIPopoverPresentationControllerDelegate {
     
-    @IBOutlet weak var Date: UILabel!
-    @IBOutlet weak var TimeLine: UICollectionView!
-    @IBOutlet weak var tommorow: UIButton!
-    @IBOutlet weak var yesterday: UIButton!
-    @IBOutlet weak var dayTime: UITableView!
-    
-    @IBOutlet weak var dayTimeWidth: NSLayoutConstraint!
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var timeLineCollectionView: UICollectionView!
+    @IBOutlet weak var tommorowButton: UIButton!
+    @IBOutlet weak var yesterdayButton: UIButton!
+    @IBOutlet weak var dayTimeTableView: UITableView!
+    @IBOutlet weak var dayTimeWidthLayoutConstraint: NSLayoutConstraint!
     
     //日付
-    let cal = NSCalendar(identifier: NSCalendarIdentifierGregorian)!
-    var now = NSDate()
-    var tommorowDate: NSDate?
-    var yesterdayDate: NSDate?
-    let formatter = NSDateFormatter()
-    var hourTime: NSMutableArray = ["0時", "1時", "2時", "3時", "4時", "5時", "6時", "7時", "8時", "9時", "10時", "11時", "12時", "13時", "14時", "15時", "16時", "17時", "18時", "19時", "20時", "21時", "22時", "23時"]
+    private let cal = NSCalendar(identifier: NSCalendarIdentifierGregorian)!
+    private var now = NSDate()
+    private var tommorowDate: NSDate?
+    private var yesterdayDate: NSDate?
+    private let formatter = NSDateFormatter()
+    private let hourTime: NSMutableArray = []
     // 画面全体の幅、高さ
-    var rect: CGRect?
+    var size: CGSize?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        size = self.view.frame.size
+        setupView()
+        setupTime()
+        setupDate()
+        setupTable()
+        setupCollection()
+        longTop()
+    }
+    
+    // 初期値
+    func setupView() {
+        let orientation: UIInterfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
+        guard let guardSize = size else { return }
+        switch (orientation) {
+        case UIInterfaceOrientation.Portrait:
+            dayTimeTableView.rowHeight = guardSize.height / 16
+            dayTimeWidthLayoutConstraint.constant = guardSize.width / 4
+        case UIInterfaceOrientation.LandscapeLeft, UIInterfaceOrientation.LandscapeRight:
+            dayTimeTableView.rowHeight = guardSize.height / 10
+            dayTimeWidthLayoutConstraint.constant = guardSize.width / 4
+        default:
+            break
+        }
+    }
+    
+    // 時間を入れる
+    private func setupTime() {
+        for num in 0 ... 23 {
+            hourTime.addObject(String(num) + "時")
+        }
+    }
+    
+    // 画面回転時の処理
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        let orientation: UIInterfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
+        switch (orientation) {
+        case UIInterfaceOrientation.Portrait:
+            dayTimeTableView.rowHeight = size.height / 10
+            dayTimeWidthLayoutConstraint.constant = size.width / 4
+        case UIInterfaceOrientation.LandscapeLeft, UIInterfaceOrientation.LandscapeRight:
+            dayTimeTableView.rowHeight = size.height / 16
+            dayTimeWidthLayoutConstraint.constant = size.width / 4
+        default:
+            break
+        }
+        timeLineCollectionView.reloadData()
+    }
+    
+    // テーブルの設定
+    func setupTable() {
+        dayTimeTableView.allowsSelection = false
+        dayTimeTableView.separatorInset = UIEdgeInsetsZero
         
-        tommorowDate = cal.dateByAddingUnit(.Day, value: 1, toDate: now, options: NSCalendarOptions())!
-        yesterdayDate = cal.dateByAddingUnit(.Day, value: -1, toDate: now, options: NSCalendarOptions())!
+        // セル名の登録をおこなう.
+        dayTimeTableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "tableCell")
         
-        // 画面全体の幅、高さを取得
-        rect = UIScreen.mainScreen().bounds
-
-        // 日付の設定
-        // ロケールの設定
-        formatter.locale = NSLocale(localeIdentifier: "en_US")
-        // 日付フォーマットの設定
-        formatter.dateFormat = "yyyy/MM/dd"
-        Date.text = formatter.stringFromDate(now)
-        tommorow.setTitle(formatter.stringFromDate(tommorowDate!), forState: UIControlState.Normal)
-        yesterday.setTitle(formatter.stringFromDate(yesterdayDate!), forState: UIControlState.Normal)
-        //中央寄せ
-        Date.textAlignment = NSTextAlignment.Center
-        Date.textColor = UIColor.blackColor()
+        // スクロールバー非表示
+        dayTimeTableView.showsVerticalScrollIndicator = false
         
+        // 羅線の色を設定
+        dayTimeTableView.separatorColor = UIColor.blackColor()
+        
+        // DataSourceの設定をする.
+        dayTimeTableView.dataSource = self
+        // Delegateを設定する.
+        dayTimeTableView.delegate = self
+        
+    }
+    // コレクションの設定
+    private func setupCollection() {
+        timeLineCollectionView.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
+        timeLineCollectionView.backgroundColor = UIColor.whiteColor()
+        timeLineCollectionView.delegate = self
+        timeLineCollectionView.dataSource = self
+    }
+    
+    // ロングタップの設定
+    private func longTop() {
         // viewにロングタップの使用宣言を追加
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.cellLongPressed(_:)))
         longPressGestureRecognizer.delegate = self
         
         //collectionにrecognizerを設定
-        TimeLine.addGestureRecognizer(longPressGestureRecognizer)
-        TimeLine.backgroundColor = UIColor.whiteColor()
-        TimeLine.delegate = self
-        TimeLine.dataSource = self
-        
-        //UITableView
-        //tableの大きさ、位置を設定
-        let tableWidth = rect!.width / 4
-        dayTimeWidth.constant = tableWidth
-        dayTime.allowsSelection = false
-        dayTime.separatorInset = UIEdgeInsetsZero
-        
-        //セルの高さ
-        if rect!.height > rect!.width {
-            dayTime.rowHeight = rect!.height / 16
-        } else if rect!.width > rect!.height {
-            dayTime.rowHeight = rect!.height / 10
-        }
-        
-        // セル名の登録をおこなう.
-        dayTime.registerClass(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
-        
-        // スクロールバー非表示
-        dayTime.showsVerticalScrollIndicator = false
-        
-        // 羅線の色を設定
-        dayTime.separatorColor = UIColor.blackColor()
-        
-        // DataSourceの設定をする.
-        dayTime.dataSource = self
-        // Delegateを設定する.
-        dayTime.delegate = self
+        timeLineCollectionView.addGestureRecognizer(longPressGestureRecognizer)
     }
     
-    //* Gesture処理の制御 */
-    func doGesture(gesture:UIGestureRecognizer){
+    // 日付の設定
+    private func setupDate() {
+        // ロケールの設定
+        formatter.locale = NSLocale(localeIdentifier: "en_US")
+        // 日付フォーマットの設定
+        formatter.dateFormat = "yyyy/MM/dd"
+
+        
+        // 翌日の日付を設定
+        tommorowDate = cal.dateByAddingUnit(.Day, value: 1, toDate: now, options: NSCalendarOptions())!
+        // 昨日の日付を設定
+        yesterdayDate = cal.dateByAddingUnit(.Day, value: -1, toDate: now, options: NSCalendarOptions())!
+        
+        guard let guardTommorowDate = tommorowDate else { return }
+        guard let guardYesterdayDate = yesterdayDate else { return }
+        
+        dateLabel.text = formatter.stringFromDate(now)
+        tommorowButton.setTitle(formatter.stringFromDate(guardTommorowDate), forState: UIControlState.Normal)
+        yesterdayButton.setTitle(formatter.stringFromDate(guardYesterdayDate), forState: UIControlState.Normal)
+        
+        // 日付ラベルの設定
+        dateLabel.textAlignment = NSTextAlignment.Center
+        dateLabel.textColor = UIColor.blackColor()
+    }
+    
+    // Gesture処理の制御
+    private func doGesture(gesture:UIGestureRecognizer) {
         if let longPressGesture = gesture as? UILongPressGestureRecognizer{
             longPress(longPressGesture)
         }
     }
     
     // LongPressGestureの処理
-    func longPress(gesture:UILongPressGestureRecognizer){
+    private func longPress(gesture:UILongPressGestureRecognizer){
         
         if gesture.state != .Began{
             return
@@ -107,8 +160,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.view.backgroundColor = UIColor.blueColor()
         })
     }
-    
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -117,7 +169,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     // セルクリック時の処理
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         print("選択しました: \(indexPath.row)")
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CustomCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath)
         let controller = TaskPop()
         self.presentPopover(controller, sourceView: cell)
         
@@ -131,13 +183,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     // データを返す
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         //コレクションビューから識別子「TestCell」のセルを取得する。
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CustomCell
-        
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath)
         //セルの背景色を赤に設定する。
         cell.backgroundColor = UIColor.whiteColor()
-        
-        //セルのラベルに番号を設定する。
-        cell.time.text = String(indexPath.row + 1)
         
         // セルの羅線の太さを設定
         cell.layer.borderWidth=0.5
@@ -147,10 +195,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     //セル長押し時の処理
-    func cellLongPressed(sender : UILongPressGestureRecognizer){
+   func cellLongPressed(sender : UILongPressGestureRecognizer){
         //押された位置でcellのpathを取得
-        let point = sender.locationInView(TimeLine)
-        let indexPath = TimeLine.indexPathForItemAtPoint(point)
+        let point = sender.locationInView(timeLineCollectionView)
+        let indexPath = timeLineCollectionView.indexPathForItemAtPoint(point)
         
         if sender.state == UIGestureRecognizerState.Began{
             //セルが長押しされたときの処理
@@ -163,7 +211,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     // セルが選択された際に呼び出す
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         print("Num: \(indexPath.row)")
-        print("Value: \(hourTime[indexPath.row])")
     }
     
     // セルの総数を返す
@@ -174,25 +221,25 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     // セルに値を設定
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         // 再利用するセルを取得
-        let cell = tableView.dequeueReusableCellWithIdentifier("MyCell", forIndexPath: indexPath)
-        
-        // セルに値を設定
-        cell.textLabel!.text = "\(hourTime[indexPath.row])"
+        let cell = tableView.dequeueReusableCellWithIdentifier("tableCell", forIndexPath: indexPath)
         
         // セルの羅線の太さを設定
         cell.layer.borderWidth = 0.5
+        
+        // セルに値を設定
+        cell.textLabel!.text = "\(hourTime[indexPath.row])"
         
         return cell
     }
     
      // 左端までセルの線を延ばす
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        if(dayTime.respondsToSelector(Selector("setSeparatorInset:"))){
-            dayTime.separatorInset = UIEdgeInsetsZero
+        if(dayTimeTableView.respondsToSelector(Selector("setSeparatorInset:"))){
+            dayTimeTableView.separatorInset = UIEdgeInsetsZero
         }
         
-        if(dayTime.respondsToSelector(Selector("setLayoutMargins:"))){
-            dayTime.layoutMargins = UIEdgeInsetsZero
+        if(dayTimeTableView.respondsToSelector(Selector("setLayoutMargins:"))){
+            dayTimeTableView.layoutMargins = UIEdgeInsetsZero
         }
         
         if(cell.respondsToSelector(Selector("setLayoutMargins:"))){
@@ -202,23 +249,23 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     // スクロール時の処理
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        if scrollView == dayTime {
-            TimeLine.contentOffset = dayTime.contentOffset
-        } else if scrollView == TimeLine {
-            dayTime.contentOffset = TimeLine.contentOffset
+        if scrollView == dayTimeTableView {
+            timeLineCollectionView.contentOffset = dayTimeTableView.contentOffset
+        } else if scrollView == timeLineCollectionView {
+            dayTimeTableView.contentOffset = timeLineCollectionView.contentOffset
         }
 
     }
     
     // popover処理
     func presentPopover(viewController: UIViewController!, sourceView: UIView!) {
-        
         viewController.modalPresentationStyle = UIModalPresentationStyle.Popover
+        guard let guardSize = size else { return }
         // pooverサイズ
-        if rect!.height > rect!.width {
-            viewController.preferredContentSize = CGSizeMake(rect!.width, rect!.height / 3)
-        } else if rect!.width > rect!.height {
-            viewController.preferredContentSize = CGSizeMake(rect!.height, rect!.width / 3)
+        if guardSize.height > guardSize.width {
+            viewController.preferredContentSize = CGSizeMake(guardSize.width, guardSize.height / 3)
+        } else if guardSize.width > guardSize.height {
+            viewController.preferredContentSize = CGSizeMake(guardSize.height, guardSize.width / 3)
         }
         
         
@@ -236,26 +283,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // popoverをiPhoneに対応させる
     func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
-        return UIModalPresentationStyle.None
+        return .None
     }
     
     // 日付を翌日に更新
     @IBAction func goTommorow(sender: AnyObject) {
-        now = tommorowDate!
-        viewDidLoad()
+        guard let guardTommorowDate = tommorowDate else { return }
+        now = guardTommorowDate
+        setupDate()
     }
     
     // 日付を昨日に更新
     @IBAction func goYesterday(sender: AnyObject) {
-        now = yesterdayDate!
-        viewDidLoad()
+        guard let guardYesterdayDate = yesterdayDate else { return }
+        now = guardYesterdayDate
+        setupDate()
     }
-    
-    // 画面回転時の処理
-    override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-        print("test回転")
-        viewDidLoad()
-        TimeLine.reloadData()
-    }
-    
 }

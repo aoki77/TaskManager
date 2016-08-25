@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -69,23 +68,8 @@
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UBf-FE-Z7c">
-                                                    <rect key="frame" x="8" y="14" width="34" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
-                                        <constraints>
-                                            <constraint firstItem="UBf-FE-Z7c" firstAttribute="centerY" secondItem="ogF-8m-kxO" secondAttribute="centerY" id="9kw-se-Adu"/>
-                                            <constraint firstItem="UBf-FE-Z7c" firstAttribute="leading" secondItem="ogF-8m-kxO" secondAttribute="leadingMargin" id="d0u-W9-G08"/>
-                                        </constraints>
-                                        <connections>
-                                            <outlet property="time" destination="UBf-FE-Z7c" id="Vl0-M5-PN9"/>
-                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
@@ -110,12 +94,12 @@
                     </view>
                     <navigationItem key="navigationItem" id="rT3-Sk-435"/>
                     <connections>
-                        <outlet property="Date" destination="x0X-H4-Ioy" id="zsE-e2-WW1"/>
-                        <outlet property="TimeLine" destination="uva-gM-9iG" id="NRW-Y0-nLV"/>
-                        <outlet property="dayTime" destination="poE-Yd-zSN" id="E5s-O0-X8t"/>
-                        <outlet property="dayTimeWidth" destination="dZG-6l-uWq" id="Alm-OJ-ceC"/>
-                        <outlet property="tommorow" destination="anu-D2-DYK" id="Dde-5R-DfO"/>
-                        <outlet property="yesterday" destination="Dnj-QF-cgK" id="fYg-5M-zmj"/>
+                        <outlet property="dateLabel" destination="x0X-H4-Ioy" id="H8e-hd-SrN"/>
+                        <outlet property="dayTimeTableView" destination="poE-Yd-zSN" id="4ok-ms-clr"/>
+                        <outlet property="dayTimeWidthLayoutConstraint" destination="dZG-6l-uWq" id="OSy-Zs-Vz3"/>
+                        <outlet property="timeLineCollectionView" destination="uva-gM-9iG" id="l1U-o6-R1F"/>
+                        <outlet property="tommorowButton" destination="anu-D2-DYK" id="gW1-IV-9ac"/>
+                        <outlet property="yesterdayButton" destination="Dnj-QF-cgK" id="Xfw-dL-3TB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
