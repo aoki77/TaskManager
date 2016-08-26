@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5E3AC56E1D64089C00D446E1 /* TaskPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3AC56D1D64089C00D446E1 /* TaskPopoverViewController.swift */; };
+		5E3F7BA11D6FBF520045334A /* TaskPop.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E3F7BA01D6FBF520045334A /* TaskPop.storyboard */; };
 		5E4A5A0F1D5D9E3F00181359 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A0E1D5D9E3F00181359 /* AppDelegate.swift */; };
 		5E4A5A111D5D9E3F00181359 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A101D5D9E3F00181359 /* ViewController.swift */; };
 		5E4A5A141D5D9E3F00181359 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E4A5A121D5D9E3F00181359 /* Main.storyboard */; };
@@ -37,6 +38,7 @@
 
 /* Begin PBXFileReference section */
 		5E3AC56D1D64089C00D446E1 /* TaskPopoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskPopoverViewController.swift; sourceTree = "<group>"; };
+		5E3F7BA01D6FBF520045334A /* TaskPop.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = TaskPop.storyboard; sourceTree = "<group>"; };
 		5E4A5A0B1D5D9E3F00181359 /* TaskManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E4A5A0E1D5D9E3F00181359 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5E4A5A101D5D9E3F00181359 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				5E3389141D6E726A00C77815 /* Controllers */,
 				5E3389151D6E72D700C77815 /* Extensions */,
 				5E4A5A121D5D9E3F00181359 /* Main.storyboard */,
+				5E3F7BA01D6FBF520045334A /* TaskPop.storyboard */,
 				5E4A5A151D5D9E3F00181359 /* Assets.xcassets */,
 				5E4A5A171D5D9E3F00181359 /* LaunchScreen.storyboard */,
 				5E4A5A1A1D5D9E3F00181359 /* Info.plist */,
@@ -254,6 +257,7 @@
 				5E4A5A191D5D9E3F00181359 /* LaunchScreen.storyboard in Resources */,
 				5E4A5A161D5D9E3F00181359 /* Assets.xcassets in Resources */,
 				5E4A5A141D5D9E3F00181359 /* Main.storyboard in Resources */,
+				5E3F7BA11D6FBF520045334A /* TaskPop.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

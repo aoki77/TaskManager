@@ -106,26 +106,6 @@
             </objects>
             <point key="canvasLocation" x="274" y="297"/>
         </scene>
-        <!--Task Pop-->
-        <scene sceneID="EF8-aR-Uya">
-            <objects>
-                <viewController id="0K4-oC-aFT" customClass="TaskPop" customModule="TaskManager" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Zfj-4a-BHC"/>
-                        <viewControllerLayoutGuide type="bottom" id="1kf-Kd-ZpM"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="YR4-P4-a05">
-                        <rect key="frame" x="0.0" y="0.0" width="400" height="200"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="400" height="200"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="4mM-dQ-eNg" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="818" y="97"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="hFr-eH-YE5">
             <objects>
