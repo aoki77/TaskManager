@@ -70,17 +70,21 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     /// 画面回転時の処理
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-        viewDirection(size)
-        dayTimeTableView.reloadData()
-        if let TimeLineLayout = timeLineCollectionView.collectionViewLayout as? TimeLineLayout{
-            TimeLineLayout.updateLayout()
-        }
-        if let indexPath = cellIndexPath {
-            let cell = timeLineCollectionView.cellForItemAtIndexPath(indexPath)
-            let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
-            let next: UIViewController = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as UIViewController
-
-            self.presentPopover(next, sourceView: cell)
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+        coordinator.animateAlongsideTransition(nil) { [weak self] _ in
+            guard let guardSelf = self else { return }
+            guardSelf.viewDirection(size)
+            guardSelf.dayTimeTableView.reloadData()
+            if let TimeLineLayout = guardSelf.timeLineCollectionView.collectionViewLayout as? TimeLineLayout{
+                TimeLineLayout.updateLayout()
+            }
+            if let indexPath = guardSelf.cellIndexPath {
+                let cell = guardSelf.timeLineCollectionView.cellForItemAtIndexPath(indexPath)
+                let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
+                let next: UIViewController = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as UIViewController
+                
+                guardSelf.presentPopover(next, sourceView: cell)
+            }
         }
     }
     
@@ -219,10 +223,10 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     private func viewDirection(size: CGSize) {
         switch UIApplication.sharedApplication().statusBarOrientation {
         case .Portrait, .PortraitUpsideDown, .Unknown:
-            dayTimeTableView.rowHeight = size.height / 10
+            dayTimeTableView.rowHeight = size.height / 16
             dayTimeWidthLayoutConstraint.constant = size.width / 4
         case .LandscapeLeft, .LandscapeRight:
-            dayTimeTableView.rowHeight = size.height / 16
+            dayTimeTableView.rowHeight = size.height / 10
             dayTimeWidthLayoutConstraint.constant = size.width / 4
         }
     }
