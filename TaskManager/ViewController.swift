@@ -33,7 +33,27 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     // 選択されたセルのインデックスパス
     private var cellIndexPath: NSIndexPath?
+    private var collectionView: UICollectionView?
     
+    /// popoverのサイズ
+    private var popoverSize: CGSize {
+        switch UIApplication.sharedApplication().statusBarOrientation {
+        case .Portrait, .PortraitUpsideDown, .Unknown:
+            return CGSize(width: view.bounds.width, height: view.bounds.height / 3)
+        case .LandscapeLeft, .LandscapeRight:
+            return CGSize(width: view.bounds.height, height: view.bounds.width / 3)
+        }
+    }
+    
+    /// popoverの方向
+    private var popoverDirection: UIPopoverArrowDirection {
+        switch UIApplication.sharedApplication().statusBarOrientation {
+        case .LandscapeLeft, .LandscapeRight:
+            return [.Left, .Right]
+        case .Portrait, .PortraitUpsideDown, .Unknown:
+            return [.Up, .Down]
+        }
+    }
     
     // MARK: - ライフサイクル関数
     
@@ -50,29 +70,18 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     /// 画面回転時の処理
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-        let orientation: UIInterfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
-        switch (orientation) {
-        case .Portrait, .PortraitUpsideDown, .Unknown:
-            dayTimeTableView.rowHeight = size.height / 10
-            dayTimeWidthLayoutConstraint.constant = size.width / 4
-        case .LandscapeLeft, .LandscapeRight:
-            dayTimeTableView.rowHeight = size.height / 16
-            dayTimeWidthLayoutConstraint.constant = size.width / 4
+        viewDirection(size)
+        dayTimeTableView.reloadData()
+        if let TimeLineLayout = timeLineCollectionView.collectionViewLayout as? TimeLineLayout{
+            TimeLineLayout.updateLayout()
         }
+        if let indexPath = cellIndexPath {
+            let cell = timeLineCollectionView.cellForItemAtIndexPath(indexPath)
+            let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
+            let next: UIViewController = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as UIViewController
 
-        timeLineCollectionView.reloadData()
-        
-        self.dismissViewControllerAnimated(true, completion: {
-            if let indexPath = self.cellIndexPath {
-                let cell = self.timeLineCollectionView.cellForItemAtIndexPath(indexPath)
-                let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
-                let next: UIViewController = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as UIViewController
-                print(indexPath.row)
-                self.presentPopover(next, sourceView: cell)
-            }
-            
-        })
-        
+            self.presentPopover(next, sourceView: cell)
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -84,16 +93,13 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     /// 初期値を設定
     private func setupView() {
-        let orientation: UIInterfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
-        switch (orientation) {
-        case UIInterfaceOrientation.Portrait:
+        switch UIApplication.sharedApplication().statusBarOrientation {
+        case .Portrait, .PortraitUpsideDown, .Unknown:
             dayTimeTableView.rowHeight = self.view.frame.size.height / 16
             dayTimeWidthLayoutConstraint.constant = self.view.frame.size.width / 4
-        case UIInterfaceOrientation.LandscapeLeft, UIInterfaceOrientation.LandscapeRight:
+        case .LandscapeLeft, .LandscapeRight:
             dayTimeTableView.rowHeight = self.view.frame.size.height / 10
             dayTimeWidthLayoutConstraint.constant = self.view.frame.size.width / 4
-        default:
-            break
         }
     }
     
@@ -118,9 +124,10 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         /// 羅線の色を設定
         dayTimeTableView.separatorColor = UIColor.blackColor()
         
-        /// DataSourceの設定をする.
+        /// DataSourceの設定
         dayTimeTableView.dataSource = self
-        /// Delegateを設定する.
+        
+        /// Delegateを設定
         dayTimeTableView.delegate = self
         
     }
@@ -191,6 +198,11 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     private func presentPopover(viewController: UIViewController!, sourceView: UIView!) {
         viewController.modalPresentationStyle = .Popover
         viewController.preferredContentSize = popoverSize
+        if let popoverViewController = presentedViewController {
+            let animated: Bool = false
+            /// popoverを閉じる
+            popoverViewController.dismissViewControllerAnimated(animated, completion: nil)
+        }
         
         if let popoverController = viewController.popoverPresentationController {
             popoverController.delegate = self
@@ -204,24 +216,14 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         presentViewController(viewController, animated: true, completion: nil)
     }
     
-    /// popoverのサイズ
-    private var popoverSize: CGSize {
-        let orientation: UIInterfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
-        switch (orientation) {
-        case .Portrait, .PortraitUpsideDown, .Unknown:
-            return CGSize(width: view.bounds.width, height: view.bounds.height / 3)
-        case .LandscapeLeft, .LandscapeRight:
-            return CGSize(width: view.bounds.height, height: view.bounds.width / 3)
-        }
-    }
-    
-    /// popoverの方向
-    private var popoverDirection: UIPopoverArrowDirection {
+    private func viewDirection(size: CGSize) {
         switch UIApplication.sharedApplication().statusBarOrientation {
-        case .LandscapeLeft, .LandscapeRight:
-            return [.Left, .Right]
         case .Portrait, .PortraitUpsideDown, .Unknown:
-            return [.Up, .Down]
+            dayTimeTableView.rowHeight = size.height / 10
+            dayTimeWidthLayoutConstraint.constant = size.width / 4
+        case .LandscapeLeft, .LandscapeRight:
+            dayTimeTableView.rowHeight = size.height / 16
+            dayTimeWidthLayoutConstraint.constant = size.width / 4
         }
     }
     
@@ -231,6 +233,7 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         print("選択しました: \(indexPath.row)")
         cellIndexPath = indexPath
+        collectionView
         let cell = collectionView.cellForItemAtIndexPath(indexPath)
         let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
         let next: UIViewController = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as UIViewController
@@ -309,15 +312,20 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         } else if scrollView == timeLineCollectionView {
             dayTimeTableView.contentOffset = timeLineCollectionView.contentOffset
         }
-        
     }
-    
     
     // MARK: - UIPopoverPresentationControllerDelegate
     
     /// popoverをiPhoneに対応させる
     func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
         return .None
+    }
+    
+    // MARK: - UIPopoverPresentationControllerDelegate
+    
+    /// ポップオーバーが閉じられた際にindexpathを削除
+    func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController) {
+        cellIndexPath = nil
     }
     
     // MARK: - アクション
