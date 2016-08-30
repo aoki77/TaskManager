@@ -8,7 +8,12 @@
 
 import UIKit
 
-final class TaskPopoverViewController: UIViewController {
+// デリゲートを宣言
+protocol coloumPopDelegate: class {
+    func cellSelectPop(columnType: String, rowType: Int)
+}
+
+final class TaskPopoverViewController: UIViewController, columnDelegate {
     
     // MARK: - アウトレット
     
@@ -17,12 +22,18 @@ final class TaskPopoverViewController: UIViewController {
     @IBOutlet weak var detailLabel: UILabel!
     @IBOutlet weak var editButton: UIButton!
     
+    // MARK: - 変数プロパティ
+    private var column: String?
+    private var row: Int?
+    private var mainRect = UIScreen.mainScreen().bounds
+    
     // MARK: - ライフサイクル関数
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         setupContents()
+        ViewController().delegate = self
     }
     
     // MARK: - プライベート関数
@@ -39,6 +50,22 @@ final class TaskPopoverViewController: UIViewController {
         editButton.layer.masksToBounds = true
         editButton.layer.cornerRadius = 20.0
         editButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+    }
+    
+    // MARK: - パブリック関数
+
+    func cellSelect(columnType: String, rowType: Int) {
+        print("delegateTEST")
+        let delegate: coloumPopDelegate! = nil
+        delegate?.cellSelectPop(columnType, rowType: rowType)
+    }
+    
+    // MARK: - アクション
+    
+    @IBAction func clickEditButton(sender: UIButton) {
+        let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: nil)
+        let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
+        presentViewController(next, animated: true, completion: nil)
     }
 
 }

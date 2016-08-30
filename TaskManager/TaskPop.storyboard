@@ -49,6 +49,9 @@
                                         <exclude reference="oGp-ZF-wLP"/>
                                     </mask>
                                 </variation>
+                                <connections>
+                                    <action selector="clickEditButton:" destination="QGR-53-XcD" eventType="touchUpInside" id="qWs-lV-qIO"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="日時" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HXy-CJ-Cs6">
                                 <rect key="frame" x="30" y="61" width="540" height="21"/>

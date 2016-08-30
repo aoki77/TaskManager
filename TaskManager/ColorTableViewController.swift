@@ -14,7 +14,7 @@ protocol ColorTablePopDelegate: class {
 }
 
 
-class ColorTablePop: UITableViewController {
+class ColorTableViewController: UITableViewController {
     
     var delegate: ColorTablePopDelegate! = nil
     
@@ -56,7 +56,6 @@ class ColorTablePop: UITableViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         print("Num: \(indexPath.row)")
         delegate?.colorButtonChanged(colors[indexPath.row], newText: texts[indexPath.row], newNum: indexPath.row)
-        print("testtesttest")
     }
     
     // セルに値を設定

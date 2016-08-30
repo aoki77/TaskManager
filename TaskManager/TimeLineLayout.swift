@@ -44,7 +44,7 @@ final class TimeLineLayout: UICollectionViewLayout {
         return CGSize(width:allWidth, height:allHeight)
     }
     
-    //MARK: -プライベート関数
+    // MARK: - プライベート関数
     private func rowSetup() {
         /// 1列の高さ
         let orientation: UIInterfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
@@ -82,14 +82,11 @@ final class TimeLineLayout: UICollectionViewLayout {
                 y = 0
             }
         }
-        
     }
     
-    
+    //MARK: - パブリック関数
     func updateLayout() {
         rowSetup()
         invalidateLayout()
     }
-    
-    
 }

@@ -16,8 +16,11 @@ class TaskDate: Object {
     dynamic var alert_time = NSDate()
     dynamic var color = 0
     dynamic var detail = ""
+    dynamic var column = ""
 
     override static func primaryKey() -> String? {
         return "id"
     }
+    
+    
 }

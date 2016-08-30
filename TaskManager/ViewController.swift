@@ -7,6 +7,12 @@
 //
 
 import UIKit
+import RealmSwift
+
+// デリゲートを宣言
+protocol columnDelegate: class {
+    func cellSelect(columnType: String, rowType: Int)
+}
 
 final class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, UIPopoverPresentationControllerDelegate {
     
@@ -24,7 +30,15 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     /// 時間
     private let hourTime: NSMutableArray = []
     
+    // 色を格納した配列
+    private let colors = [UIColor.redColor(), UIColor.orangeColor(), UIColor.yellowColor()]
+    
+
+    
     // MARK: - 変数プロパティ
+    
+    /// デリゲート
+    var delegate: columnDelegate! = nil
     
     /// 日付
     private var now = NSDate()
@@ -33,7 +47,6 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     // 選択されたセルのインデックスパス
     private var cellIndexPath: NSIndexPath?
-    private var collectionView: UICollectionView?
     
     /// popoverのサイズ
     private var popoverSize: CGSize {
@@ -231,13 +244,67 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         }
     }
     
+    /// タスクに応じてセルの色を変える
+    private func cellColorChange(indexPath: NSIndexPath) {
+        if indexPath.row <= 23 {
+            print("A")
+            print(indexPath.row)
+            delegate?.cellSelect("A", rowType: indexPath.row)
+        } else if 24 <= indexPath.row && indexPath.row <= 47 {
+            print("B")
+            print(indexPath.row - 24)
+            delegate?.cellSelect("B", rowType: indexPath.row - 24)
+        } else if 48 <= indexPath.row && indexPath.row <= 71 {
+            print("C")
+            print(indexPath.row - 48)
+            delegate?.cellSelect("C", rowType: indexPath.row - 48)
+        }
+    }
+    /// DB内にデータがある時間のセルを重要度に応じて色を変更する
+    private func dateCheck(cell: UICollectionViewCell, indexPath: NSIndexPath) {
+        let realm = realmMigrations()
+        let tasks = realm.objects(TaskDate)
+        let dateformatter = NSDateFormatter()
+        dateformatter.dateFormat = "yyyy/MM/DD"
+        for task in tasks{
+            print("name: \(task.start_time)")
+            //日付が同じセルのみを選択
+            if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(now)) == NSComparisonResult.OrderedDescending {
+                print("日付が新しい")
+            } else if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(now)) == NSComparisonResult.OrderedAscending {
+                print("日付が古い")
+            } else {
+                print("日付が同じ")
+                let timefomatter = NSDateFormatter()
+                timefomatter.dateFormat = "HH"
+                if timefomatter.stringFromDate(task.start_time) == String(indexPath.row) {
+                    cell.backgroundColor = colors[task.color]
+                    
+                }
+            }
+        }
+    }
+    
+    /// マイグレーション
+    func realmMigrations() -> Realm {
+        // Realmのインスタンスを取得
+        let config = Realm.Configuration(
+            schemaVersion: 2,
+            migrationBlock: { migration, oldSchemaVersion in
+                if (oldSchemaVersion < 1) {}
+        })
+        Realm.Configuration.defaultConfiguration = config
+        let realm = try! Realm()
+        return realm
+    }
+    
     // MARK: - UICollectionViewDelegate
     
     /// セルクリック時の処理
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         print("選択しました: \(indexPath.row)")
         cellIndexPath = indexPath
-        collectionView
+        cellColorChange(indexPath)
         let cell = collectionView.cellForItemAtIndexPath(indexPath)
         let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
         let next: UIViewController = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as UIViewController
@@ -257,12 +324,10 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath)
         /// セルの背景色を赤に設定
         cell.backgroundColor = UIColor.whiteColor()
-        
         /// セルの羅線の太さを設定
         cell.layer.borderWidth = 0.5
-        
+        dateCheck(cell, indexPath: indexPath)
         return cell
-        
     }
     
     // MARK: - UITableViewDataSource
