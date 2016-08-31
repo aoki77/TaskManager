@@ -11,7 +11,7 @@ import RealmSwift
 
 // デリゲートを宣言
 protocol columnDelegate: class {
-    func cellSelect(columnType: String, rowType: Int)
+    func cellSelect(columnNum: Int)
 }
 
 final class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, UIPopoverPresentationControllerDelegate {
@@ -246,18 +246,20 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     /// タスクに応じてセルの色を変える
     private func cellColorChange(indexPath: NSIndexPath) {
+        // 列数を入れる配列
+        let columnNum = [1, 2, 3]
         if indexPath.row <= 23 {
             print("A")
             print(indexPath.row)
-            delegate?.cellSelect("A", rowType: indexPath.row)
+            delegate?.cellSelect(columnNum[0])
         } else if 24 <= indexPath.row && indexPath.row <= 47 {
             print("B")
             print(indexPath.row - 24)
-            delegate?.cellSelect("B", rowType: indexPath.row - 24)
+            delegate?.cellSelect(columnNum[1])
         } else if 48 <= indexPath.row && indexPath.row <= 71 {
             print("C")
             print(indexPath.row - 48)
-            delegate?.cellSelect("C", rowType: indexPath.row - 48)
+            delegate?.cellSelect(columnNum[2])
         }
     }
     /// DB内にデータがある時間のセルを重要度に応じて色を変更する
@@ -289,7 +291,7 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     func realmMigrations() -> Realm {
         // Realmのインスタンスを取得
         let config = Realm.Configuration(
-            schemaVersion: 2,
+            schemaVersion: 3,
             migrationBlock: { migration, oldSchemaVersion in
                 if (oldSchemaVersion < 1) {}
         })
