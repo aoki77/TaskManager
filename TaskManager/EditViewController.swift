@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class EditViewController: UITableViewController, UIPopoverPresentationControllerDelegate, ColorTablePopDelegate {
+class EditViewController: UITableViewController, UIPopoverPresentationControllerDelegate, ColorTablePopDelegate, columnPopDelegate {
     
     @IBOutlet var editTable: UITableView!
     @IBOutlet weak var titleTextField: UITextField!
@@ -23,7 +23,9 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     @IBOutlet weak var detailText: UITextView!
     @IBOutlet weak var detailRow: UITableViewCell!
     @IBOutlet weak var detailPlaceHolderLabel: UILabel!
-    
+    @IBOutlet weak var alertCheckCell: UITableViewCell!
+    @IBOutlet weak var alertTitleLabel: UILabel!
+
     
     // MARK: - 定数プロパティ
     
@@ -36,11 +38,20 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     //　DatePickerの表示状態（初期状態は非表示（false））
     private var pickerShowFlag = [false, false, false]
     
+    // アラートの表示状態(初期状態は非表示（false））
+    private var alertShowFlag = false
+    
     // Picker表示時のセルの高さ
     private var pickerCellHeight: CGFloat?
     
+    // アラートのセルの高さ
+    private var alertCellHeight: CGFloat = UIScreen.mainScreen().bounds.height / 8
+    
     // 色と重要度を把握するための数値（初期値は2（黄色、重要度：低））
     private var colorNum = 2
+    
+    // 列の番号
+    private var columnNumber: Int?
     
     // MARK: - ライフサイクル関数
     
@@ -54,7 +65,7 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         
         //　DatePicker表示時のセルの高さを設定
         pickerCellHeight = rect.height / 4
-
+        
         // タイトル入力フォームの設定
         titleTextField.layer.borderColor = UIColor.clearColor().CGColor
         
@@ -62,6 +73,10 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         datePickerChanged(startTimeLabel, picker: startPicker)
         datePickerChanged(finishTimeLabel, picker: finishPicker)
         datePickerChanged(alertLabel, picker: alertPicker)
+        
+        // アラートを隠す
+        alertTitleLabel.hidden = true
+        alertLabel.hidden = true
         
         // ピッカーを隠す
         startPicker.hidden = true
@@ -77,7 +92,6 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         detailText.scrollEnabled = false
         editTable.estimatedRowHeight = 1000
         editTable.rowHeight = UITableViewAutomaticDimension
-
         
         detailPlaceHolderLabel.textColor = UIColor.lightGrayColor()
     }
@@ -162,8 +176,17 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         // セルの高さを返す
         var height: CGFloat = editTable.rowHeight
         
+        // フラグに応じて選択されたアラートの行の高さを変更
+        if indexPath.row == 6 {
+            if alertShowFlag {
+                height = alertCellHeight
+            } else {
+                height = CGFloat(0)
+            }
+        }
+        
+        // フラグに応じて選択されたピッカーの行の高さを変更
         if indexPath.row == 2 {
-            // フラグに応じて選択されたピッカーの行の高さを変更
             if pickerShowFlag[0] {
                 height = pickerCellHeight!
             } else {
@@ -175,7 +198,7 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
             } else {
                 height = CGFloat(0)
             }
-        } else if indexPath.row == 6 {
+        } else if indexPath.row == 7 {
             if pickerShowFlag[2] {
                 height = pickerCellHeight!
             } else {
@@ -186,12 +209,34 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        // アラートの表示状況に応じて表示非表示を変更
+        if indexPath.row == 5 {
+            if alertCheckCell.accessoryType == UITableViewCellAccessoryType.None {
+                alertCheckCell.accessoryType = UITableViewCellAccessoryType.Checkmark
+                // セルのアニメーション準備
+                editTable.beginUpdates()
+                editTable.endUpdates()
+                alertTitleLabel.hidden = false
+                alertLabel.hidden = false
+                alertShowFlag = false
+            } else if alertCheckCell.accessoryType == UITableViewCellAccessoryType.Checkmark {
+                alertCheckCell.accessoryType = UITableViewCellAccessoryType.None
+                // セルのアニメーション準備
+                editTable.beginUpdates()
+                editTable.endUpdates()
+                alertTitleLabel.hidden = true
+                alertLabel.hidden = true
+                alertShowFlag = true
+            }
+        }
+        
         // 日付の行が選択された際にピッカーの表示切り替えの関数を呼び出す
         if indexPath.row == 1 {
             dspDatePicker(startPicker)
         } else if indexPath.row == 3 {
             dspDatePicker(finishPicker)
-        } else if indexPath.row == 5 {
+        } else if indexPath.row == 6 {
             dspDatePicker(alertPicker)
         }
     }
@@ -215,6 +260,12 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
+    // MARK: - ColumnPopDelegate
+    
+    func cellSelectPop(columnNum: Int) {
+        columnNumber = columnNum
+    }
+    
     // MARK: - アクション
     
     // ピッカーが押された際の処理
@@ -236,30 +287,69 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         presentPopver(controller, sourceView: sender)
         controller.delegate = self
     }
-
-    // 完了ボタンを押されたらその時の値を入力
+    
+    /// 完了ボタンを押されたらその時の値を入力
     @IBAction func clickCompletButton(sender: UIButton) {
-        let realm = try! Realm()
-        let task = TaskDate()
-        var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
-
-        try! realm.write {
-            task.id = maxId + 1
-            task.title = titleTextField.text!
-            task.start_time = startPicker.date
-            task.finish_time = finishPicker.date
-            task.alert_time = alertPicker.date
-            task.color = colorNum
-            task.detail = detailText.text
-            task.column = ""
-            realm.add(task, update: true)
-        }
-        self.navigationController?.popViewControllerAnimated(true)
-         print(realm.objects(TaskDate))
         
+        /// タイトルまたは詳細が未入力の際にアラートを出す
+        guard let guardTitle = titleTextField.text else { return }
+        guard let guardDetail = detailText.text else { return }
+        if guardTitle.characters.count == 0 || guardDetail.characters.count == 0 {
+            let alert: UIAlertController = UIAlertController(title: "未入力項目があります", message: "", preferredStyle:  UIAlertControllerStyle.Alert)
+            let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:{
+                /// ボタンが押された時の処理
+                (action: UIAlertAction!) -> Void in
+            })
+            /// アラートの追加
+            alert.addAction(defaultAction)
+            
+            presentViewController(alert, animated: true, completion: nil)
+        } else {
+            
+            print("test入った")
+            // マイグレーション処理
+            //        let config = Realm.Configuration(
+            //            schemaVersion: 3,
+            //            migrationBlock: { migration, oldSchemaVersion in
+            //                if (oldSchemaVersion < 1) {}
+            //        })
+            //        Realm.Configuration.defaultConfiguration = config
+            
+            let realm = try! Realm()
+            let task = TaskDate()
+            var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
+            
+            guard let guardColumnNumber = columnNumber else {
+                print("行数来てない")
+                return
+            }
+            try! realm.write {
+                task.id = maxId + 1
+                task.title = titleTextField.text!
+                task.start_time = startPicker.date
+                task.finish_time = finishPicker.date
+                task.alert_time = alertPicker.date
+                task.color = colorNum
+                task.detail = detailText.text
+                task.column = guardColumnNumber
+                realm.add(task, update: true)
+            }
+
+            print(realm.objects(TaskDate))
+            
+            // タイムスケジュール画面に戻る
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
+            presentViewController(next, animated: true, completion: nil)
+        }
+    }
+
+    @IBAction func returnTimeLine(sender: UIBarButtonItem) {
         // タイムスケジュール画面に戻る
         let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
         presentViewController(next, animated: true, completion: nil)
     }
+    
+    
 }

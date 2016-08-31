@@ -12,6 +12,7 @@ import RealmSwift
 // デリゲートを宣言
 protocol columnDelegate: class {
     func cellSelect(columnNum: Int)
+    func cellDate(title: String, startTime: NSData, finishTime: NSData, Detial: NSData)
 }
 
 final class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, UIPopoverPresentationControllerDelegate {
@@ -33,12 +34,10 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     // 色を格納した配列
     private let colors = [UIColor.redColor(), UIColor.orangeColor(), UIColor.yellowColor()]
     
-
-    
     // MARK: - 変数プロパティ
     
     /// デリゲート
-    var delegate: columnDelegate! = nil
+    weak var delegate: columnDelegate! = nil
     
     /// 日付
     private var now = NSDate()
@@ -244,7 +243,7 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         }
     }
     
-    /// タスクに応じてセルの色を変える
+    /// 何列目をクリックしたかを判別する
     private func cellColorChange(indexPath: NSIndexPath) {
         // 列数を入れる配列
         let columnNum = [1, 2, 3]
@@ -252,16 +251,20 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
             print("A")
             print(indexPath.row)
             delegate?.cellSelect(columnNum[0])
+            print(delegate?.cellSelect)
         } else if 24 <= indexPath.row && indexPath.row <= 47 {
             print("B")
             print(indexPath.row - 24)
             delegate?.cellSelect(columnNum[1])
+            print(delegate?.cellSelect)
         } else if 48 <= indexPath.row && indexPath.row <= 71 {
             print("C")
             print(indexPath.row - 48)
             delegate?.cellSelect(columnNum[2])
+            print(delegate?.cellSelect)
         }
     }
+    
     /// DB内にデータがある時間のセルを重要度に応じて色を変更する
     private func dateCheck(cell: UICollectionViewCell, indexPath: NSIndexPath) {
         let realm = realmMigrations()
@@ -279,9 +282,11 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 print("日付が同じ")
                 let timefomatter = NSDateFormatter()
                 timefomatter.dateFormat = "HH"
-                if timefomatter.stringFromDate(task.start_time) == String(indexPath.row) {
-                    cell.backgroundColor = colors[task.color]
-                    
+                let schedulePeriod = Int(timefomatter.stringFromDate(task.finish_time))! - Int(timefomatter.stringFromDate(task.start_time))!
+                for num in 0 ... schedulePeriod {
+                    if (Int(timefomatter.stringFromDate(task.start_time))! + num) == indexPath.row {
+                        cell.backgroundColor = colors[task.color]
+                    }
                 }
             }
         }
@@ -307,6 +312,7 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         print("選択しました: \(indexPath.row)")
         cellIndexPath = indexPath
         cellColorChange(indexPath)
+        
         let cell = collectionView.cellForItemAtIndexPath(indexPath)
         let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
         let next: UIViewController = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as UIViewController
@@ -416,12 +422,12 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     /// セル長押し時の処理
-    func cellLongPressed(sender : UILongPressGestureRecognizer){
+    func cellLongPressed(sender : UILongPressGestureRecognizer) {
         /// 押された位置でcellのpathを取得
         let point = sender.locationInView(timeLineCollectionView)
         let indexPath = timeLineCollectionView.indexPathForItemAtPoint(point)
         
-        if sender.state == UIGestureRecognizerState.Began{
+        if sender.state == UIGestureRecognizerState.Began {
             /// セルが長押しされたときの処理
             /// 完了か未完了かを把握して変更する処理をここに記載
             print("\(indexPath!.row + 1)が長押しされました")

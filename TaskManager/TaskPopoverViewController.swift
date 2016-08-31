@@ -9,8 +9,8 @@
 import UIKit
 
 // デリゲートを宣言
-protocol coloumPopDelegate: class {
-    func cellSelectPop(columnType: String, rowType: Int)
+protocol columnPopDelegate: class {
+    func cellSelectPop(columnNum: Int)
 }
 
 final class TaskPopoverViewController: UIViewController, columnDelegate {
@@ -44,24 +44,31 @@ final class TaskPopoverViewController: UIViewController, columnDelegate {
         self.view.backgroundColor = UIColor.whiteColor()
     }
     
-    private func setupContents() {
+    func setupContents() {
         /// ボタン
         editButton.backgroundColor = UIColor.blueColor()
         editButton.layer.masksToBounds = true
         editButton.layer.cornerRadius = 20.0
         editButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+        print("test")
+        //print(ViewController().delegate)
+        print("test2")
+    }
+    
+    func cellDate(title: String, startTime: NSData, finishTime: NSData, Detial: NSData) {
+        
     }
     
     // MARK: - パブリック関数
 
-    func cellSelect(columnType: String, rowType: Int) {
+    func cellSelect(columnNum: Int) {
         print("delegateTEST")
-        let delegate: coloumPopDelegate! = nil
-        delegate?.cellSelectPop(columnType, rowType: rowType)
+        print(columnNum)
+        let delegate: columnPopDelegate! = nil
+        delegate?.cellSelectPop(columnNum)
     }
     
     // MARK: - アクション
-    
     @IBAction func clickEditButton(sender: UIButton) {
         let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: nil)
         let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController

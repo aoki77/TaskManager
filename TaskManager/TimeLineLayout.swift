@@ -19,14 +19,11 @@ final class TimeLineLayout: UICollectionViewLayout {
     private var viewSize :CGSize?
     private var cellHeight: CGFloat?
     
-    
-    
     // MARK: - ライフサイクル関数
     
     /// レイアウトを準備するメソッド
     override func prepareLayout() {
         rowSetup()
-
     }
     
     /// レイアウトを返す
