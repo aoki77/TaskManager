@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class EditViewController: UITableViewController, UIPopoverPresentationControllerDelegate, ColorTablePopDelegate, columnPopDelegate {
+class EditViewController: UITableViewController, UIPopoverPresentationControllerDelegate, UITextViewDelegate, ColorTablePopDelegate, columnPopDelegate {
     
     @IBOutlet var editTable: UITableView!
     @IBOutlet weak var titleTextField: UITextField!
@@ -25,32 +25,19 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     @IBOutlet weak var detailPlaceHolderLabel: UILabel!
     @IBOutlet weak var alertCheckCell: UITableViewCell!
     @IBOutlet weak var alertTitleLabel: UILabel!
-
-    
-    // MARK: - 定数プロパティ
-    
-    // 画面全体の高さ、幅
-    private let rect = UIScreen.mainScreen().bounds
-    
     
     // MARK: - 変数プロパティ
     
-    //　DatePickerの表示状態（初期状態は非表示（false））
+    ///　DatePickerの表示状態（初期状態は非表示（false））
     private var pickerShowFlag = [false, false, false]
     
-    // アラートの表示状態(初期状態は非表示（false））
+    /// アラートの表示状態(初期状態は非表示（false））
     private var alertShowFlag = false
     
-    // Picker表示時のセルの高さ
-    private var pickerCellHeight: CGFloat?
-    
-    // アラートのセルの高さ
-    private var alertCellHeight: CGFloat = UIScreen.mainScreen().bounds.height / 8
-    
-    // 色と重要度を把握するための数値（初期値は2（黄色、重要度：低））
+    /// 色と重要度を把握するための数値（初期値は2（黄色、重要度：低））
     private var colorNum = 2
     
-    // 列の番号
+    /// 列の番号
     private var columnNumber: Int?
     
     // MARK: - ライフサイクル関数
@@ -58,53 +45,48 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // 各ピッカーにタグを設定
+        /// 各ピッカーにタグを設定
         startPicker.tag = 0
         finishPicker.tag = 1
         alertPicker.tag = 2
         
-        //　DatePicker表示時のセルの高さを設定
-        pickerCellHeight = rect.height / 4
-        
-        // タイトル入力フォームの設定
+        /// タイトル入力フォームの設定
         titleTextField.layer.borderColor = UIColor.clearColor().CGColor
         
-        // ピッカーの初期値をLabelに挿入
+        /// ピッカーの初期値をLabelに挿入
         datePickerChanged(startTimeLabel, picker: startPicker)
         datePickerChanged(finishTimeLabel, picker: finishPicker)
         datePickerChanged(alertLabel, picker: alertPicker)
         
-        // アラートを隠す
+        /// アラートを隠す
         alertTitleLabel.hidden = true
         alertLabel.hidden = true
         
-        // ピッカーを隠す
+        /// ピッカーを隠す
         startPicker.hidden = true
         finishPicker.hidden = true
         alertPicker.hidden = true
         
-        // ボタンの初期設定
+        /// ボタンの初期設定
         colorSelectButton.setTitleColor(UIColor.yellowColor(), forState: . Normal)
         colorSelectButton.setTitle("低", forState: .Normal)
         
-        // テキストビューの設定
-        // スクロール禁止
+        /// テキストビューの設定
+        /// テキストビューのスクロールを禁止
         detailText.scrollEnabled = false
+        /// テーブルの高さを可変にする
         editTable.estimatedRowHeight = 1000
         editTable.rowHeight = UITableViewAutomaticDimension
         
         detailPlaceHolderLabel.textColor = UIColor.lightGrayColor()
+        
+        detailText.delegate = self
     }
     
     // MARK: - プライベート関数
     
-    private func textViewDidChange(textView: UITextView) {
-        editTable.beginUpdates()
-        editTable.endUpdates()
-    }
-    
     private func dspDatePicker(picker: UIDatePicker) {
-        // フラグに応じてピッカーの表示、非表示の関数を呼び出す
+        /// フラグに応じてピッカーの表示、非表示の関数を呼び出す
         if pickerShowFlag[picker.tag] {
             hideDatePickerCell(picker)
         } else {
@@ -113,26 +95,26 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     }
     
     private func showDatePickerCell(picker: UIDatePicker) {
-        // フラグの更新
+        /// フラグの更新
         pickerShowFlag[picker.tag] = true
         
-        // セルのアニメーション準備
+        /// セルのアニメーション準備
         editTable.beginUpdates()
         editTable.endUpdates()
         
-        // Pickerを表示
+        /// Pickerを表示
         picker.hidden = false
     }
     
     private func hideDatePickerCell(picker: UIDatePicker) {
-        // フラグの更新
+        /// フラグの更新
         pickerShowFlag[picker.tag] = false
         
-        // セルのアニメーション準備
+        /// セルのアニメーション準備
         editTable.beginUpdates()
         editTable.endUpdates()
         
-        // Pickerを非表示
+        /// Pickerを非表示
         picker.hidden = true
     }
     
@@ -143,7 +125,7 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     private func presentPopver(viewController: UIViewController!, sourceView: UIView!) {
         viewController.modalPresentationStyle = UIModalPresentationStyle.Popover
         // popの大きさ
-        viewController.preferredContentSize = CGSizeMake(rect.width / 2, rect.height / 5)
+        viewController.preferredContentSize = CGSizeMake(UIScreen.mainScreen().bounds.width / 2, UIScreen.mainScreen().bounds.height / 5)
         
         let popoverController = viewController.popoverPresentationController
         popoverController?.delegate = self
@@ -156,23 +138,40 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         self.presentViewController(viewController, animated: true, completion: nil)
     }
     
-    //textviewがフォーカスされたら、Labelを非表示
-    private func textViewShouldBeginEditing(textView: UITextView) -> Bool {
+    // MARK: - UITextViewDelegate
+    
+    /// textviewがフォーカスされたら、Labelを非表示
+    func textViewShouldBeginEditing(textView: UITextView) -> Bool {
         detailPlaceHolderLabel.hidden = true
         print("detailtest")
         return true
     }
     
-    //textviewからフォーカスが外れて、TextViewが空だったらLabelを再び表示
-    private func textViewDidEndEditing(textView: UITextView) {
+    /// textviewからフォーカスが外れて、TextViewが空だったらLabelを再び表示
+    func textViewDidEndEditing(textView: UITextView) {
         if(detailText.text.isEmpty){
+            print("detailtest2")
             detailPlaceHolderLabel.hidden = false
         }
+    }
+    
+    /// UITextViewのテキストが編集するたびに呼び出される
+    func textViewDidChange(textView: UITextView) {
+        /// セルを更新
+        editTable.beginUpdates()
+        editTable.endUpdates()
     }
     
     // MARK: - UITableViewDelegate
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        ///　DatePicker表示時のセルの高さを設定
+        let pickerCellHeight: CGFloat = UIScreen.mainScreen().bounds.height / 4
+        
+        /// アラートのセルの高さ
+        let alertCellHeight: CGFloat = UIScreen.mainScreen().bounds.height / 10
+        
         // セルの高さを返す
         var height: CGFloat = editTable.rowHeight
         
@@ -188,19 +187,19 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         // フラグに応じて選択されたピッカーの行の高さを変更
         if indexPath.row == 2 {
             if pickerShowFlag[0] {
-                height = pickerCellHeight!
+                height = pickerCellHeight
             } else {
                 height = CGFloat(0)
             }
         } else if indexPath.row == 4 {
             if pickerShowFlag[1] {
-                height = pickerCellHeight!
+                height = pickerCellHeight
             } else {
                 height = CGFloat(0)
             }
         } else if indexPath.row == 7 {
             if pickerShowFlag[2] {
-                height = pickerCellHeight!
+                height = pickerCellHeight
             } else {
                 height = CGFloat(0)
             }
@@ -208,6 +207,7 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         return height
     }
     
+    /// セルがタッチされた時の処理
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         // アラートの表示状況に応じて表示非表示を変更
@@ -307,13 +307,6 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         } else {
             
             print("test入った")
-            // マイグレーション処理
-            //        let config = Realm.Configuration(
-            //            schemaVersion: 3,
-            //            migrationBlock: { migration, oldSchemaVersion in
-            //                if (oldSchemaVersion < 1) {}
-            //        })
-            //        Realm.Configuration.defaultConfiguration = config
             
             let realm = try! Realm()
             let task = TaskDate()
@@ -334,22 +327,19 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
                 task.column = guardColumnNumber
                 realm.add(task, update: true)
             }
-
             print(realm.objects(TaskDate))
             
-            // タイムスケジュール画面に戻る
+            /// タイムスケジュール画面に戻る
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
             presentViewController(next, animated: true, completion: nil)
         }
     }
-
+    
     @IBAction func returnTimeLine(sender: UIBarButtonItem) {
-        // タイムスケジュール画面に戻る
+        /// タイムスケジュール画面に戻る
         let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
         presentViewController(next, animated: true, completion: nil)
     }
-    
-    
 }

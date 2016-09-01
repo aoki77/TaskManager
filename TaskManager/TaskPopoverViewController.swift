@@ -33,7 +33,9 @@ final class TaskPopoverViewController: UIViewController, columnDelegate {
         super.viewDidLoad()
         setupView()
         setupContents()
-        ViewController().delegate = self
+        let controller = ViewController()
+        controller.delegate = self
+        print(controller.delegate)
     }
     
     // MARK: - プライベート関数
@@ -50,12 +52,10 @@ final class TaskPopoverViewController: UIViewController, columnDelegate {
         editButton.layer.masksToBounds = true
         editButton.layer.cornerRadius = 20.0
         editButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-        print("test")
-        //print(ViewController().delegate)
-        print("test2")
     }
     
-    func cellDate(title: String, startTime: NSData, finishTime: NSData, Detial: NSData) {
+    func cellDate(title: String, startTime: NSDate, finishTime: NSDate, Detial: String) {
+        print("delegate来た")
         
     }
     

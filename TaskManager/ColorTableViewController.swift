@@ -16,7 +16,7 @@ protocol ColorTablePopDelegate: class {
 
 class ColorTableViewController: UITableViewController {
     
-    var delegate: ColorTablePopDelegate! = nil
+    weak var delegate: ColorTablePopDelegate! = nil
     
     // 画面全体の縦、幅
     var mainRect = UIScreen.mainScreen().bounds
@@ -28,6 +28,7 @@ class ColorTableViewController: UITableViewController {
     let texts = ["高", "中", "低"]
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         // 縦向きか横向きか判定してサイズを変更
         if mainRect.height > mainRect.width {
             self.view.layer.frame = CGRectMake(0, 0, mainRect.width / 2, mainRect.height / 5)

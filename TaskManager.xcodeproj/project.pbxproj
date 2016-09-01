@@ -7,14 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01338118621101A9335F9C4F /* Pods_TaskManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC1BB62EB7DC93830AC58D97 /* Pods_TaskManager.framework */; };
-		4B0CF16AAFBE191096941145 /* Pods_TaskManagerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89474AB7E58DF70E00A4C095 /* Pods_TaskManagerUITests.framework */; };
+		5E37C4C11D77FE34005E77A0 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E37C4BF1D77FE34005E77A0 /* Realm.framework */; };
+		5E37C4C21D77FE34005E77A0 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E37C4C01D77FE34005E77A0 /* RealmSwift.framework */; };
 		5E3AC56E1D64089C00D446E1 /* TaskPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3AC56D1D64089C00D446E1 /* TaskPopoverViewController.swift */; };
 		5E3AE47C1D754C650090F649 /* TaskDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3AE47B1D754C650090F649 /* TaskDate.swift */; };
 		5E3AE4801D754CCD0090F649 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3AE47F1D754CCD0090F649 /* EditViewController.swift */; };
 		5E3AE4821D754D020090F649 /* ColorTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3AE4811D754D020090F649 /* ColorTableViewController.swift */; };
-		5E3AE4AF1D75506D0090F649 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3AE4AD1D75506D0090F649 /* Realm.framework */; };
-		5E3AE4B01D75506D0090F649 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3AE4AE1D75506D0090F649 /* RealmSwift.framework */; };
 		5E3AE4B11D7551430090F649 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E4A5A121D5D9E3F00181359 /* Main.storyboard */; };
 		5E3AE4B21D7551480090F649 /* TaskPop.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E3F7BA01D6FBF520045334A /* TaskPop.storyboard */; };
 		5E3AE4B31D75514D0090F649 /* Edit.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E3AE48F1D754EC10090F649 /* Edit.storyboard */; };
@@ -24,7 +22,6 @@
 		5E4A5A241D5D9E3F00181359 /* TaskManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A231D5D9E3F00181359 /* TaskManagerTests.swift */; };
 		5E4A5A2F1D5D9E3F00181359 /* TaskManagerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A2E1D5D9E3F00181359 /* TaskManagerUITests.swift */; };
 		5E66EE1D1D618501006D55D6 /* TimeLineLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E66EE1C1D618501006D55D6 /* TimeLineLayout.swift */; };
-		E5C5F857524ED8D4CDF8CF08 /* Pods_TaskManagerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F7D6A0EDCB5CA37FBE8E3AB /* Pods_TaskManagerTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,13 +46,13 @@
 		12E0F84F9D63C5BDCBB46F50 /* Pods-TaskManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TaskManager.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TaskManager/Pods-TaskManager.debug.xcconfig"; sourceTree = "<group>"; };
 		32C23F2640E9BC0C60F3D3A2 /* Pods-TaskManagerUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TaskManagerUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TaskManagerUITests/Pods-TaskManagerUITests.release.xcconfig"; sourceTree = "<group>"; };
 		3BB6BFDAFFF28D682224CFD8 /* Pods-TaskManagerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TaskManagerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TaskManagerTests/Pods-TaskManagerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5E37C4BF1D77FE34005E77A0 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "../Library/Developer/Xcode/DerivedData/TaskManager-bqyqbvpnqwbghwckgagzmowsbmzj/Build/Products/Debug-iphonesimulator/Realm/Realm.framework"; sourceTree = "<group>"; };
+		5E37C4C01D77FE34005E77A0 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = "../Library/Developer/Xcode/DerivedData/TaskManager-bqyqbvpnqwbghwckgagzmowsbmzj/Build/Products/Debug-iphonesimulator/RealmSwift/RealmSwift.framework"; sourceTree = "<group>"; };
 		5E3AC56D1D64089C00D446E1 /* TaskPopoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskPopoverViewController.swift; sourceTree = "<group>"; };
 		5E3AE47B1D754C650090F649 /* TaskDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDate.swift; sourceTree = "<group>"; };
 		5E3AE47F1D754CCD0090F649 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		5E3AE4811D754D020090F649 /* ColorTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTableViewController.swift; sourceTree = "<group>"; };
 		5E3AE48F1D754EC10090F649 /* Edit.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Edit.storyboard; sourceTree = "<group>"; };
-		5E3AE4AD1D75506D0090F649 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/../build/Debug-iphoneos/Realm/Realm.framework"; sourceTree = "<group>"; };
-		5E3AE4AE1D75506D0090F649 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = "Pods/../build/Debug-iphoneos/RealmSwift/RealmSwift.framework"; sourceTree = "<group>"; };
 		5E3F7BA01D6FBF520045334A /* TaskPop.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = TaskPop.storyboard; sourceTree = "<group>"; };
 		5E4A5A0B1D5D9E3F00181359 /* TaskManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E4A5A0E1D5D9E3F00181359 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -71,10 +68,7 @@
 		5E4A5A2E1D5D9E3F00181359 /* TaskManagerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManagerUITests.swift; sourceTree = "<group>"; };
 		5E4A5A301D5D9E3F00181359 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5E66EE1C1D618501006D55D6 /* TimeLineLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLineLayout.swift; sourceTree = "<group>"; };
-		6F7D6A0EDCB5CA37FBE8E3AB /* Pods_TaskManagerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TaskManagerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		89474AB7E58DF70E00A4C095 /* Pods_TaskManagerUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TaskManagerUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B85AA60635A321E265E34A86 /* Pods-TaskManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TaskManager.release.xcconfig"; path = "Pods/Target Support Files/Pods-TaskManager/Pods-TaskManager.release.xcconfig"; sourceTree = "<group>"; };
-		CC1BB62EB7DC93830AC58D97 /* Pods_TaskManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TaskManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2C02E14E7F235335D2F35D3 /* Pods-TaskManagerUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TaskManagerUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TaskManagerUITests/Pods-TaskManagerUITests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -83,9 +77,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E3AE4AF1D75506D0090F649 /* Realm.framework in Frameworks */,
-				5E3AE4B01D75506D0090F649 /* RealmSwift.framework in Frameworks */,
-				01338118621101A9335F9C4F /* Pods_TaskManager.framework in Frameworks */,
+				5E37C4C11D77FE34005E77A0 /* Realm.framework in Frameworks */,
+				5E37C4C21D77FE34005E77A0 /* RealmSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,7 +86,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5C5F857524ED8D4CDF8CF08 /* Pods_TaskManagerTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,7 +93,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B0CF16AAFBE191096941145 /* Pods_TaskManagerUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,11 +178,8 @@
 		D5792E644E71037C4BE4AB60 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5E3AE4AD1D75506D0090F649 /* Realm.framework */,
-				5E3AE4AE1D75506D0090F649 /* RealmSwift.framework */,
-				CC1BB62EB7DC93830AC58D97 /* Pods_TaskManager.framework */,
-				6F7D6A0EDCB5CA37FBE8E3AB /* Pods_TaskManagerTests.framework */,
-				89474AB7E58DF70E00A4C095 /* Pods_TaskManagerUITests.framework */,
+				5E37C4BF1D77FE34005E77A0 /* Realm.framework */,
+				5E37C4C01D77FE34005E77A0 /* RealmSwift.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -231,6 +219,8 @@
 				5E4A5A081D5D9E3F00181359 /* Frameworks */,
 				5E3AE48B1D754E890090F649 /* Headers */,
 				5E3AE48C1D754E8C0090F649 /* Resources */,
+				83A5508D1804ACF1A8F84E22 /* [CP] Embed Pods Frameworks */,
+				E36E38BC64A338E8A6C128BC /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -399,6 +389,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		83A5508D1804ACF1A8F84E22 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TaskManager/Pods-TaskManager-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		94A354F15616F193F801C83B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -412,6 +417,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		E36E38BC64A338E8A6C128BC /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TaskManager/Pods-TaskManager-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FE294D6D7B2171F380FB58E2 /* [CP] Copy Pods Resources */ = {

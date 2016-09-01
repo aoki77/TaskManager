@@ -12,8 +12,9 @@ import RealmSwift
 // デリゲートを宣言
 protocol columnDelegate: class {
     func cellSelect(columnNum: Int)
-    func cellDate(title: String, startTime: NSData, finishTime: NSData, Detial: NSData)
+    func cellDate(title: String, startTime: NSDate, finishTime: NSDate, Detial: String)
 }
+
 
 final class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, UIPopoverPresentationControllerDelegate {
     
@@ -36,8 +37,9 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     // MARK: - 変数プロパティ
     
-    /// デリゲート
-    weak var delegate: columnDelegate! = nil
+    /// デリゲートインスタンス
+    //weak var delegate: columnDelegate! = nil
+    var delegate: columnDelegate! = nil
     
     /// 日付
     private var now = NSDate()
@@ -77,7 +79,7 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         setupDate()
         setupTable()
         setupCollection()
-        longTop()
+        longTap()
     }
     
     /// 画面回転時の処理
@@ -157,7 +159,7 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     /// ロングタップの設定
-    private func longTop() {
+    private func longTap() {
         /// viewにロングタップの使用宣言を追加
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.cellLongPressed(_:)))
         longPressGestureRecognizer.delegate = self
@@ -251,7 +253,9 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
             print("A")
             print(indexPath.row)
             delegate?.cellSelect(columnNum[0])
+            print("aaaaaaaaaaaa")
             print(delegate?.cellSelect)
+            print("bbbbbbbbbbbb")
         } else if 24 <= indexPath.row && indexPath.row <= 47 {
             print("B")
             print(indexPath.row - 24)
