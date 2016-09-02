@@ -8,17 +8,13 @@
 
 import UIKit
 
-// デリゲートを宣言
-protocol columnPopDelegate: class {
-    func cellSelectPop(columnNum: Int)
-}
-
-final class TaskPopoverViewController: UIViewController, columnDelegate {
+final class TaskPopoverViewController: UIViewController {
     
     // MARK: - アウトレット
     
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var timeLabel: UILabel!
+    @IBOutlet weak var startTimeLabel: UILabel!
+    @IBOutlet weak var finishTimeLabel: UILabel!
     @IBOutlet weak var detailLabel: UILabel!
     @IBOutlet weak var editButton: UIButton!
     
@@ -27,18 +23,36 @@ final class TaskPopoverViewController: UIViewController, columnDelegate {
     private var row: Int?
     private var mainRect = UIScreen.mainScreen().bounds
     
+    var cellDate:TaskDate?
+    
+
+    func celltest() {
+        print("test")
+    }
+    
     // MARK: - ライフサイクル関数
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        setupLabel()
         setupContents()
-        let controller = ViewController()
-        controller.delegate = self
-        print(controller.delegate)
     }
     
     // MARK: - プライベート関数
+    
+    /// viewcontrollerからセルのデータを受け取り、ラベルにセットする
+    private func setupLabel() {
+        let dateformatter = NSDateFormatter()
+        dateformatter.dateFormat = "yyyy/MM/dd HH時"
+        guard let guardCellDate = cellDate else { return }
+        
+        titleLabel.text = guardCellDate.title
+        startTimeLabel.text = dateformatter.stringFromDate(guardCellDate.start_time)
+        finishTimeLabel.text = dateformatter.stringFromDate(guardCellDate.finish_time)
+        detailLabel.text = guardCellDate.detail
+    }
+    
     
     /// 画面の設定
     private func setupView() {
@@ -54,19 +68,8 @@ final class TaskPopoverViewController: UIViewController, columnDelegate {
         editButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
     }
     
-    func cellDate(title: String, startTime: NSDate, finishTime: NSDate, Detial: String) {
-        print("delegate来た")
-        
-    }
     
     // MARK: - パブリック関数
-
-    func cellSelect(columnNum: Int) {
-        print("delegateTEST")
-        print(columnNum)
-        let delegate: columnPopDelegate! = nil
-        delegate?.cellSelectPop(columnNum)
-    }
     
     // MARK: - アクション
     @IBAction func clickEditButton(sender: UIButton) {

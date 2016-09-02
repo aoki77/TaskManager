@@ -9,13 +9,6 @@
 import UIKit
 import RealmSwift
 
-// デリゲートを宣言
-protocol columnDelegate: class {
-    func cellSelect(columnNum: Int)
-    func cellDate(title: String, startTime: NSDate, finishTime: NSDate, Detial: String)
-}
-
-
 final class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, UIPopoverPresentationControllerDelegate {
     
     // MARK: - アウトレット
@@ -37,9 +30,7 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     // MARK: - 変数プロパティ
     
-    /// デリゲートインスタンス
-    //weak var delegate: columnDelegate! = nil
-    var delegate: columnDelegate! = nil
+    var cellDate: TaskDate?
     
     /// 日付
     private var now = NSDate()
@@ -202,7 +193,6 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     /// LongPressGestureの処理
     private func longPress(gesture:UILongPressGestureRecognizer){
-        
         if gesture.state != .Began{
             return
         }
@@ -216,6 +206,7 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     private func presentPopover(viewController: UIViewController!, sourceView: UIView!) {
         viewController.modalPresentationStyle = .Popover
         viewController.preferredContentSize = popoverSize
+
         if let popoverViewController = presentedViewController {
             let animated: Bool = false
             /// popoverを閉じる
@@ -230,10 +221,14 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
             /// どこから出た感じにするか
             popoverController.sourceView = sourceView
             popoverController.sourceRect = sourceView.bounds
+            
+            
+            
         }
         presentViewController(viewController, animated: true, completion: nil)
     }
     
+    /// 画面の向きを判定してviewのサイズを変更する
     private func viewDirection(size: CGSize) {
         switch UIApplication.sharedApplication().statusBarOrientation {
         case .Portrait, .PortraitUpsideDown, .Unknown:
@@ -245,28 +240,21 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         }
     }
     
-    /// 何列目をクリックしたかを判別する
-    private func cellColorChange(indexPath: NSIndexPath) {
+    /// 何列目(何タスク目)をクリックしたかを判別する
+    private func selectTaskNum(indexPath: NSIndexPath) -> Int {
         // 列数を入れる配列
-        let columnNum = [1, 2, 3]
+        let taskNum = [1, 2, 3]
         if indexPath.row <= 23 {
-            print("A")
             print(indexPath.row)
-            delegate?.cellSelect(columnNum[0])
-            print("aaaaaaaaaaaa")
-            print(delegate?.cellSelect)
-            print("bbbbbbbbbbbb")
+            return taskNum[0]
         } else if 24 <= indexPath.row && indexPath.row <= 47 {
-            print("B")
             print(indexPath.row - 24)
-            delegate?.cellSelect(columnNum[1])
-            print(delegate?.cellSelect)
+            return taskNum[1]
         } else if 48 <= indexPath.row && indexPath.row <= 71 {
-            print("C")
             print(indexPath.row - 48)
-            delegate?.cellSelect(columnNum[2])
-            print(delegate?.cellSelect)
+            return taskNum[2]
         }
+        return 0
     }
     
     /// DB内にデータがある時間のセルを重要度に応じて色を変更する
@@ -274,16 +262,12 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         let realm = realmMigrations()
         let tasks = realm.objects(TaskDate)
         let dateformatter = NSDateFormatter()
-        dateformatter.dateFormat = "yyyy/MM/DD"
+        dateformatter.dateFormat = "yyyy/MM/dd"
         for task in tasks{
-            print("name: \(task.start_time)")
-            //日付が同じセルのみを選択
-            if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(now)) == NSComparisonResult.OrderedDescending {
-                print("日付が新しい")
-            } else if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(now)) == NSComparisonResult.OrderedAscending {
-                print("日付が古い")
-            } else {
+            /// 日付が同じセルのみを選択
+            if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(now)) == NSComparisonResult.OrderedSame {
                 print("日付が同じ")
+                print("name: \(task.start_time)")
                 let timefomatter = NSDateFormatter()
                 timefomatter.dateFormat = "HH"
                 let schedulePeriod = Int(timefomatter.stringFromDate(task.finish_time))! - Int(timefomatter.stringFromDate(task.start_time))!
@@ -296,11 +280,35 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         }
     }
     
+    /// クリックされたセルに合うデータのIDをDBから取ってくる
+    private func selectDate(taskNum: Int, indexPath: NSIndexPath) -> Bool {
+        let realm = realmMigrations()
+        let tasks = realm.objects(TaskDate)
+        let dateformatter = NSDateFormatter()
+        let dateformatterNow = NSDateFormatter()
+        dateformatter.dateFormat = "yyyy/MM/dd/HH"
+        dateformatterNow.dateFormat = "yyyy/MM/dd"
+        let stringNow = dateformatterNow.stringFromDate(now) + "/\(indexPath.row)"
+        
+        for task in tasks{
+            /// 日付及び列番号が同じセルのみを選択
+            if dateformatter.stringFromDate(task.start_time).compare(stringNow) == NSComparisonResult.OrderedSame
+                && taskNum == task.task_no {
+                print("日時及び列が同じ")
+                print(task.id)
+                print(task.title)
+                cellDate = task
+                return true
+            }
+        }
+        return false
+    }
+    
     /// マイグレーション
     func realmMigrations() -> Realm {
         // Realmのインスタンスを取得
         let config = Realm.Configuration(
-            schemaVersion: 3,
+            schemaVersion: 4,
             migrationBlock: { migration, oldSchemaVersion in
                 if (oldSchemaVersion < 1) {}
         })
@@ -315,12 +323,23 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         print("選択しました: \(indexPath.row)")
         cellIndexPath = indexPath
-        cellColorChange(indexPath)
-        
-        let cell = collectionView.cellForItemAtIndexPath(indexPath)
-        let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
-        let next: UIViewController = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as UIViewController
-        self.presentPopover(next, sourceView: cell)
+        let taskNum = selectTaskNum(indexPath)
+        let dateFlag = selectDate(taskNum, indexPath: indexPath)
+        /// セルの中にデータが存在するかどうかで判定
+        if dateFlag {
+            /// ポップアップを出す
+            let cell = collectionView.cellForItemAtIndexPath(indexPath)
+            let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
+            let next = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as! TaskPopoverViewController
+            next.cellDate = cellDate
+            self.presentPopover(next, sourceView: cell)
+        } else {
+            /// 編集画面へ飛ばす
+            let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: nil)
+            let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
+            
+            presentViewController(next, animated: true, completion: nil)
+        }
     }
     
     // MARK: - UICollectionViewDateSource
@@ -416,6 +435,8 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         guard let guardTommorowDate = tommorowDate else { return }
         now = guardTommorowDate
         setupDate()
+        ///　テーブルの更新
+        timeLineCollectionView.reloadData()
     }
     
     /// 日付を昨日に更新
@@ -423,6 +444,8 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         guard let guardYesterdayDate = yesterdayDate else { return }
         now = guardYesterdayDate
         setupDate()
+        /// テーブルの更新
+        timeLineCollectionView.reloadData()
     }
     
     /// セル長押し時の処理

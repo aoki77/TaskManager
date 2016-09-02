@@ -87,7 +87,5 @@ class ColorTableViewController: UITableViewController {
         
         // 色を設定する関数の呼び出し
         cell.backgroundColor = colorForIndex(indexPath.row)
-        
     }
-
 }
