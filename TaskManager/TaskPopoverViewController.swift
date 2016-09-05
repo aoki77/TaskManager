@@ -1,5 +1,5 @@
 //
-//  TaskPop.swift
+//  TaskPopoverViewController.swift
 //  TaskManager
 //
 //  Created by 青木孝乃輔 on 2016/08/17.
@@ -12,33 +12,26 @@ final class TaskPopoverViewController: UIViewController {
     
     // MARK: - アウトレット
     
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var timeLabel: UILabel!
-    @IBOutlet weak var detailLabel: UILabel!
-    @IBOutlet weak var editButton: UIButton!
+    @IBOutlet weak private var titleLabel: UILabel!
+    @IBOutlet weak private var timeLabel: UILabel!
+    @IBOutlet weak private var detailLabel: UILabel!
+    @IBOutlet weak private var editButton: UIButton!
     
     // MARK: - ライフサイクル関数
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
         setupContents()
     }
     
     // MARK: - プライベート関数
     
-    /// 画面の設定
-    private func setupView() {
-        /// 背景を白に
-        self.view.backgroundColor = UIColor.whiteColor()
-    }
-    
+    /// 各種コンテンツの初期設定
     private func setupContents() {
-        /// ボタン
+        // ボタン
         editButton.backgroundColor = UIColor.blueColor()
         editButton.layer.masksToBounds = true
         editButton.layer.cornerRadius = 20.0
-        editButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+        editButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
     }
-
 }
