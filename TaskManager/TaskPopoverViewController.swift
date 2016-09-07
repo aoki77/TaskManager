@@ -19,16 +19,11 @@ final class TaskPopoverViewController: UIViewController {
     @IBOutlet weak var editButton: UIButton!
     
     // MARK: - 変数プロパティ
-    private var column: String?
+    var taskNum: Int?
     private var row: Int?
     private var mainRect = UIScreen.mainScreen().bounds
     
-    var cellDate:TaskDate?
-    
-
-    func celltest() {
-        print("test")
-    }
+    var cellData:TaskDate?
     
     // MARK: - ライフサイクル関数
 
@@ -45,14 +40,13 @@ final class TaskPopoverViewController: UIViewController {
     private func setupLabel() {
         let dateformatter = NSDateFormatter()
         dateformatter.dateFormat = "yyyy/MM/dd HH時"
-        guard let guardCellDate = cellDate else { return }
+        guard let guardCellData = cellData else { return }
         
-        titleLabel.text = guardCellDate.title
-        startTimeLabel.text = dateformatter.stringFromDate(guardCellDate.start_time)
-        finishTimeLabel.text = dateformatter.stringFromDate(guardCellDate.finish_time)
-        detailLabel.text = guardCellDate.detail
+        titleLabel.text = guardCellData.title
+        startTimeLabel.text = dateformatter.stringFromDate(guardCellData.start_time)
+        finishTimeLabel.text = dateformatter.stringFromDate(guardCellData.finish_time)
+        detailLabel.text = guardCellData.detail
     }
-    
     
     /// 画面の設定
     private func setupView() {
@@ -68,14 +62,17 @@ final class TaskPopoverViewController: UIViewController {
         editButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
     }
     
-    
     // MARK: - パブリック関数
     
     // MARK: - アクション
     @IBAction func clickEditButton(sender: UIButton) {
-        let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: nil)
-        let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
-        presentViewController(next, animated: true, completion: nil)
+        let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: NSBundle.mainBundle())
+        let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
+        let editView: EditViewController = naviView.visibleViewController as! EditViewController
+        editView.cellData = cellData
+        
+        presentViewController(naviView, animated: true, completion: nil)
+
     }
 
 }

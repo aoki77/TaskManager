@@ -9,11 +9,15 @@
         <!--Navigation Controller-->
         <scene sceneID="o3X-OV-oJc">
             <objects>
-                <navigationController id="xEW-GM-Ecc" sceneMemberID="viewController">
+                <navigationController toolbarHidden="NO" id="xEW-GM-Ecc" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="jMA-Cx-XHu">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="jF4-Cc-ZAE">
+                        <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="5UT-Ua-OwL" kind="relationship" relationship="rootViewController" id="F80-fd-J99"/>
                     </connections>
@@ -30,14 +34,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <button key="tableFooterView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="g1Z-4v-oQ1">
-                            <rect key="frame" x="0.0" y="504" width="600" height="44"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="完了"/>
-                            <connections>
-                                <action selector="clickCompletButton:" destination="5UT-Ua-OwL" eventType="touchUpInside" id="PJf-Z9-oEw"/>
-                            </connections>
-                        </button>
                         <sections>
                             <tableViewSection id="AMe-hS-8QT">
                                 <cells>
@@ -98,21 +94,14 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="OL6-lb-SOx">
-                                                    <rect key="frame" x="18" y="-86" width="564" height="216"/>
-                                                    <date key="date" timeIntervalSinceReferenceDate="493537446.014103">
-                                                        <!--2016-08-22 05:44:06 +0000-->
-                                                    </date>
-                                                    <connections>
-                                                        <action selector="editPicker:" destination="5UT-Ua-OwL" eventType="valueChanged" id="D4Y-eh-F5a"/>
-                                                    </connections>
-                                                </datePicker>
+                                                <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GPn-uk-oIr">
+                                                    <rect key="frame" x="8" y="-86" width="584" height="216"/>
+                                                </pickerView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="OL6-lb-SOx" firstAttribute="centerX" secondItem="VsF-HO-1ZU" secondAttribute="centerX" id="2Qd-De-MFO"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="OL6-lb-SOx" secondAttribute="trailing" constant="10" id="kQN-rs-zOy"/>
-                                                <constraint firstItem="OL6-lb-SOx" firstAttribute="centerY" secondItem="VsF-HO-1ZU" secondAttribute="centerY" id="u8T-82-Ogd"/>
-                                                <constraint firstItem="OL6-lb-SOx" firstAttribute="leading" secondItem="VsF-HO-1ZU" secondAttribute="leadingMargin" constant="10" id="zzr-eF-Xgj"/>
+                                                <constraint firstItem="GPn-uk-oIr" firstAttribute="leading" secondItem="VsF-HO-1ZU" secondAttribute="leadingMargin" id="ALC-QG-zlu"/>
+                                                <constraint firstItem="GPn-uk-oIr" firstAttribute="centerX" secondItem="VsF-HO-1ZU" secondAttribute="centerX" id="Bai-jm-Oo0"/>
+                                                <constraint firstItem="GPn-uk-oIr" firstAttribute="centerY" secondItem="VsF-HO-1ZU" secondAttribute="centerY" id="tGy-DY-IUs"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -145,21 +134,14 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="Ocd-OT-yJV">
-                                                    <rect key="frame" x="18" y="-86" width="564" height="216"/>
-                                                    <date key="date" timeIntervalSinceReferenceDate="493537446.014103">
-                                                        <!--2016-08-22 05:44:06 +0000-->
-                                                    </date>
-                                                    <connections>
-                                                        <action selector="editPicker:" destination="5UT-Ua-OwL" eventType="valueChanged" id="jcT-6I-Xw9"/>
-                                                    </connections>
-                                                </datePicker>
+                                                <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1bY-x3-ncV">
+                                                    <rect key="frame" x="8" y="-86" width="584" height="216"/>
+                                                </pickerView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="Ocd-OT-yJV" firstAttribute="centerX" secondItem="sSw-h2-xpU" secondAttribute="centerX" id="6bX-X6-Rlq"/>
-                                                <constraint firstItem="Ocd-OT-yJV" firstAttribute="centerY" secondItem="sSw-h2-xpU" secondAttribute="centerY" id="CD4-MO-Hme"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="Ocd-OT-yJV" secondAttribute="trailing" constant="10" id="Iqd-aN-xFe"/>
-                                                <constraint firstItem="Ocd-OT-yJV" firstAttribute="leading" secondItem="sSw-h2-xpU" secondAttribute="leadingMargin" constant="10" id="Pb9-TH-P9i"/>
+                                                <constraint firstItem="1bY-x3-ncV" firstAttribute="leading" secondItem="sSw-h2-xpU" secondAttribute="leadingMargin" id="9Q9-i9-Nim"/>
+                                                <constraint firstItem="1bY-x3-ncV" firstAttribute="centerY" secondItem="sSw-h2-xpU" secondAttribute="centerY" id="CHl-tC-qX4"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="1bY-x3-ncV" secondAttribute="trailing" id="vDu-aI-7wJ"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -208,21 +190,14 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="2Nx-zt-I3M">
-                                                    <rect key="frame" x="18" y="-86" width="564" height="216"/>
-                                                    <date key="date" timeIntervalSinceReferenceDate="493537446.014103">
-                                                        <!--2016-08-22 05:44:06 +0000-->
-                                                    </date>
-                                                    <connections>
-                                                        <action selector="editPicker:" destination="5UT-Ua-OwL" eventType="valueChanged" id="2LR-zh-M4N"/>
-                                                    </connections>
-                                                </datePicker>
+                                                <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xh2-mU-9Ux">
+                                                    <rect key="frame" x="8" y="-86" width="584" height="216"/>
+                                                </pickerView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="2Nx-zt-I3M" firstAttribute="leading" secondItem="I77-sB-hfD" secondAttribute="leadingMargin" constant="10" id="Ecp-J7-rLd"/>
-                                                <constraint firstItem="2Nx-zt-I3M" firstAttribute="centerY" secondItem="I77-sB-hfD" secondAttribute="centerY" id="H2e-dL-wv7"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="2Nx-zt-I3M" secondAttribute="trailing" constant="10" id="UpB-QS-5U0"/>
-                                                <constraint firstItem="2Nx-zt-I3M" firstAttribute="centerX" secondItem="I77-sB-hfD" secondAttribute="centerX" id="kRK-Un-AFc"/>
+                                                <constraint firstItem="xh2-mU-9Ux" firstAttribute="centerX" secondItem="I77-sB-hfD" secondAttribute="centerX" id="2iJ-ym-EWX"/>
+                                                <constraint firstItem="xh2-mU-9Ux" firstAttribute="centerY" secondItem="I77-sB-hfD" secondAttribute="centerY" id="Khe-TF-ggo"/>
+                                                <constraint firstItem="xh2-mU-9Ux" firstAttribute="leading" secondItem="I77-sB-hfD" secondAttribute="leadingMargin" id="oPr-o4-FXb"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -293,11 +268,23 @@
                             <outlet property="delegate" destination="5UT-Ua-OwL" id="HWY-6n-ObT"/>
                         </connections>
                     </tableView>
-                    <toolbarItems/>
+                    <toolbarItems>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="bPx-3Z-cOf"/>
+                        <barButtonItem title="完了" id="Ns7-Bh-zy9">
+                            <connections>
+                                <action selector="clickCompletButton:" destination="5UT-Ua-OwL" id="Usk-PY-jPY"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" id="LAs-Dj-oSX">
                         <barButtonItem key="leftBarButtonItem" title="戻る" id="l9K-j3-tIG">
                             <connections>
                                 <action selector="returnTimeLine:" destination="5UT-Ua-OwL" id="SaL-T3-Xzn"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="削除" id="aXX-LG-Koc">
+                            <connections>
+                                <action selector="clickDeleteButton:" destination="5UT-Ua-OwL" id="bKT-63-Xso"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -305,16 +292,17 @@
                     <connections>
                         <outlet property="alertCheckCell" destination="Por-BG-jKK" id="CRl-wZ-9vw"/>
                         <outlet property="alertLabel" destination="jwW-pT-h9a" id="Gda-JE-nNh"/>
-                        <outlet property="alertPicker" destination="2Nx-zt-I3M" id="agy-5B-zKM"/>
+                        <outlet property="alertPicker" destination="xh2-mU-9Ux" id="m1C-vH-Guz"/>
                         <outlet property="alertTitleLabel" destination="o5O-Ec-5EH" id="PLQ-NS-iJy"/>
                         <outlet property="colorSelectButton" destination="ilV-We-K9p" id="dZG-i7-XHE"/>
+                        <outlet property="deleteButton" destination="aXX-LG-Koc" id="nRG-aL-y0O"/>
                         <outlet property="detailPlaceHolderLabel" destination="6XG-u7-Izc" id="50d-17-4Ou"/>
                         <outlet property="detailRow" destination="4sK-6K-mdV" id="aJV-Ie-w76"/>
                         <outlet property="detailText" destination="txQ-HP-3D0" id="knR-eh-esB"/>
                         <outlet property="editTable" destination="QlL-Go-QCM" id="H9n-8N-tz2"/>
-                        <outlet property="finishPicker" destination="Ocd-OT-yJV" id="0OR-ed-Q2q"/>
+                        <outlet property="finishPicker" destination="1bY-x3-ncV" id="M2h-YP-a1Z"/>
                         <outlet property="finishTimeLabel" destination="p0I-ps-bqE" id="39e-Lg-cXs"/>
-                        <outlet property="startPicker" destination="OL6-lb-SOx" id="7n2-FS-6T8"/>
+                        <outlet property="startPicker" destination="GPn-uk-oIr" id="VoD-MZ-aNK"/>
                         <outlet property="startTimeLabel" destination="UQo-Qg-Ti4" id="vG5-c0-bZY"/>
                         <outlet property="titleTextField" destination="BF9-Q3-kua" id="APt-gS-YJV"/>
                     </connections>

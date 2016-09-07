@@ -20,6 +20,8 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     @IBOutlet weak var dayTimeTableView: UITableView!
     @IBOutlet weak var dayTimeWidthLayoutConstraint: NSLayoutConstraint!
     
+    
+    
     // MARK: - 定数プロパティ
     
     /// 時間
@@ -30,10 +32,10 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     // MARK: - 変数プロパティ
     
-    var cellDate: TaskDate?
+    var cellData: TaskDate?
     
     /// 日付
-    private var now = NSDate()
+    var currentDate = NSDate()
     private var tommorowDate: NSDate?
     private var yesterdayDate: NSDate?
     
@@ -80,14 +82,19 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
             guard let guardSelf = self else { return }
             guardSelf.viewDirection(size)
             guardSelf.dayTimeTableView.reloadData()
-            if let TimeLineLayout = guardSelf.timeLineCollectionView.collectionViewLayout as? TimeLineLayout{
-                TimeLineLayout.updateLayout()
-            }
+            
+            guard let collectionLayout = guardSelf.timeLineCollectionView.collectionViewLayout as? TimeLineLayout else { return }
+            /// コレクションビューを更新
+            collectionLayout.updateLayout()
+            
+            // ポップオーバーが表示されたまま回転された時の処理
             if let indexPath = guardSelf.cellIndexPath {
                 let cell = guardSelf.timeLineCollectionView.cellForItemAtIndexPath(indexPath)
                 let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
-                let next: UIViewController = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as UIViewController
-                
+                let next = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as! TaskPopoverViewController
+                next.cellData = guardSelf.cellData
+                let taskNum = guardSelf.selectTaskNum(indexPath)
+                next.taskNum = taskNum
                 guardSelf.presentPopover(next, sourceView: cell)
             }
         }
@@ -168,14 +175,14 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         /// 日付フォーマットの設定
         formatter.dateFormat = "yyyy/MM/dd"
         /// 翌日の日付を設定
-        tommorowDate = cal.dateByAddingUnit(.Day, value: 1, toDate: now, options: NSCalendarOptions())!
+        tommorowDate = cal.dateByAddingUnit(.Day, value: 1, toDate: currentDate, options: NSCalendarOptions())!
         /// 昨日の日付を設定
-        yesterdayDate = cal.dateByAddingUnit(.Day, value: -1, toDate: now, options: NSCalendarOptions())!
+        yesterdayDate = cal.dateByAddingUnit(.Day, value: -1, toDate: currentDate, options: NSCalendarOptions())!
         
         guard let guardTommorowDate = tommorowDate else { return }
         guard let guardYesterdayDate = yesterdayDate else { return }
         
-        dateLabel.text = formatter.stringFromDate(now)
+        dateLabel.text = formatter.stringFromDate(currentDate)
         tommorowButton.setTitle(formatter.stringFromDate(guardTommorowDate), forState: UIControlState.Normal)
         yesterdayButton.setTitle(formatter.stringFromDate(guardYesterdayDate), forState: UIControlState.Normal)
         
@@ -206,7 +213,7 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     private func presentPopover(viewController: UIViewController!, sourceView: UIView!) {
         viewController.modalPresentationStyle = .Popover
         viewController.preferredContentSize = popoverSize
-
+        
         if let popoverViewController = presentedViewController {
             let animated: Bool = false
             /// popoverを閉じる
@@ -221,9 +228,6 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
             /// どこから出た感じにするか
             popoverController.sourceView = sourceView
             popoverController.sourceRect = sourceView.bounds
-            
-            
-            
         }
         presentViewController(viewController, animated: true, completion: nil)
     }
@@ -245,13 +249,10 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         // 列数を入れる配列
         let taskNum = [1, 2, 3]
         if indexPath.row <= 23 {
-            print(indexPath.row)
             return taskNum[0]
         } else if 24 <= indexPath.row && indexPath.row <= 47 {
-            print(indexPath.row - 24)
             return taskNum[1]
         } else if 48 <= indexPath.row && indexPath.row <= 71 {
-            print(indexPath.row - 48)
             return taskNum[2]
         }
         return 0
@@ -265,15 +266,22 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         dateformatter.dateFormat = "yyyy/MM/dd"
         for task in tasks{
             /// 日付が同じセルのみを選択
-            if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(now)) == NSComparisonResult.OrderedSame {
-                print("日付が同じ")
-                print("name: \(task.start_time)")
-                let timefomatter = NSDateFormatter()
-                timefomatter.dateFormat = "HH"
-                let schedulePeriod = Int(timefomatter.stringFromDate(task.finish_time))! - Int(timefomatter.stringFromDate(task.start_time))!
+            if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(currentDate)) == NSComparisonResult.OrderedSame {
+                let timeFormatter = NSDateFormatter()
+                timeFormatter.dateFormat = "HH"
+                let schedulePeriod = Int(timeFormatter.stringFromDate(task.finish_time))! - Int(timeFormatter.stringFromDate(task.start_time))!
+                var num2: Int?
+                if task.task_no == 1 {
+                    num2 = 0
+                }else if task.task_no == 2 {
+                    num2 = 24
+                } else if task.task_no == 3 {
+                    num2 = 48
+                }
+                guard let num3 = num2 else { return }
                 for num in 0 ... schedulePeriod {
-                    if (Int(timefomatter.stringFromDate(task.start_time))! + num) == indexPath.row {
-                        cell.backgroundColor = colors[task.color]
+                        if (Int(timeFormatter.stringFromDate(task.start_time))! + num + num3)  == indexPath.row {
+                            cell.backgroundColor = colors[task.color]
                     }
                 }
             }
@@ -285,23 +293,44 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
         let realm = realmMigrations()
         let tasks = realm.objects(TaskDate)
         let dateformatter = NSDateFormatter()
-        let dateformatterNow = NSDateFormatter()
-        dateformatter.dateFormat = "yyyy/MM/dd/HH"
-        dateformatterNow.dateFormat = "yyyy/MM/dd"
-        let stringNow = dateformatterNow.stringFromDate(now) + "/\(indexPath.row)"
+        let timeFormatter = NSDateFormatter()
+        dateformatter.dateFormat = "yyyy/MM/dd/"
+        timeFormatter.dateFormat = "HH"
         
+        var num: Int?
+        if taskNum == 1 {
+            num = 0
+        } else if taskNum == 2 {
+            num = 24
+        } else if taskNum == 3 {
+            num = 48
+        }
+        guard let num2 = num else { return false }
         for task in tasks{
-            /// 日付及び列番号が同じセルのみを選択
-            if dateformatter.stringFromDate(task.start_time).compare(stringNow) == NSComparisonResult.OrderedSame
-                && taskNum == task.task_no {
-                print("日時及び列が同じ")
-                print(task.id)
-                print(task.title)
-                cellDate = task
-                return true
+            let schedulePeriod = Int(timeFormatter.stringFromDate(task.finish_time))! - Int(timeFormatter.stringFromDate(task.start_time))!
+            // 開始時間から終わりの分まで表示させる
+            for num4 in 0 ... schedulePeriod {
+                    /// 日付及び時間、列番号が同じセルのみを選択
+                    if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(currentDate)) == NSComparisonResult.OrderedSame && taskNum == task.task_no && (Int(timeFormatter.stringFromDate(task.start_time))! + num2 + num4) == indexPath.row {
+                        cellData = task
+                        return true
+                }
             }
         }
         return false
+    }
+    
+    /// インデックスパスを投げると日時を返してくれる
+    private func setTime(indexPath: NSIndexPath) -> Int {
+        // 列数を入れる配列
+        if indexPath.row <= 23 {
+            return indexPath.row
+        } else if 24 <= indexPath.row && indexPath.row <= 47 {
+            return indexPath.row - 24
+        } else if 48 <= indexPath.row && indexPath.row <= 71 {
+            return indexPath.row - 48
+        }
+        return 0
     }
     
     /// マイグレーション
@@ -331,14 +360,21 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
             let cell = collectionView.cellForItemAtIndexPath(indexPath)
             let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
             let next = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as! TaskPopoverViewController
-            next.cellDate = cellDate
+            next.cellData = cellData
+            next.taskNum = taskNum
             self.presentPopover(next, sourceView: cell)
         } else {
             /// 編集画面へ飛ばす
-            let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: nil)
-            let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
+            let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: NSBundle.mainBundle())
+            let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
+            let editView: EditViewController = naviView.visibleViewController as! EditViewController
+            editView.taskNum = taskNum
+            // 日時を送る処理を書く
+            editView.currentDate = currentDate
+            let selectTime:Int = setTime(indexPath)
+            editView.selectTime = selectTime
             
-            presentViewController(next, animated: true, completion: nil)
+            presentViewController(naviView, animated: true, completion: nil)
         }
     }
     
@@ -433,7 +469,7 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     /// 日付を翌日に更新
     @IBAction func goTommorow(sender: AnyObject) {
         guard let guardTommorowDate = tommorowDate else { return }
-        now = guardTommorowDate
+        currentDate = guardTommorowDate
         setupDate()
         ///　テーブルの更新
         timeLineCollectionView.reloadData()
@@ -442,7 +478,7 @@ final class ViewController: UIViewController, UITableViewDelegate, UITableViewDa
     /// 日付を昨日に更新
     @IBAction func goYesterday(sender: AnyObject) {
         guard let guardYesterdayDate = yesterdayDate else { return }
-        now = guardYesterdayDate
+        currentDate = guardYesterdayDate
         setupDate()
         /// テーブルの更新
         timeLineCollectionView.reloadData()

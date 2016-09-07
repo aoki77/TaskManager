@@ -11,20 +11,35 @@ import RealmSwift
 
 class EditViewController: UITableViewController, UIPopoverPresentationControllerDelegate, UITextViewDelegate, ColorTablePopDelegate {
     
-    @IBOutlet var editTable: UITableView!
-    @IBOutlet weak var titleTextField: UITextField!
-    @IBOutlet weak var startTimeLabel: UILabel!
-    @IBOutlet weak var finishTimeLabel: UILabel!
-    @IBOutlet weak var alertLabel: UILabel!
-    @IBOutlet weak var startPicker: UIDatePicker!
-    @IBOutlet weak var finishPicker: UIDatePicker!
-    @IBOutlet weak var alertPicker: UIDatePicker!
-    @IBOutlet weak var colorSelectButton: UIButton!
-    @IBOutlet weak var detailText: UITextView!
-    @IBOutlet weak var detailRow: UITableViewCell!
-    @IBOutlet weak var detailPlaceHolderLabel: UILabel!
-    @IBOutlet weak var alertCheckCell: UITableViewCell!
-    @IBOutlet weak var alertTitleLabel: UILabel!
+    /// MARK: - アウトレット
+    
+    @IBOutlet private var editTable: UITableView!
+    @IBOutlet weak private var titleTextField: UITextField!
+    @IBOutlet weak private var startTimeLabel: UILabel!
+    @IBOutlet weak private var finishTimeLabel: UILabel!
+    @IBOutlet weak private var alertLabel: UILabel!
+    @IBOutlet weak private var startPicker: UIPickerView!
+    @IBOutlet weak private var finishPicker: UIPickerView!
+    @IBOutlet weak private var alertPicker: UIPickerView!
+    @IBOutlet weak private var colorSelectButton: UIButton!
+    @IBOutlet weak private var detailText: UITextView!
+    @IBOutlet weak private var detailRow: UITableViewCell!
+    @IBOutlet weak private var detailPlaceHolderLabel: UILabel!
+    @IBOutlet weak private var alertCheckCell: UITableViewCell!
+    @IBOutlet weak private var alertTitleLabel: UILabel!
+    @IBOutlet weak var deleteButton: UIBarButtonItem!
+    
+    // MARK: - 定数プロパティ
+    private let years = (2015...2030).map { $0 }
+    private let months = (1...12).map { $0 }
+    private let days =  (1...31).map { $0 }
+    private let hours = (0...23).map { $0 }
+    
+    /// 色を格納した配列
+    private let colors = [UIColor.redColor(), UIColor.orangeColor(), UIColor.yellowColor()]
+    
+    /// テキストを格納した配列
+    private let texts = ["高", "中", "低"]
     
     // MARK: - 変数プロパティ
     
@@ -38,7 +53,13 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     private var colorNum = 2
     
     /// 列の番号
-    private var columnNumber: Int?
+    var taskNum: Int?
+    /// 当日の日付
+    var currentDate: NSDate?
+    /// 選択された時間
+    var selectTime: Int?
+    /// 選択されたデータ
+    var cellData: TaskDate?
     
     // MARK: - ライフサイクル関数
     
@@ -52,46 +73,135 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     /// 各コンテンツの初期設定
     private func setupContents() {
         
-        /// 各ピッカーにタグを設定
+        // セルの間の枠線の色を設定
+        editTable.separatorColor = .blackColor()
+        
+        // 各ピッカーにタグを設定
         startPicker.tag = 0
         finishPicker.tag = 1
         alertPicker.tag = 2
-
-        /// タイトル入力フォームの設定
+        
+        // タイトル入力フォームの設定
         titleTextField.layer.borderColor = UIColor.clearColor().CGColor
         
-        /// ピッカーの初期値をLabelに挿入
-        datePickerChanged(startTimeLabel, picker: startPicker)
-        datePickerChanged(finishTimeLabel, picker: finishPicker)
-        datePickerChanged(alertLabel, picker: alertPicker)
-        
-        /// アラートを隠す
+        // アラートを隠す
         alertTitleLabel.hidden = true
         alertLabel.hidden = true
         
-        /// ピッカーを隠す
+        // ピッカーを隠す
         startPicker.hidden = true
         finishPicker.hidden = true
         alertPicker.hidden = true
         
-        /// ボタンの初期設定
+        // ボタンの初期設定
         colorSelectButton.setTitleColor(UIColor.yellowColor(), forState: . Normal)
         colorSelectButton.setTitle("低", forState: .Normal)
         
-        /// テキストビューの設定
-        /// テキストビューのスクロールを禁止
+        // テキストビューの設定
+        
+        // テキストビューのスクロールを禁止
         detailText.scrollEnabled = false
-        /// テーブルの高さを可変にする
+        // テーブルの高さを可変にする
         editTable.estimatedRowHeight = 1000
         editTable.rowHeight = UITableViewAutomaticDimension
         
         detailPlaceHolderLabel.textColor = UIColor.lightGrayColor()
         
         detailText.delegate = self
+        
+        // ピッカーの設定
+        startPicker.dataSource = self
+        finishPicker.dataSource = self
+        alertPicker.dataSource = self
+        startPicker.delegate = self
+        finishPicker.delegate = self
+        alertPicker.delegate = self
+        
+        // タスクが登録されていない場合はsetupPickerを呼び出す
+        if cellData == nil {
+            // ピッカーに初期値をセット
+            guard let guardCurrentDate = currentDate else { return }
+            setupPicker(startPicker, date: guardCurrentDate)
+            setupPicker(finishPicker, date: guardCurrentDate)
+            setupPicker(alertPicker, date: guardCurrentDate)
+        } else {
+            // タスクが既に登録されている場合は受け取ったデータを初期値としてセットする
+            setupValue()
+        }
+        
+        // ピッカーの初期値をLabelに挿入
+        setLabel(startPicker, label: startTimeLabel)
+        setLabel(finishPicker, label: finishTimeLabel)
+        setLabel(alertPicker, label: alertLabel)
+        
+    }
+    
+    /// 既にタスクデータが存在している場合、データから値を取り出し初期値として入力、表示させる
+    private func setupValue() {
+        guard let guardCellData = cellData else { return }
+        titleTextField.text = guardCellData.title
+        detailText.text = guardCellData.detail
+        detailPlaceHolderLabel.hidden = true
+        colorNum = guardCellData.color
+        colorSelectButton.setTitleColor(colors[guardCellData.color], forState: . Normal)
+        colorSelectButton.setTitle(texts[guardCellData.color], forState: .Normal)
+        setupPicker(startPicker, date: guardCellData.start_time)
+        setupPicker(finishPicker, date: guardCellData.finish_time)
+        setupPicker(alertPicker, date: guardCellData.alert_time)
+        currentDate = guardCellData.start_time
+        
+    }
+    
+    /// ピッカーに入力された値をNSDate型に変換する
+    private func dateFormat(pickerView: UIPickerView) -> NSDate {
+        let year = years[pickerView.selectedRowInComponent(0)]
+        let month = months[pickerView.selectedRowInComponent(1)]
+        let day = days[pickerView.selectedRowInComponent(2)]
+        let hour = hours[pickerView.selectedRowInComponent(3)]
+        
+        let date = "\(year)-\(month)-\(day) \(hour)"
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US")
+        dateFormatter.dateFormat = "yyyy-MM-dd HH"
+        
+        return dateFormatter.dateFromString(date)!
+        
+    }
+    
+    /// ピッカーに初期値(選択されたセルの日時)をセットする
+    private func setupPicker(picker: UIPickerView, date: NSDate){
+        let year = NSDateFormatter()
+        year.dateFormat = "yyyy"
+        let month = NSDateFormatter()
+        month.dateFormat = "MM"
+        let day = NSDateFormatter()
+        day.dateFormat = "dd"
+        let hour = NSDateFormatter()
+        hour.dateFormat = "HH"
+        
+        let currentYear = Int(year.stringFromDate(date))
+        let currentMonth = Int(month.stringFromDate(date))
+        let currentDay = Int(day.stringFromDate(date))
+        
+        guard let guardCurrentYear = currentYear else { return }
+        guard let guardCurrentMonth = currentMonth else { return }
+        guard let guardCurrentDay = currentDay else { return }
+        
+        picker.selectRow(years.indexOf(guardCurrentYear)!, inComponent: 0, animated: true)
+        picker.selectRow(months.indexOf(guardCurrentMonth)!, inComponent: 1, animated: true)
+        picker.selectRow(days.indexOf(guardCurrentDay)!, inComponent: 2, animated: true)
+        
+        if cellData == nil {
+            picker.selectRow(selectTime!, inComponent: 3, animated: true)
+        } else {
+            let currentHour = Int(hour.stringFromDate(date))
+            guard let guardCurrentHour = currentHour else { return }
+            picker.selectRow(hours.indexOf(guardCurrentHour)!, inComponent: 3, animated: true)
+        }
     }
     
     /// フラグに応じてピッカーの表示、非表示の関数を呼び出す
-    private func dspDatePicker(picker: UIDatePicker) {
+    private func dspDatePicker(picker: UIPickerView) {
         if pickerShowFlag[picker.tag] {
             hideDatePickerCell(picker)
         } else {
@@ -100,7 +210,7 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     }
     
     /// ピッカーを表示
-    private func showDatePickerCell(picker: UIDatePicker) {
+    private func showDatePickerCell(picker: UIPickerView) {
         /// フラグの更新
         pickerShowFlag[picker.tag] = true
         
@@ -113,7 +223,7 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     }
     
     /// ピッカーを非表示
-    private func hideDatePickerCell(picker: UIDatePicker) {
+    private func hideDatePickerCell(picker: UIPickerView) {
         /// フラグの更新
         pickerShowFlag[picker.tag] = false
         
@@ -123,11 +233,6 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         
         /// Pickerを非表示
         picker.hidden = true
-    }
-    
-    /// ピッカーに対応しているラベルのフォーマットを設定
-    private func datePickerChanged (label: UILabel, picker: UIDatePicker) {
-        label.text = NSDateFormatter.localizedStringFromDate(picker.date, dateStyle: NSDateFormatterStyle.ShortStyle, timeStyle: NSDateFormatterStyle.ShortStyle)
     }
     
     /// ポップオーバーの処理
@@ -145,6 +250,15 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         popoverController?.sourceRect = sourceView.bounds
         
         self.presentViewController(viewController, animated: true, completion: nil)
+    }
+    
+    private func setLabel(pickerView: UIPickerView, label: UILabel) {
+        let year = years[pickerView.selectedRowInComponent(0)]
+        let month = months[pickerView.selectedRowInComponent(1)]
+        let day = days[pickerView.selectedRowInComponent(2)]
+        let hour = hours[pickerView.selectedRowInComponent(3)]
+        
+        label.text = "\(year)年 \(month)月 \(day)日 \(hour)時"
     }
     
     // MARK: - UITextViewDelegate
@@ -261,22 +375,9 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         /// タッチ後にモーダルを閉じる
         self.dismissViewControllerAnimated(true, completion: nil)
     }
-
+    
     
     // MARK: - アクション
-    
-    /// ピッカーが押された際の処理
-    @IBAction func editPicker(sender: UIDatePicker) {
-        var setLabel: UILabel?
-        if sender == startPicker {
-            setLabel = startTimeLabel
-        } else if sender == finishPicker {
-            setLabel = finishTimeLabel
-        } else if sender == alertPicker {
-            setLabel = alertLabel
-        }
-        datePickerChanged(setLabel!, picker: sender)
-    }
     
     // 重要度ボタンが押された際の処理
     @IBAction func clickColorSelectButton(sender: UIButton) {
@@ -286,7 +387,7 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     }
     
     /// 完了ボタンを押された際の処理
-    @IBAction func clickCompletButton(sender: UIButton) {
+    @IBAction func clickCompletButton(sender: UIBarButtonItem) {
         
         /// タイトルまたは詳細が未入力の際にアラートを出す
         guard let guardTitle = titleTextField.text else { return }
@@ -306,19 +407,16 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
             let task = TaskDate()
             var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
             
-            guard let guardColumnNumber = columnNumber else {
-                print("行数来てない")
-                return
-            }
+            guard let guardTaskNum = taskNum else { return }
             try! realm.write {
                 task.id = maxId + 1
                 task.title = titleTextField.text!
-                task.start_time = startPicker.date
-                task.finish_time = finishPicker.date
-                task.alert_time = alertPicker.date
+                task.start_time = dateFormat(startPicker)
+                task.finish_time = dateFormat(finishPicker)
+                task.alert_time = dateFormat(alertPicker)
                 task.color = colorNum
                 task.detail = detailText.text
-                task.task_no = guardColumnNumber
+                task.task_no = guardTaskNum
                 task.complete_flag = false
                 realm.add(task, update: true)
             }
@@ -326,15 +424,110 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
             
             /// タイムスケジュール画面に戻る
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
-            presentViewController(next, animated: true, completion: nil)
+            let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
+            let mainView = naviView.visibleViewController as! ViewController
+            guard let guardCurrentDate = currentDate else { return }
+            mainView.currentDate = guardCurrentDate
+            presentViewController(naviView, animated: true, completion: nil)
         }
     }
     
     /// タイムスケジュール画面に戻る
     @IBAction func returnTimeLine(sender: UIBarButtonItem) {
         let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let next: UIViewController = storyboard.instantiateInitialViewController()! as UIViewController
-        presentViewController(next, animated: true, completion: nil)
+        let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
+        let mainView = naviView.visibleViewController as! ViewController
+        guard let guardCurrentDate = currentDate else { return }
+        mainView.currentDate = guardCurrentDate
+        presentViewController(naviView, animated: true, completion: nil)
+    }
+    
+    /// 削除ボタンを押した時の処理
+    @IBAction func clickDeleteButton(sender: UIBarButtonItem) {
+        if let deleteDate = cellData {
+            // データを削除する
+            print(111111)
+            let realm = try! Realm()
+            try! realm.write {
+                print(22222222)
+                realm.delete(deleteDate)
+            }
+            /// タイムスケジュール画面に戻る
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
+            let mainView = naviView.visibleViewController as! ViewController
+            guard let guardCurrentDate = currentDate else { return }
+            mainView.currentDate = guardCurrentDate
+            presentViewController(naviView, animated: true, completion: nil)
+            
+        } else {
+            /// 削除するデータがない時にアラートを出す
+            let alert: UIAlertController = UIAlertController(title: "削除するデータがありません", message: "", preferredStyle:  UIAlertControllerStyle.Alert)
+            let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:{
+                /// ボタンが押された時の処理
+                (action: UIAlertAction!) -> Void in
+            })
+            /// アラートの追加
+            alert.addAction(defaultAction)
+            
+            presentViewController(alert, animated: true, completion: nil)
+        }
+        
+    }
+}
+
+extension EditViewController: UIPickerViewDataSource {
+    
+    /// ピッカーのカラム数
+    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+        return 4
+    }
+    
+    /// ピッカーの各カラムの行数
+    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        switch component {
+        case 0:
+            return years.count
+        case 1:
+            return months.count
+        case 2:
+            return days.count
+        case 3:
+            return hours.count
+        default:
+            return 0
+        }
+    }
+}
+
+extension EditViewController: UIPickerViewDelegate {
+    
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        switch component {
+        case 0:
+            return "\(years[row])年"
+        case 1:
+            return "\(months[row])月"
+        case 2:
+            return "\(days[row])日"
+        case 3:
+            return "\(hours[row])時"
+        default:
+            return nil
+        }
+    }
+    
+    /// ピッカーが変更された際の処理
+    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        switch pickerView {
+        case startPicker:
+            setLabel(pickerView, label: startTimeLabel)
+        case finishPicker:
+            setLabel(pickerView, label: finishTimeLabel)
+        case alertPicker:
+            setLabel(pickerView, label: alertLabel)
+        default:
+            break
+        }
     }
 }
