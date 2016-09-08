@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E2B01761D81570B00B63B22 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2B01741D81570B00B63B22 /* Realm.framework */; };
+		5E2B01771D81570B00B63B22 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2B01751D81570B00B63B22 /* RealmSwift.framework */; };
 		5E3AC56E1D64089C00D446E1 /* TaskPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3AC56D1D64089C00D446E1 /* TaskPopoverViewController.swift */; };
 		5E3F7BA11D6FBF520045334A /* TaskPop.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E3F7BA01D6FBF520045334A /* TaskPop.storyboard */; };
 		5E4A5A0F1D5D9E3F00181359 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A0E1D5D9E3F00181359 /* AppDelegate.swift */; };
@@ -37,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5E2B01741D81570B00B63B22 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "../Library/Developer/Xcode/DerivedData/TaskManager-bqyqbvpnqwbghwckgagzmowsbmzj/Build/Products/Debug-iphonesimulator/Realm/Realm.framework"; sourceTree = "<group>"; };
+		5E2B01751D81570B00B63B22 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = "../Library/Developer/Xcode/DerivedData/TaskManager-bqyqbvpnqwbghwckgagzmowsbmzj/Build/Products/Debug-iphonesimulator/RealmSwift/RealmSwift.framework"; sourceTree = "<group>"; };
 		5E3AC56D1D64089C00D446E1 /* TaskPopoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskPopoverViewController.swift; sourceTree = "<group>"; };
 		5E3F7BA01D6FBF520045334A /* TaskPop.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = TaskPop.storyboard; sourceTree = "<group>"; };
 		5E4A5A0B1D5D9E3F00181359 /* TaskManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,6 +64,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E2B01761D81570B00B63B22 /* Realm.framework in Frameworks */,
+				5E2B01771D81570B00B63B22 /* RealmSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,6 +106,8 @@
 		5E4A5A021D5D9E3F00181359 = {
 			isa = PBXGroup;
 			children = (
+				5E2B01741D81570B00B63B22 /* Realm.framework */,
+				5E2B01751D81570B00B63B22 /* RealmSwift.framework */,
 				5E4A5A0D1D5D9E3F00181359 /* TaskManager */,
 				5E4A5A221D5D9E3F00181359 /* TaskManagerTests */,
 				5E4A5A2D1D5D9E3F00181359 /* TaskManagerUITests */,
@@ -174,7 +182,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5E4A5A361D5D9E3F00181359 /* Build configuration list for PBXNativeTarget "TaskManagerTests" */;
 			buildPhases = (
-				0319645959F54725462FB55E /* [CP] Check Pods Manifest.lock */,
 				5E4A5A1B1D5D9E3F00181359 /* Sources */,
 				5E4A5A1C1D5D9E3F00181359 /* Frameworks */,
 				5E4A5A1D1D5D9E3F00181359 /* Resources */,
