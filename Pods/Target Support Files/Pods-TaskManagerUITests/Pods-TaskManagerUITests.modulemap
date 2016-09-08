@@ -1,0 +1,6 @@
+framework module Pods_TaskManagerUITests {
+  umbrella header "Pods-TaskManagerUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
