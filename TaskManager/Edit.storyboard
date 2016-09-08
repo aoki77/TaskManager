@@ -51,16 +51,16 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="タイトルを入力してください" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="BF9-Q3-kua">
-                                                    <rect key="frame" x="113" y="8" width="469" height="30"/>
+                                                    <rect key="frame" x="98" y="8" width="484" height="30"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="BF9-Q3-kua" secondAttribute="trailing" constant="10" id="Cbe-vV-XKY"/>
-                                                <constraint firstItem="BF9-Q3-kua" firstAttribute="leading" secondItem="rLn-7d-Tod" secondAttribute="trailing" constant="20" id="Eqh-4H-88j"/>
-                                                <constraint firstItem="BF9-Q3-kua" firstAttribute="top" secondItem="gmN-za-bdF" secondAttribute="topMargin" id="UGs-4q-day"/>
-                                                <constraint firstItem="rLn-7d-Tod" firstAttribute="centerY" secondItem="BF9-Q3-kua" secondAttribute="centerY" id="W5A-B6-bMO"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="BF9-Q3-kua" secondAttribute="trailing" constant="10" id="461-NR-mew"/>
+                                                <constraint firstItem="BF9-Q3-kua" firstAttribute="centerY" secondItem="rLn-7d-Tod" secondAttribute="centerY" id="MKR-2Y-Hn7"/>
+                                                <constraint firstItem="BF9-Q3-kua" firstAttribute="leading" secondItem="rLn-7d-Tod" secondAttribute="trailing" constant="5" id="TBy-j0-0Ko"/>
+                                                <constraint firstItem="BF9-Q3-kua" firstAttribute="top" secondItem="gmN-za-bdF" secondAttribute="topMargin" id="yjL-2j-486"/>
                                                 <constraint firstItem="rLn-7d-Tod" firstAttribute="leading" secondItem="gmN-za-bdF" secondAttribute="leadingMargin" constant="17" id="yjm-y5-dig"/>
                                             </constraints>
                                         </tableViewCellContentView>

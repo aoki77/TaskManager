@@ -73,9 +73,6 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     /// 各コンテンツの初期設定
     private func setupContents() {
         
-        // セルの間の枠線の色を設定
-        editTable.separatorColor = .blackColor()
-        
         // 各ピッカーにタグを設定
         startPicker.tag = 0
         finishPicker.tag = 1
@@ -386,51 +383,76 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         controller.delegate = self
     }
     
-    /// 完了ボタンを押された際の処理
+    // 完了ボタンを押された際の処理
     @IBAction func clickCompletButton(sender: UIBarButtonItem) {
         
-        /// タイトルまたは詳細が未入力の際にアラートを出す
+        // タイトルまたは詳細が未入力の際にアラートを出す
         guard let guardTitle = titleTextField.text else { return }
         guard let guardDetail = detailText.text else { return }
         if guardTitle.characters.count == 0 || guardDetail.characters.count == 0 {
             let alert: UIAlertController = UIAlertController(title: "未入力項目があります", message: "", preferredStyle:  UIAlertControllerStyle.Alert)
             let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:{
-                /// ボタンが押された時の処理
+                // ボタンが押された時の処理
                 (action: UIAlertAction!) -> Void in
             })
-            /// アラートの追加
+            // アラートの追加
             alert.addAction(defaultAction)
-            
             presentViewController(alert, animated: true, completion: nil)
+            
+        } else if dateFormat(startPicker).compare(dateFormat(finishPicker)) == NSComparisonResult.OrderedDescending {
+            // 終了時間が開始時間よりも前の場合にアラートを出す
+            let alert: UIAlertController = UIAlertController(title: "入力時刻が正しくありません", message: "", preferredStyle:  UIAlertControllerStyle.Alert)
+            let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:{
+                // ボタンが押された時の処理
+                (action: UIAlertAction!) -> Void in
+            })
+            // アラートの追加
+            alert.addAction(defaultAction)
+            presentViewController(alert, animated: true, completion: nil)
+            
         } else {
             let realm = try! Realm()
-            let task = TaskDate()
-            var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
-            
-            guard let guardTaskNum = taskNum else { return }
-            try! realm.write {
-                task.id = maxId + 1
-                task.title = titleTextField.text!
-                task.start_time = dateFormat(startPicker)
-                task.finish_time = dateFormat(finishPicker)
-                task.alert_time = dateFormat(alertPicker)
-                task.color = colorNum
-                task.detail = detailText.text
-                task.task_no = guardTaskNum
-                task.complete_flag = false
-                realm.add(task, update: true)
+            if let data = cellData {
+                // 更新
+                try! realm.write {
+                    data.title = titleTextField.text!
+                    data.start_time = dateFormat(startPicker)
+                    data.finish_time = dateFormat(finishPicker)
+                    data.alert_time = dateFormat(alertPicker)
+                    data.color = colorNum
+                    data.detail = detailText.text
+                    data.complete_flag = false
+                }
+            } else {
+                
+                // 新規登録
+                let task = TaskDate()
+                var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
+                guard let guardTaskNum = taskNum else { return }
+                try! realm.write {
+                    task.id = maxId + 1
+                    task.title = titleTextField.text!
+                    task.start_time = dateFormat(startPicker)
+                    task.finish_time = dateFormat(finishPicker)
+                    task.alert_time = dateFormat(alertPicker)
+                    task.color = colorNum
+                    task.detail = detailText.text
+                    task.task_no = guardTaskNum
+                    task.complete_flag = false
+                    realm.add(task, update: true)
+                }
             }
-            print(realm.objects(TaskDate))
-            
-            /// タイムスケジュール画面に戻る
-            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
-            let mainView = naviView.visibleViewController as! ViewController
-            guard let guardCurrentDate = currentDate else { return }
-            mainView.currentDate = guardCurrentDate
-            presentViewController(naviView, animated: true, completion: nil)
         }
+        
+        /// タイムスケジュール画面に戻る
+        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
+        let mainView = naviView.visibleViewController as! ViewController
+        guard let guardCurrentDate = currentDate else { return }
+        mainView.currentDate = guardCurrentDate
+        presentViewController(naviView, animated: true, completion: nil)
     }
+    
     
     /// タイムスケジュール画面に戻る
     @IBAction func returnTimeLine(sender: UIBarButtonItem) {
@@ -446,10 +468,8 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     @IBAction func clickDeleteButton(sender: UIBarButtonItem) {
         if let deleteDate = cellData {
             // データを削除する
-            print(111111)
             let realm = try! Realm()
             try! realm.write {
-                print(22222222)
                 realm.delete(deleteDate)
             }
             /// タイムスケジュール画面に戻る

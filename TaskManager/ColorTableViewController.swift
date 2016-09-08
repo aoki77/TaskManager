@@ -13,7 +13,6 @@ protocol ColorTablePopDelegate: class {
     func colorButtonChanged(newColor: UIColor, newText: String, newNum: Int)
 }
 
-
 class ColorTableViewController: UITableViewController {
     
     weak var delegate: ColorTablePopDelegate! = nil
