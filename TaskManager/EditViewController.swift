@@ -443,6 +443,7 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
                     task.complete_flag = false
                     realm.add(task, update: true)
                 }
+                print("登録されました\(task)")
             }
         }
         
