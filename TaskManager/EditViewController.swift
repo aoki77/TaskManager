@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class EditViewController: UITableViewController, UIPopoverPresentationControllerDelegate, UITextViewDelegate, ColorTablePopDelegate {
+class EditViewController: UITableViewController {
     
     /// MARK: - アウトレット
     
@@ -258,26 +258,39 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         label.text = "\(year)年 \(month)月 \(day)日 \(hour)時"
     }
     
-    // MARK: - UITextViewDelegate
-    
-    /// textviewがフォーカスされたら、Labelを非表示
-    func textViewShouldBeginEditing(textView: UITextView) -> Bool {
-        detailPlaceHolderLabel.hidden = true
-        return true
-    }
-    
-    /// textviewからフォーカスが外れて、TextViewが空だったらLabelを再び表示
-    func textViewDidEndEditing(textView: UITextView) {
-        if(detailText.text.isEmpty){
-            detailPlaceHolderLabel.hidden = false
+    /// 入力したタスクの時間が他と被っているかを確認
+    private func checkDate() -> Bool {
+        let realm = try! Realm()
+        guard let guardTaskNum = taskNum else { return false }
+        let tasks = realm.objects(TaskDate).filter("task_no == \(guardTaskNum)")
+        var flg = true
+        for task in tasks {
+            // 開始日時が被っていいたらfalse
+            if  dateFormat(startPicker).compare(task.finish_time) == NSComparisonResult.OrderedAscending ||
+                dateFormat(startPicker).compare(task.finish_time) == NSComparisonResult.OrderedSame {
+                flg = false
+            }
+            // 終了日時が被っていたらfalse
+            if dateFormat(finishPicker).compare(task.start_time) == NSComparisonResult.OrderedDescending &&
+                dateFormat(finishPicker).compare(task.start_time) == NSComparisonResult.OrderedSame {
+                flg = false
+            }
         }
-    }
-    
-    /// UITextViewのテキストが編集するたびに呼び出される
-    func textViewDidChange(textView: UITextView) {
-        /// セルを更新
-        editTable.beginUpdates()
-        editTable.endUpdates()
+        
+        // 被っている場合はアラートを出す
+        if flg == false {
+            // 終了時間が開始時間よりも前の場合にアラートを出す
+            let alert: UIAlertController = UIAlertController(title: "既にタスクが存在します", message: "", preferredStyle:  UIAlertControllerStyle.Alert)
+            let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:{
+                // ボタンが押された時の処理
+                (action: UIAlertAction!) -> Void in
+            })
+            // アラートの追加
+            alert.addAction(defaultAction)
+            presentViewController(alert, animated: true, completion: nil)
+        }
+        
+        return flg
     }
     
     // MARK: - UITableViewDelegate
@@ -354,26 +367,6 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         }
     }
     
-    // MARK: - UIAdaptivePresentationControllerDelegate
-    
-    /// iPhoneでpopoverを表示するための設定
-    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
-        return UIModalPresentationStyle.None
-    }
-    
-    // MARK: - ColorTablePopDelegate
-    
-    /// 重要度のボタンの色とテキストを変更する
-    func colorButtonChanged(newColor: UIColor, newText: String, newNum: Int) {
-        colorSelectButton.setTitleColor(newColor, forState: . Normal)
-        colorSelectButton.setTitle(newText, forState: .Normal)
-        colorNum = newNum
-        
-        /// タッチ後にモーダルを閉じる
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    
     // MARK: - アクション
     
     // 重要度ボタンが押された際の処理
@@ -424,26 +417,27 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
                     data.complete_flag = false
                 }
             } else {
-                /// ここに既にデータがあった場合の処理を書く
-                
-                
-                // 新規登録
-                let task = TaskDate()
-                var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
-                guard let guardTaskNum = taskNum else { return }
-                try! realm.write {
-                    task.id = maxId + 1
-                    task.title = titleTextField.text!
-                    task.start_time = dateFormat(startPicker)
-                    task.finish_time = dateFormat(finishPicker)
-                    task.alert_time = dateFormat(alertPicker)
-                    task.color = colorNum
-                    task.detail = detailText.text
-                    task.task_no = guardTaskNum
-                    task.complete_flag = false
-                    realm.add(task, update: true)
+                //　その時間にデータが既にあるかどうかを確認
+                if checkDate() {
+                    
+                    // 新規登録
+                    let task = TaskDate()
+                    var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
+                    guard let guardTaskNum = taskNum else { return }
+                    try! realm.write {
+                        task.id = maxId + 1
+                        task.title = titleTextField.text!
+                        task.start_time = dateFormat(startPicker)
+                        task.finish_time = dateFormat(finishPicker)
+                        task.alert_time = dateFormat(alertPicker)
+                        task.color = colorNum
+                        task.detail = detailText.text
+                        task.task_no = guardTaskNum
+                        task.complete_flag = false
+                        realm.add(task, update: true)
+                    }
+                    print("登録されました\(task)")
                 }
-                print("登録されました\(task)")
             }
         }
         
@@ -455,7 +449,6 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
         mainView.currentDate = guardCurrentDate
         presentViewController(naviView, animated: true, completion: nil)
     }
-    
     
     /// タイムスケジュール画面に戻る
     @IBAction func returnTimeLine(sender: UIBarButtonItem) {
@@ -499,10 +492,64 @@ class EditViewController: UITableViewController, UIPopoverPresentationController
     }
 }
 
+// MARK: - UITextViewDelegate
+
+extension EditViewController: UITextViewDelegate {
+    
+    /// textviewがフォーカスされたら、Labelを非表示
+    func textViewShouldBeginEditing(textView: UITextView) -> Bool {
+        detailPlaceHolderLabel.hidden = true
+        return true
+    }
+    
+    /// textviewからフォーカスが外れて、TextViewが空だったらLabelを再び表示
+    func textViewDidEndEditing(textView: UITextView) {
+        if(detailText.text.isEmpty){
+            detailPlaceHolderLabel.hidden = false
+        }
+    }
+    
+    /// UITextViewのテキストが編集するたびに呼び出される
+    func textViewDidChange(textView: UITextView) {
+        /// セルを更新
+        editTable.beginUpdates()
+        editTable.endUpdates()
+    }
+}
+
+// MARK: - UIPopoverPresentationControllerDelegate
+
+extension EditViewController: UIPopoverPresentationControllerDelegate {
+    
+    /// iPhoneでpopoverを表示するための設定
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.None
+    }
+}
+
+// MARK: - ColorTablePopDelegate
+
+extension EditViewController: ColorTablePopDelegate {
+    
+    /// 重要度のボタンの色とテキストを変更する
+    func colorButtonChanged(newColor: UIColor, newText: String, newNum: Int) {
+        colorSelectButton.setTitleColor(newColor, forState: . Normal)
+        colorSelectButton.setTitle(newText, forState: .Normal)
+        colorNum = newNum
+        
+        /// タッチ後にモーダルを閉じる
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+}
+
+// MARK: - UIPickerViewDataSource
+
 extension EditViewController: UIPickerViewDataSource {
     
     /// ピッカーのカラム数
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+        // ピッカーのカラム数は4
         return 4
     }
     
@@ -522,6 +569,8 @@ extension EditViewController: UIPickerViewDataSource {
         }
     }
 }
+
+// MARK: - UIPickerViewDelegate
 
 extension EditViewController: UIPickerViewDelegate {
     

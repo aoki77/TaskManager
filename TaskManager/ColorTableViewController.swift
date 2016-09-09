@@ -26,8 +26,16 @@ class ColorTableViewController: UITableViewController {
     // テキストを格納した配列
     let texts = ["高", "中", "低"]
     
+    // MARK: - ライフサイクル関数
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupContents()
+    }
+    
+    // MARK: - プライベート関数
+    
+    private func setupContents() {
         // 縦向きか横向きか判定してサイズを変更
         if mainRect.height > mainRect.width {
             self.view.layer.frame = CGRectMake(0, 0, mainRect.width / 2, mainRect.height / 5)
@@ -44,18 +52,18 @@ class ColorTableViewController: UITableViewController {
         
         // テーブルを固定
         self.tableView.scrollEnabled = false
-        
     }
+    
+    // セルに色を設定する
+    private func colorForIndex(index: Int) -> UIColor {
+        return colors[index]
+    }
+    
+    // MARK: - UITableViewDetaSource
     
     // テーブルの行数を指定
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 3
-    }
-    
-    // セルの選択時に呼び出される
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        print("Num: \(indexPath.row)")
-        delegate?.colorButtonChanged(colors[indexPath.row], newText: texts[indexPath.row], newNum: indexPath.row)
     }
     
     // セルに値を設定
@@ -65,25 +73,18 @@ class ColorTableViewController: UITableViewController {
         return cell
     }
     
-    // セルに色を設定する
-    func colorForIndex(index: Int) -> UIColor {
-        return colors[index]
+    // MARK: - UITableViewDelegate
+    
+    // セルの選択時に呼び出される
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        print("Num: \(indexPath.row)")
+        delegate?.colorButtonChanged(colors[indexPath.row], newText: texts[indexPath.row], newNum: indexPath.row)
     }
     
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         // 左端までセルの線を延ばす
-        if(self.tableView.respondsToSelector(Selector("setSeparatorInset:"))){
-            self.tableView.separatorInset = UIEdgeInsetsZero
-        }
-        
-        if(self.tableView.respondsToSelector(Selector("setLayoutMargins:"))){
-            self.tableView.layoutMargins = UIEdgeInsetsZero
-        }
-        
-        if(cell.respondsToSelector(Selector("setLayoutMargins:"))){
-            cell.layoutMargins = UIEdgeInsetsZero
-        }
-        
+        self.tableView.layoutMargins = UIEdgeInsetsZero
+
         // 色を設定する関数の呼び出し
         cell.backgroundColor = colorForIndex(indexPath.row)
     }
