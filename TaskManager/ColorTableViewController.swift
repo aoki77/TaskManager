@@ -37,18 +37,19 @@ class ColorTableViewController: UITableViewController {
     
     private func setupContents() {
         // 縦向きか横向きか判定してサイズを変更
-        if mainRect.height > mainRect.width {
-            self.view.layer.frame = CGRectMake(0, 0, mainRect.width / 2, mainRect.height / 5)
-        } else if mainRect.width > mainRect.height {
-            self.view.layer.frame = CGRectMake(0, 0, mainRect.height / 2, mainRect.width / 5)
+        switch UIApplication.sharedApplication().statusBarOrientation {
+        case .Portrait, .PortraitUpsideDown, .Unknown:
+            self.tableView.bounds.size = CGSize(width: mainRect.width / 2, height: mainRect.height / 5)
+        case .LandscapeLeft, .LandscapeRight:
+            self.tableView.bounds.size = CGSize(width: mainRect.width / 5, height: mainRect.height / 2)
         }
-        
-        // セル名の登録
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
         
         // セルの高さを設定
         let rect = self.tableView.bounds
         self.tableView.rowHeight = (rect.height / 3)
+        
+        // セル名の登録
+        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
         
         // テーブルを固定
         self.tableView.scrollEnabled = false
