@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class EditViewController: UITableViewController {
+final class EditViewController: UITableViewController {
     
     /// MARK: - アウトレット
     
@@ -68,6 +68,12 @@ class EditViewController: UITableViewController {
         setupContents()
     }
     
+    /// 画面回転時の処理
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+        
+    }
+    
     // MARK: - プライベート関数
     
     /// 各コンテンツの初期設定
@@ -98,8 +104,9 @@ class EditViewController: UITableViewController {
         
         // テキストビューのスクロールを禁止
         detailText.scrollEnabled = false
+        
         // テーブルの高さを可変にする
-        editTable.estimatedRowHeight = 1000
+        editTable.estimatedRowHeight = detailRow.bounds.size.height
         editTable.rowHeight = UITableViewAutomaticDimension
         
         detailPlaceHolderLabel.textColor = UIColor.lightGrayColor()
@@ -208,27 +215,27 @@ class EditViewController: UITableViewController {
     
     /// ピッカーを表示
     private func showDatePickerCell(picker: UIPickerView) {
-        /// フラグの更新
+        // フラグの更新
         pickerShowFlag[picker.tag] = true
         
-        /// セルのアニメーション準備
+        // セルのアニメーション準備
         editTable.beginUpdates()
         editTable.endUpdates()
         
-        /// Pickerを表示
+        // Pickerを表示
         picker.hidden = false
     }
     
     /// ピッカーを非表示
     private func hideDatePickerCell(picker: UIPickerView) {
-        /// フラグの更新
+        // フラグの更新
         pickerShowFlag[picker.tag] = false
         
-        /// セルのアニメーション準備
+        // セルのアニメーション準備
         editTable.beginUpdates()
         editTable.endUpdates()
         
-        /// Pickerを非表示
+        // Pickerを非表示
         picker.hidden = true
     }
     
@@ -236,7 +243,12 @@ class EditViewController: UITableViewController {
     private func presentPopver(viewController: UIViewController!, sourceView: UIView!) {
         viewController.modalPresentationStyle = UIModalPresentationStyle.Popover
         // popの大きさ
-        viewController.preferredContentSize = CGSizeMake(UIScreen.mainScreen().bounds.width / 2, UIScreen.mainScreen().bounds.height / 5)
+        switch UIApplication.sharedApplication().statusBarOrientation {
+        case .Portrait, .PortraitUpsideDown, .Unknown:
+            viewController.preferredContentSize = CGSizeMake(UIScreen.mainScreen().bounds.width / 2, UIScreen.mainScreen().bounds.height / 5)
+        case .LandscapeLeft, .LandscapeRight:
+            viewController.preferredContentSize = CGSizeMake(UIScreen.mainScreen().bounds.width / 5, UIScreen.mainScreen().bounds.height / 2)
+        }
         
         let popoverController = viewController.popoverPresentationController
         popoverController?.delegate = self
@@ -297,7 +309,7 @@ class EditViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
-        ///　DatePicker表示時のセルの高さを設定
+        //　DatePicker表示時のセルの高さを設定
         let pickerCellHeight: CGFloat = UIScreen.mainScreen().bounds.height / 4
         
         // セルの高さを返す
@@ -336,7 +348,7 @@ class EditViewController: UITableViewController {
     /// セルがタッチされた時の処理
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        /// アラートの表示状況に応じて表示非表示を変更
+        // アラートの表示状況に応じて表示非表示を変更
         if indexPath.row == 5 {
             if alertCheckCell.accessoryType == UITableViewCellAccessoryType.None {
                 alertCheckCell.accessoryType = UITableViewCellAccessoryType.Checkmark
@@ -369,14 +381,14 @@ class EditViewController: UITableViewController {
     
     // MARK: - アクション
     
-    // 重要度ボタンが押された際の処理
+    /// 重要度ボタンが押された際の処理
     @IBAction func clickColorSelectButton(sender: UIButton) {
         let controller = ColorTableViewController()
         presentPopver(controller, sourceView: sender)
         controller.delegate = self
     }
     
-    // 完了ボタンを押された際の処理
+    /// 完了ボタンを押された際の処理
     @IBAction func clickCompletButton(sender: UIBarButtonItem) {
         
         // タイトルまたは詳細が未入力の際にアラートを出す
@@ -441,7 +453,7 @@ class EditViewController: UITableViewController {
             }
         }
         
-        /// タイムスケジュール画面に戻る
+        // タイムスケジュール画面に戻る
         let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
         let mainView = naviView.visibleViewController as! ViewController
@@ -537,10 +549,9 @@ extension EditViewController: ColorTablePopDelegate {
         colorSelectButton.setTitle(newText, forState: .Normal)
         colorNum = newNum
         
-        /// タッチ後にモーダルを閉じる
+        // タッチ後にモーダルを閉じる
         self.dismissViewControllerAnimated(true, completion: nil)
     }
-    
 }
 
 // MARK: - UIPickerViewDataSource

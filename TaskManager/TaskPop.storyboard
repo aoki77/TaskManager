@@ -114,13 +114,11 @@
                             <constraint firstItem="gOq-7y-dVe" firstAttribute="trailing" secondItem="kaO-eY-ifG" secondAttribute="trailing" id="IL9-i4-6bo"/>
                             <constraint firstItem="6PE-kp-OYs" firstAttribute="top" secondItem="HXy-CJ-Cs6" secondAttribute="bottom" constant="10" id="Ihf-j8-heb"/>
                             <constraint firstItem="HXy-CJ-Cs6" firstAttribute="top" secondItem="7rk-hH-Mzo" secondAttribute="bottom" constant="10" id="KAK-pJ-tBi"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Z80-MD-B1g" secondAttribute="trailing" constant="10" id="MCk-pi-xQn"/>
                             <constraint firstItem="gOq-7y-dVe" firstAttribute="leading" secondItem="1qi-hg-mYD" secondAttribute="leading" id="Nuo-pf-p3Q"/>
                             <constraint firstItem="kaO-eY-ifG" firstAttribute="leading" secondItem="O4W-fi-tc2" secondAttribute="leadingMargin" constant="105" id="OlA-Xl-Njs"/>
                             <constraint firstItem="gOq-7y-dVe" firstAttribute="trailing" secondItem="eut-oi-VRU" secondAttribute="trailing" id="QAI-FR-OdT"/>
                             <constraint firstItem="7rk-hH-Mzo" firstAttribute="top" secondItem="6jd-zc-V1g" secondAttribute="bottom" constant="10" id="QcT-IA-zzo"/>
                             <constraint firstItem="gOq-7y-dVe" firstAttribute="top" secondItem="6jd-zc-V1g" secondAttribute="bottom" constant="10" id="RLJ-L1-gRW"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Z80-MD-B1g" secondAttribute="trailing" constant="10" id="RXr-g8-70N"/>
                             <constraint firstAttribute="trailingMargin" secondItem="HXy-CJ-Cs6" secondAttribute="trailing" constant="10" id="WHm-RQ-qLA"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Z80-MD-B1g" secondAttribute="trailing" constant="10" id="WQN-9P-sL3"/>
                             <constraint firstItem="0wf-NN-XIb" firstAttribute="leading" secondItem="O4W-fi-tc2" secondAttribute="leadingMargin" constant="10" id="ch5-Rn-CL4"/>
@@ -138,12 +136,6 @@
                             <constraint firstAttribute="trailingMargin" secondItem="7rk-hH-Mzo" secondAttribute="trailing" constant="10" id="yJM-EJ-RzV"/>
                             <constraint firstItem="gOq-7y-dVe" firstAttribute="trailing" secondItem="1qi-hg-mYD" secondAttribute="trailing" id="zJz-NR-gqe"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="MCk-pi-xQn"/>
-                                <exclude reference="RXr-g8-70N"/>
-                            </mask>
-                        </variation>
                     </view>
                     <connections>
                         <outlet property="detailLabel" destination="1qi-hg-mYD" id="4GE-ZX-PZR"/>

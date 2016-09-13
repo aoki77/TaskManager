@@ -60,7 +60,7 @@ final class TaskPopoverViewController: UIViewController {
     /// 画面の設定
     private func setupView() {
         /// 背景を白に
-        self.view.backgroundColor = UIColor.whiteColor()
+        self.view.backgroundColor = .whiteColor()
     }
     
     // MARK: - アクション

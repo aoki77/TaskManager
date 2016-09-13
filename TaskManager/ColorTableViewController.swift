@@ -13,12 +13,9 @@ protocol ColorTablePopDelegate: class {
     func colorButtonChanged(newColor: UIColor, newText: String, newNum: Int)
 }
 
-class ColorTableViewController: UITableViewController {
+final class ColorTableViewController: UITableViewController {
     
     weak var delegate: ColorTablePopDelegate! = nil
-    
-    // 画面全体の縦、幅
-    var mainRect = UIScreen.mainScreen().bounds
     
     // 色を格納した配列
     let colors = [UIColor.redColor(), UIColor.orangeColor(), UIColor.yellowColor()]
@@ -39,9 +36,11 @@ class ColorTableViewController: UITableViewController {
         // 縦向きか横向きか判定してサイズを変更
         switch UIApplication.sharedApplication().statusBarOrientation {
         case .Portrait, .PortraitUpsideDown, .Unknown:
-            self.tableView.bounds.size = CGSize(width: mainRect.width / 2, height: mainRect.height / 5)
+            self.tableView.bounds.size = CGSize(width: UIScreen.mainScreen().bounds.width / 2,
+                                                height: UIScreen.mainScreen().bounds.height / 5)
         case .LandscapeLeft, .LandscapeRight:
-            self.tableView.bounds.size = CGSize(width: mainRect.width / 5, height: mainRect.height / 2)
+            self.tableView.bounds.size = CGSize(width: UIScreen.mainScreen().bounds.width / 5,
+                                                height: UIScreen.mainScreen().bounds.height / 2)
         }
         
         // セルの高さを設定

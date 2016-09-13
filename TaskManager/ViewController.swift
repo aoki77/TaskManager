@@ -61,6 +61,7 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
             tommorowButton.setTitle(dateFormatter.stringFromDate(nextDate), forState: UIControlState.Normal)
         }
     }
+    
     /// 昨日の日付
     private var previousDate: NSDate = NSDate() {
         didSet {
@@ -92,6 +93,8 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        selectedCellIndexPath = nil
+        
         setupView()
         setupDate()
         setupTable()
@@ -369,7 +372,6 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
                         for i in 0 ... Int(hourFormatter.stringFromDate(task.finish_time))! {
                             // 日付及び時間、列番号が同じセルのみを選択
                             if  taskNum == task.task_no && (guardNum + i) == indexPath.row {
-                                print("haitta")
                                 cellData = task
                                 return true
                             }
@@ -379,7 +381,6 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
                         for i in 0 ... 23 {
                             // 日付及び時間、列番号が同じセルのみを選択
                             if  taskNum == task.task_no && (guardNum + i) == indexPath.row {
-                                print("kotti")
                                 cellData = task
                                 return true
                             }
