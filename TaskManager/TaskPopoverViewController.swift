@@ -21,7 +21,7 @@ final class TaskPopoverViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupContents()
+        //setupContents()
     }
     
     // MARK: - プライベート関数
@@ -29,9 +29,6 @@ final class TaskPopoverViewController: UIViewController {
     /// 各種コンテンツの初期設定
     private func setupContents() {
         // ボタン
-        editButton.backgroundColor = UIColor.blueColor()
-        editButton.layer.masksToBounds = true
-        editButton.layer.cornerRadius = 20.0
-        editButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        //editButton.layer.masksToBounds = true
     }
 }

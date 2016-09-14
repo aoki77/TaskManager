@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class ViewController: UIViewController, UIGestureRecognizerDelegate {
+final class ViewController: UIViewController,UITableViewDelegate , UIGestureRecognizerDelegate {
     
     // MARK: - アウトレット
     
@@ -17,8 +17,7 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak private var tommorowButton: UIButton!
     @IBOutlet weak private var yesterdayButton: UIButton!
     @IBOutlet weak private var dayTimeTableView: UITableView!
-    @IBOutlet weak private var dayTimeWidthLayoutConstraint: NSLayoutConstraint!
-    
+    @IBOutlet weak private var dayTimeWidthLayoutConstraint: NSLayoutConstraint!    
     // MARK: - 定数プロパティ
     
     /// カレンダー
@@ -33,13 +32,13 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     }()
     
     /// 時間
-    private let hourTime = { () -> NSMutableArray in
+    private let hourTime: NSMutableArray = {
         let time: NSMutableArray = []
         for num in 0 ... 23 {
-            time.addObject(String(num) + "時")
+            time.addObject("\(num)時")
         }
         return time
-    }
+    }()
     
     // MARK: - 変数プロパティ
     
@@ -49,13 +48,14 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     /// 翌日の日付
     private var nextDate: NSDate = NSDate() {
         didSet {
-             tommorowButton.setTitle(dateFormatter.stringFromDate(nextDate), forState: UIControlState.Normal)
+            tommorowButton.setTitle(dateFormatter.stringFromDate(nextDate), forState: .Normal)
         }
     }
+    
     /// 昨日の日付
     private var previousDate: NSDate = NSDate() {
         didSet {
-            yesterdayButton.setTitle(dateFormatter.stringFromDate(previousDate), forState: UIControlState.Normal)
+            yesterdayButton.setTitle(dateFormatter.stringFromDate(previousDate), forState: .Normal)
         }
     }
     
@@ -86,10 +86,10 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
-        setupDate()
+        updateDate()
         setupTable()
         setupCollection()
+        setupView()
     }
     
     /// 画面回転時の処理
@@ -103,9 +103,10 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
                 TimeLineLayout.updateLayout()
             }
             if let indexPath = guardSelf.selectedCellIndexPath {
-                guardSelf.presentPopover(guardSelf.timeLineCollectionView, indexPath: indexPath)
+                let sourceView = guardSelf.timeLineCollectionView.cellForItemAtIndexPath(indexPath)
+                guard let guardSourceView = sourceView else { return }
+                guardSelf.presentPopover(guardSourceView)
             }
-            
         }
     }
     
@@ -113,19 +114,29 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     /// 初期値を設定
     private func setupView() {
+        print(dayTimeTableView.bounds.size.height)
         switch UIApplication.sharedApplication().statusBarOrientation {
         case .Portrait, .PortraitUpsideDown, .Unknown:
-            dayTimeTableView.rowHeight = self.view.frame.size.height / 16
+            dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 12
             dayTimeWidthLayoutConstraint.constant = self.view.frame.size.width / 4
+            print(dayTimeTableView.rowHeight)
         case .LandscapeLeft, .LandscapeRight:
-            dayTimeTableView.rowHeight = self.view.frame.size.height / 10
+            dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 10
             dayTimeWidthLayoutConstraint.constant = self.view.frame.size.width / 4
         }
     }
     
+    /// 日付を更新
+    private func updateDate() {
+        nextDate = calendar.dateByAddingUnit(.Day, value: 1, toDate: currentDate, options: NSCalendarOptions())!
+        previousDate = calendar.dateByAddingUnit(.Day, value: -1, toDate: currentDate, options: NSCalendarOptions())!
+        
+        // 日付ラベルの設定
+        dateLabel.text = dateFormatter.stringFromDate(currentDate)
+    }
+    
     /// テーブルの設定
     private func setupTable() {
-        dayTimeTableView.allowsSelection = false
         dayTimeTableView.separatorInset = UIEdgeInsetsZero
         
         // セル名の登録をおこなう.
@@ -133,9 +144,6 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
         
         // スクロールバー非表示
         dayTimeTableView.showsVerticalScrollIndicator = false
-        
-        // 羅線の色を設定
-        dayTimeTableView.separatorColor = UIColor.blackColor()
         
         // DataSourceの設定
         dayTimeTableView.dataSource = self
@@ -148,7 +156,7 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     /// コレクションの設定
     private func setupCollection() {
         timeLineCollectionView.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
-        timeLineCollectionView.backgroundColor = UIColor.whiteColor()
+        timeLineCollectionView.backgroundColor = .whiteColor()
         
         timeLineCollectionView.delegate = self
         timeLineCollectionView.dataSource = self
@@ -167,29 +175,15 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
         timeLineCollectionView.addGestureRecognizer(longPressGestureRecognizer)
     }
     
-    /// 日付の設定
-    private func setupDate() {
-        nextDate = calendar.dateByAddingUnit(.Day, value: 1, toDate: currentDate, options: NSCalendarOptions())!
-        previousDate = calendar.dateByAddingUnit(.Day, value: -1, toDate: currentDate, options: NSCalendarOptions())!
-        
-        // 日付ラベルの設定
-        dateLabel.text = dateFormatter.stringFromDate(currentDate)
-        dateLabel.textAlignment = NSTextAlignment.Center
-        dateLabel.textColor = UIColor.blackColor()
-    }
-    
     /// popover処理
-    private func presentPopover(collectionView: UICollectionView, indexPath: NSIndexPath) {
-        let sourceView = collectionView.cellForItemAtIndexPath(indexPath)
+    private func presentPopover(sourceView: UICollectionViewCell) {
         let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
-        let viewController: UIViewController = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as UIViewController
-        
+        let viewController = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as! TaskPopoverViewController
         viewController.modalPresentationStyle = .Popover
         viewController.preferredContentSize = popoverSize
         if let popoverViewController = presentedViewController {
-            let animated: Bool = false
             // popoverを閉じる
-            popoverViewController.dismissViewControllerAnimated(animated, completion: nil)
+            popoverViewController.dismissViewControllerAnimated(false, completion: nil)
         }
         
         if let popoverController = viewController.popoverPresentationController {
@@ -199,8 +193,7 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
             
             // どこから出た感じにするか
             popoverController.sourceView = sourceView
-            guard let guardSourceView = sourceView else { return }
-            popoverController.sourceRect = guardSourceView.bounds
+            popoverController.sourceRect = sourceView.bounds
         }
         presentViewController(viewController, animated: true, completion: nil)
     }
@@ -210,13 +203,13 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     /// 日付を翌日に更新
     @IBAction func goTommorow(sender: AnyObject) {
         currentDate = nextDate
-        setupDate()
+        updateDate()
     }
     
     /// 日付を昨日に更新
     @IBAction func goYesterday(sender: AnyObject) {
         currentDate = previousDate
-        setupDate()
+        updateDate()
     }
     
     /// セル長押し時の処理
@@ -241,7 +234,9 @@ extension ViewController: UICollectionViewDelegate {
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         print("選択しました: \(indexPath.row)")
         selectedCellIndexPath = indexPath
-        self.presentPopover(collectionView, indexPath: indexPath)
+        let sourceView = collectionView.cellForItemAtIndexPath(indexPath)
+        guard let guardSourceView = sourceView else { return }
+        presentPopover(guardSourceView)
     }
 }
 
@@ -252,7 +247,7 @@ extension ViewController: UICollectionViewDataSource {
     /// データの個数を返す
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // 行数
-        let row = 24
+        let row = hourTime.count
         // 列数
         let column = 3
         
@@ -260,16 +255,15 @@ extension ViewController: UICollectionViewDataSource {
     }
     /// データを返す
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        // コレクションビューから識別子「TestCell」のセルを取得
+        // コレクションビューから識別子「collectionCell」のセルを取得
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath)
         // セルの背景色を赤に設定
-        cell.backgroundColor = UIColor.whiteColor()
+        cell.backgroundColor = .whiteColor()
         
         // セルの羅線の太さを設定
         cell.layer.borderWidth = 0.5
         
         return cell
-        
     }
 }
 
@@ -279,7 +273,7 @@ extension ViewController: UITableViewDataSource {
     
     /// セルの総数を返す
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return hourTime().count
+        return hourTime.count
     }
     
     /// セルに値を設定
@@ -291,19 +285,9 @@ extension ViewController: UITableViewDataSource {
         cell.layer.borderWidth = 0.5
         
         // セルに値を設定
-        cell.textLabel?.text = "\(hourTime()[indexPath.row])"
+        cell.textLabel?.text = "\(hourTime[indexPath.row])"
         
         return cell
-    }
-}
-
-// MARK: - UITableViewDelegate
-
-extension ViewController: UITableViewDelegate {
-    
-    /// 左端までセルの線を延ばす
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-            dayTimeTableView.separatorInset = UIEdgeInsetsZero
     }
 }
 
@@ -335,4 +319,3 @@ extension ViewController: UIPopoverPresentationControllerDelegate {
         selectedCellIndexPath = nil
     }
 }
-    
