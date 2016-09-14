@@ -9,19 +9,22 @@
 import UIKit
 
 // デリゲートを宣言
-protocol ColorTablePopDelegate: class {
+protocol ColorTablePopDelegate {
     func colorButtonChanged(newColor: UIColor, newText: String, newNum: Int)
 }
 
 final class ColorTableViewController: UITableViewController {
     
-    weak var delegate: ColorTablePopDelegate! = nil
+    var delegate: ColorTablePopDelegate?
     
-    // 色を格納した配列
-    let colors = [UIColor.redColor(), UIColor.orangeColor(), UIColor.yellowColor()]
+    /// 色を格納した配列
+    private let colors:[UIColor] = [.redColor(), .orangeColor(), .yellowColor()]
     
-    // テキストを格納した配列
-    let texts = ["高", "中", "低"]
+    /// テキストを格納した配列
+    private let texts = ["高", "中", "低"]
+    
+    /// カラム数
+    private let columnNum = 3
     
     // MARK: - ライフサイクル関数
     
@@ -36,37 +39,32 @@ final class ColorTableViewController: UITableViewController {
         // 縦向きか横向きか判定してサイズを変更
         switch UIApplication.sharedApplication().statusBarOrientation {
         case .Portrait, .PortraitUpsideDown, .Unknown:
-            self.tableView.bounds.size = CGSize(width: UIScreen.mainScreen().bounds.width / 2,
+            tableView.bounds.size = CGSize(width: UIScreen.mainScreen().bounds.width / 2,
                                                 height: UIScreen.mainScreen().bounds.height / 5)
         case .LandscapeLeft, .LandscapeRight:
-            self.tableView.bounds.size = CGSize(width: UIScreen.mainScreen().bounds.width / 5,
+            tableView.bounds.size = CGSize(width: UIScreen.mainScreen().bounds.width / 5,
                                                 height: UIScreen.mainScreen().bounds.height / 2)
         }
         
         // セルの高さを設定
         let rect = self.tableView.bounds
-        self.tableView.rowHeight = (rect.height / 3)
+        tableView.rowHeight = (rect.height / CGFloat(columnNum))
         
         // セル名の登録
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
+        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
         
         // テーブルを固定
-        self.tableView.scrollEnabled = false
-    }
-    
-    // セルに色を設定する
-    private func colorForIndex(index: Int) -> UIColor {
-        return colors[index]
+        tableView.scrollEnabled = false
     }
     
     // MARK: - UITableViewDetaSource
     
-    // テーブルの行数を指定
+    /// テーブルの行数を指定
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return columnNum
     }
     
-    // セルに値を設定
+    /// セルに値を設定
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         // 再利用するCellを取得する.
         let cell = tableView.dequeueReusableCellWithIdentifier("MyCell", forIndexPath: indexPath)
@@ -75,7 +73,7 @@ final class ColorTableViewController: UITableViewController {
     
     // MARK: - UITableViewDelegate
     
-    // セルの選択時に呼び出される
+    /// セルの選択時に呼び出される
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         print("Num: \(indexPath.row)")
         delegate?.colorButtonChanged(colors[indexPath.row], newText: texts[indexPath.row], newNum: indexPath.row)
@@ -86,6 +84,6 @@ final class ColorTableViewController: UITableViewController {
         self.tableView.layoutMargins = UIEdgeInsetsZero
 
         // 色を設定する関数の呼び出し
-        cell.backgroundColor = colorForIndex(indexPath.row)
+        cell.backgroundColor = colors[indexPath.row]
     }
 }

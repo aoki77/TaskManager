@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-final class ViewController: UIViewController, UIGestureRecognizerDelegate {
+final class ViewController: UIViewController,UITableViewDelegate , UIGestureRecognizerDelegate {
     
     // MARK: - アウトレット
     
@@ -26,7 +26,7 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     let calendar = NSCalendar(identifier: NSCalendarIdentifierGregorian)!
     
     // 色を格納した配列
-    private let colors = [UIColor.redColor(), UIColor.orangeColor(), UIColor.yellowColor()]
+    private let colors:[UIColor] = [.redColor(), .orangeColor(), .yellowColor()]
     
     /// 日付用のフォーマッター
     private let dateFormatter: NSDateFormatter = {
@@ -37,13 +37,13 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     }()
     
     /// 時間
-    private let hourTime = { () -> NSMutableArray in
+    private let hourTime: NSMutableArray = {
         let time: NSMutableArray = []
         for num in 0 ... 23 {
-            time.addObject(String(num) + "時")
+            time.addObject("\(num)時")
         }
         return time
-    }
+    }()
     
     // MARK: - 変数プロパティ
     
@@ -58,14 +58,14 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     /// 翌日の日付
     private var nextDate: NSDate = NSDate() {
         didSet {
-            tommorowButton.setTitle(dateFormatter.stringFromDate(nextDate), forState: UIControlState.Normal)
+            tommorowButton.setTitle(dateFormatter.stringFromDate(nextDate), forState: .Normal)
         }
     }
     
     /// 昨日の日付
     private var previousDate: NSDate = NSDate() {
         didSet {
-            yesterdayButton.setTitle(dateFormatter.stringFromDate(previousDate), forState: UIControlState.Normal)
+            yesterdayButton.setTitle(dateFormatter.stringFromDate(previousDate), forState: .Normal)
         }
     }
     
@@ -94,9 +94,8 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         selectedCellIndexPath = nil
-        
         setupView()
-        setupDate()
+        updateDate()
         setupTable()
         setupCollection()
     }
@@ -112,7 +111,10 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
                 TimeLineLayout.updateLayout()
             }
             if let indexPath = guardSelf.selectedCellIndexPath {
-                guardSelf.presentPopover(guardSelf.timeLineCollectionView, indexPath: indexPath)
+                let sourceView = guardSelf.timeLineCollectionView.cellForItemAtIndexPath(indexPath)
+                guard let guardSourceView = sourceView else { return }
+                guardSelf.presentPopover(guardSourceView)
+
             }
         }
     }
@@ -133,7 +135,6 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     /// テーブルの設定
     private func setupTable() {
-        dayTimeTableView.allowsSelection = false
         dayTimeTableView.separatorInset = UIEdgeInsetsZero
         
         // セル名の登録をおこなう.
@@ -141,9 +142,6 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
         
         // スクロールバー非表示
         dayTimeTableView.showsVerticalScrollIndicator = false
-        
-        // 羅線の色を設定
-        dayTimeTableView.separatorColor = UIColor.blackColor()
         
         // DataSourceの設定
         dayTimeTableView.dataSource = self
@@ -175,23 +173,22 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
         timeLineCollectionView.addGestureRecognizer(longPressGestureRecognizer)
     }
     
-    /// 日付の設定
-    private func setupDate() {
+    /// 日付を更新
+    private func updateDate() {
         nextDate = calendar.dateByAddingUnit(.Day, value: 1, toDate: currentDate, options: NSCalendarOptions())!
         previousDate = calendar.dateByAddingUnit(.Day, value: -1, toDate: currentDate, options: NSCalendarOptions())!
         
         // 日付ラベルの設定
         dateLabel.text = dateFormatter.stringFromDate(currentDate)
-        dateLabel.textAlignment = NSTextAlignment.Center
-        dateLabel.textColor = UIColor.blackColor()
     }
+
     
     /// popover処理
-    private func presentPopover(collectionView: UICollectionView, indexPath: NSIndexPath) {
-        let sourceView = collectionView.cellForItemAtIndexPath(indexPath)
+    private func presentPopover(sourceView: UICollectionViewCell) {
         let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
         let next = storyboard.instantiateViewControllerWithIdentifier("TaskPop") as! TaskPopoverViewController
-        let taskNum = selectTaskNum(indexPath)
+        guard let guardSelectedIndexPath = selectedCellIndexPath else { return }
+        let taskNum = selectTaskNum(guardSelectedIndexPath)
         next.cellData = cellData
         next.taskNum = taskNum
         next.modalPresentationStyle = .Popover
@@ -209,8 +206,7 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
             
             // どこから出た感じにするか
             popoverController.sourceView = sourceView
-            guard let guardSourceView = sourceView else { return }
-            popoverController.sourceRect = guardSourceView.bounds
+            popoverController.sourceRect = sourceView.bounds
         }
         presentViewController(next, animated: true, completion: nil)
     }
@@ -392,203 +388,195 @@ final class ViewController: UIViewController, UIGestureRecognizerDelegate {
         return false
     }
     
-        /// インデックスパスを投げると日時を返してくれる
-        private func setTime(indexPath: NSIndexPath) -> Int {
-            // 列数を入れる配列
-            if indexPath.row <= 23 {
-                return indexPath.row
-            } else if 24 <= indexPath.row && indexPath.row <= 47 {
-                return indexPath.row - 24
-            } else if 48 <= indexPath.row && indexPath.row <= 71 {
-                return indexPath.row - 48
-            }
-            return 0
+    /// インデックスパスを投げると日時を返してくれる
+    private func setTime(indexPath: NSIndexPath) -> Int {
+        // 列数を入れる配列
+        if indexPath.row <= 23 {
+            return indexPath.row
+        } else if 24 <= indexPath.row && indexPath.row <= 47 {
+            return indexPath.row - 24
+        } else if 48 <= indexPath.row && indexPath.row <= 71 {
+            return indexPath.row - 48
         }
+        return 0
+    }
+    
+    /// マイグレーション
+    private func realmMigrations() -> Realm {
+        // Realmのインスタンスを取得
+        let config = Realm.Configuration(
+            schemaVersion: 4,
+            migrationBlock: { migration, oldSchemaVersion in
+                if (oldSchemaVersion < 1) {}
+        })
+        Realm.Configuration.defaultConfiguration = config
+        let realm = try! Realm()
+        return realm
+    }
+    
+    // MARK: - アクション
+    
+    /// 日付を翌日に更新
+    @IBAction func goTommorow(sender: AnyObject) {
+        currentDate = nextDate
+        updateDate()
+        timeLineCollectionView.reloadData()
+    }
+    
+    /// 日付を昨日に更新
+    @IBAction func goYesterday(sender: AnyObject) {
+        currentDate = previousDate
+        updateDate()
+        timeLineCollectionView.reloadData()
+    }
+    
+    /// セル長押し時の処理
+    func cellLongPressed(sender : UILongPressGestureRecognizer){
+        // 押された位置でcellのpathを取得
+        let point = sender.locationInView(timeLineCollectionView)
+        let indexPath = timeLineCollectionView.indexPathForItemAtPoint(point)
         
-        /// マイグレーション
-        private func realmMigrations() -> Realm {
-            // Realmのインスタンスを取得
-            let config = Realm.Configuration(
-                schemaVersion: 4,
-                migrationBlock: { migration, oldSchemaVersion in
-                    if (oldSchemaVersion < 1) {}
-            })
-            Realm.Configuration.defaultConfiguration = config
-            let realm = try! Realm()
-            return realm
-        }
-        
-        // MARK: - アクション
-        
-        /// 日付を翌日に更新
-        @IBAction func goTommorow(sender: AnyObject) {
-            currentDate = nextDate
-            setupDate()
-            timeLineCollectionView.reloadData()
-        }
-        
-        /// 日付を昨日に更新
-        @IBAction func goYesterday(sender: AnyObject) {
-            currentDate = previousDate
-            setupDate()
-            timeLineCollectionView.reloadData()
-        }
-        
-        /// セル長押し時の処理
-        func cellLongPressed(sender : UILongPressGestureRecognizer){
-            // 押された位置でcellのpathを取得
-            let point = sender.locationInView(timeLineCollectionView)
-            let indexPath = timeLineCollectionView.indexPathForItemAtPoint(point)
+        if sender.state == UIGestureRecognizerState.Began{
+            // セルが長押しされたときの処理
+            print("\(indexPath!.row + 1)が長押しされました")
             
-            if sender.state == UIGestureRecognizerState.Began{
-                // セルが長押しされたときの処理
-                print("\(indexPath!.row + 1)が長押しされました")
-                
-                guard let guardIndexPath = indexPath else { return }
-                // 完了か未完了かを把握して変更する処理
-                let taskNum = selectTaskNum(guardIndexPath)
-                let dataFlg = selectDate(taskNum, indexPath: guardIndexPath)
-                let realm = realmMigrations()
-                if dataFlg {
-                    guard let guardCellData = cellData else { return }
-                    if guardCellData.complete_flag {
-                        try! realm.write {
-                            guardCellData.complete_flag = false
-                        }
-                        timeLineCollectionView.reloadData()
-                    } else {
-                        try! realm.write {
-                            guardCellData.complete_flag = true
-                        }
-                        timeLineCollectionView.reloadData()
+            guard let guardIndexPath = indexPath else { return }
+            // 完了か未完了かを把握して変更する処理
+            let taskNum = selectTaskNum(guardIndexPath)
+            let dataFlg = selectDate(taskNum, indexPath: guardIndexPath)
+            let realm = realmMigrations()
+            if dataFlg {
+                guard let guardCellData = cellData else { return }
+                if guardCellData.complete_flag {
+                    try! realm.write {
+                        guardCellData.complete_flag = false
                     }
+                    timeLineCollectionView.reloadData()
+                } else {
+                    try! realm.write {
+                        guardCellData.complete_flag = true
+                    }
+                    timeLineCollectionView.reloadData()
                 }
             }
         }
     }
-    
-    // MARK: - UICollectionViewDelegate
-    
-    extension ViewController: UICollectionViewDelegate {
-        
-        // セルクリック時の処理
-        func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-            print("選択しました: \(indexPath.row)")
-            selectedCellIndexPath = indexPath
-            let taskNum = selectTaskNum(indexPath)
-            let dateFlag = selectDate(taskNum, indexPath: indexPath)
-            
-            // セルの中にデータが存在するかどうかで判定
-            if dateFlag {
-                // ポップアップを出す
-                self.presentPopover(timeLineCollectionView, indexPath: indexPath)
-            } else {
-                // 編集画面へ飛ばす
-                let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: NSBundle.mainBundle())
-                let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
-                let editView: EditViewController = naviView.visibleViewController as! EditViewController
-                editView.taskNum = taskNum
-                // 日時を送る処理を書く
-                editView.currentDate = currentDate
-                let selectTime:Int = setTime(indexPath)
-                editView.selectTime = selectTime
-                
-                presentViewController(naviView, animated: true, completion: nil)
-            }
-        }
-    }
-    
-    // MARK: - UICollectionViewDateSource
-    
-    extension ViewController: UICollectionViewDataSource {
-        
-        /// データの個数を返す
-        func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            // 行数
-            let row = 24
-            // 列数
-            let column = 3
-            
-            return row * column
-        }
-        
-        /// データを返す
-        func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-            // コレクションビューから識別子「TestCell」のセルを取得
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath)
-            // セルの背景色を白に設定
-            cell.backgroundColor = .whiteColor()
-            
-            // セルの羅線の太さを設定
-            cell.layer.borderWidth = 0.5
-            
-            // データの入っているセルの色を変更
-            dateCheck(cell, indexPath: indexPath)
-            
-            return cell
-        }
-    }
-    
-    // MARK: - UITableViewDataSource
-    
-    extension ViewController: UITableViewDataSource {
-        
-        /// セルの総数を返す
-        func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return hourTime().count
-        }
-        
-        /// セルに値を設定
-        func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-            // 再利用するセルを取得
-            let cell = tableView.dequeueReusableCellWithIdentifier("tableCell", forIndexPath: indexPath)
-            
-            // セルの羅線の太さを設定
-            cell.layer.borderWidth = 0.5
-            
-            // セルに値を設定
-            cell.textLabel?.text = "\(hourTime()[indexPath.row])"
-            
-            return cell
-        }
-    }
-    
-    // MARK: - UITableViewDelegate
-    
-    extension ViewController: UITableViewDelegate {
-        
-        /// 左端までセルの線を延ばす
-        func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-            dayTimeTableView.separatorInset = UIEdgeInsetsZero
-        }
-    }
-    
-    // MARK: - UIScrollViewDelegate
-    
-    extension ViewController: UIScrollViewDelegate {
-        
-        /// スクロール時の処理
-        func scrollViewDidScroll(scrollView: UIScrollView) {
-            if scrollView == dayTimeTableView {
-                timeLineCollectionView.contentOffset = dayTimeTableView.contentOffset
-            } else if scrollView == timeLineCollectionView {
-                dayTimeTableView.contentOffset = timeLineCollectionView.contentOffset
-            }
-        }
-    }
-    
-    // MARK: - UIPopoverPresentationControllerDelegate
-    
-    extension ViewController: UIPopoverPresentationControllerDelegate {
-        
-        /// popoverをiPhoneに対応させる
-        func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
-            return .None
-        }
-        
-        /// ポップオーバーが閉じられた際にindexpathを削除
-        func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController) {
-            selectedCellIndexPath = nil
-        }
 }
+
+// MARK: - UICollectionViewDelegate
+
+extension ViewController: UICollectionViewDelegate {
     
+    // セルクリック時の処理
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        print("選択しました: \(indexPath.row)")
+        selectedCellIndexPath = indexPath
+        let taskNum = selectTaskNum(indexPath)
+        let dateFlag = selectDate(taskNum, indexPath: indexPath)
+        
+        // セルの中にデータが存在するかどうかで判定
+        if dateFlag {
+            // ポップアップを出す
+            let sourceView = self.timeLineCollectionView.cellForItemAtIndexPath(indexPath)
+            guard let guardSourceView = sourceView else { return }
+            self.presentPopover(guardSourceView)
+        } else {
+            // 編集画面へ飛ばす
+            let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: NSBundle.mainBundle())
+            let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
+            let editView: EditViewController = naviView.visibleViewController as! EditViewController
+            editView.taskNum = taskNum
+            // 日時を送る処理を書く
+            editView.currentDate = currentDate
+            let selectTime:Int = setTime(indexPath)
+            editView.selectTime = selectTime
+            
+            presentViewController(naviView, animated: true, completion: nil)
+        }
+    }
+}
+
+// MARK: - UICollectionViewDateSource
+
+extension ViewController: UICollectionViewDataSource {
+    
+    /// データの個数を返す
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        // 行数
+        let row = hourTime.count
+        
+        // 列数
+        let column = 3
+        
+        return row * column
+    }
+    
+    /// データを返す
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        // コレクションビューから識別子「TestCell」のセルを取得
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath)
+        // セルの背景色を白に設定
+        cell.backgroundColor = .whiteColor()
+        
+        // セルの羅線の太さを設定
+        cell.layer.borderWidth = 0.5
+        
+        // データの入っているセルの色を変更
+        dateCheck(cell, indexPath: indexPath)
+        
+        return cell
+    }
+}
+
+// MARK: - UITableViewDataSource
+
+extension ViewController: UITableViewDataSource {
+    
+    /// セルの総数を返す
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return hourTime.count
+    }
+    
+    /// セルに値を設定
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        // 再利用するセルを取得
+        let cell = tableView.dequeueReusableCellWithIdentifier("tableCell", forIndexPath: indexPath)
+        
+        // セルの羅線の太さを設定
+        cell.layer.borderWidth = 0.5
+        
+        // セルに値を設定
+        cell.textLabel?.text = "\(hourTime[indexPath.row])"
+        
+        return cell
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+
+extension ViewController: UIScrollViewDelegate {
+    
+    /// スクロール時の処理
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        if scrollView == dayTimeTableView {
+            timeLineCollectionView.contentOffset = dayTimeTableView.contentOffset
+        } else if scrollView == timeLineCollectionView {
+            dayTimeTableView.contentOffset = timeLineCollectionView.contentOffset
+        }
+    }
+}
+
+// MARK: - UIPopoverPresentationControllerDelegate
+
+extension ViewController: UIPopoverPresentationControllerDelegate {
+    
+    /// popoverをiPhoneに対応させる
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .None
+    }
+    
+    /// ポップオーバーが閉じられた際にindexpathを削除
+    func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController) {
+        selectedCellIndexPath = nil
+    }
+}

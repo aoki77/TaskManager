@@ -13,7 +13,7 @@ final class EditViewController: UITableViewController {
     
     /// MARK: - アウトレット
     
-    @IBOutlet private var editTable: UITableView!
+    @IBOutlet weak private var editTable: UITableView!
     @IBOutlet weak private var titleTextField: UITextField!
     @IBOutlet weak private var startTimeLabel: UILabel!
     @IBOutlet weak private var finishTimeLabel: UILabel!
