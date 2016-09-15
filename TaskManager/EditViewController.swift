@@ -600,6 +600,23 @@ extension EditViewController: UIPickerViewDelegate {
         }
     }
     
+    /// ピッカーのカラムのサイズ
+    func pickerView(pickerView: UIPickerView, widthForComponent component: Int) -> CGFloat {
+        let pickerWidth = pickerView.bounds.size.width
+        switch component {
+        case 0:
+            return 1.5 * (pickerWidth / 5)
+        case 1:
+            return pickerWidth / 5
+        case 2:
+            return pickerWidth / 5
+        case 3:
+            return pickerWidth / 5
+        default:
+            return 0
+        }
+    }
+    
     /// ピッカーが変更された際の処理
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         switch pickerView {
