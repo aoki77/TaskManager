@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class ViewController: UIViewController,UITableViewDelegate , UIGestureRecognizerDelegate {
+final class ViewController: UIViewController, UITableViewDelegate , UIGestureRecognizerDelegate {
     
     // MARK: - アウトレット
     
@@ -89,6 +89,11 @@ final class ViewController: UIViewController,UITableViewDelegate , UIGestureReco
         updateDate()
         setupTable()
         setupCollection()
+        
+    }
+    
+    /// オートレイアウト確定後にviewを設定
+    override func viewDidLayoutSubviews() {
         setupView()
     }
     
@@ -114,12 +119,11 @@ final class ViewController: UIViewController,UITableViewDelegate , UIGestureReco
     
     /// 初期値を設定
     private func setupView() {
-        print(dayTimeTableView.bounds.size.height)
         switch UIApplication.sharedApplication().statusBarOrientation {
         case .Portrait, .PortraitUpsideDown, .Unknown:
             dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 12
             dayTimeWidthLayoutConstraint.constant = self.view.frame.size.width / 4
-            print(dayTimeTableView.rowHeight)
+
         case .LandscapeLeft, .LandscapeRight:
             dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 10
             dayTimeWidthLayoutConstraint.constant = self.view.frame.size.width / 4
@@ -283,7 +287,7 @@ extension ViewController: UITableViewDataSource {
         
         // セルの羅線の太さを設定
         cell.layer.borderWidth = 0.5
-        
+
         // セルに値を設定
         cell.textLabel?.text = "\(hourTime[indexPath.row])"
         

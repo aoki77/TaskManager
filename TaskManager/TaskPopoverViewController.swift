@@ -21,14 +21,5 @@ final class TaskPopoverViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        //setupContents()
-    }
-    
-    // MARK: - プライベート関数
-    
-    /// 各種コンテンツの初期設定
-    private func setupContents() {
-        // ボタン
-        //editButton.layer.masksToBounds = true
     }
 }

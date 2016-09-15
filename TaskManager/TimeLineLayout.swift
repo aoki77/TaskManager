@@ -59,8 +59,6 @@ final class TimeLineLayout: UICollectionViewLayout {
     
     private func layoutDataSetup() {
         guard let guardCollectionView = collectionView else { return }
-        print("kita")
-        print(collectionView!.bounds.size.height)
         // レイアウトデータの中身を削除
         layoutData.removeAll()
         // 1列の幅
