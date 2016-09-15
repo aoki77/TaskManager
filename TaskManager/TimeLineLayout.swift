@@ -23,12 +23,10 @@ final class TimeLineLayout: UICollectionViewLayout {
     
     /// 1列の高さ
     private var cellHeight = { (collection: UICollectionView) -> CGFloat in
-        let orientation: UIInterfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
-        switch (orientation) {
-        case .Portrait, .PortraitUpsideDown, .Unknown:
-            return UIScreen.mainScreen().bounds.size.height / 16
-        case .LandscapeLeft, .LandscapeRight:
-            return UIScreen.mainScreen().bounds.size.height / 10
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            return collection.bounds.size.height / 16
+        } else {
+            return collection.bounds.size.height / 10
         }
     }
     

@@ -71,20 +71,18 @@ final class ViewController: UIViewController,UITableViewDelegate , UIGestureReco
     
     /// popoverのサイズ
     private var popoverSize: CGSize {
-        switch UIApplication.sharedApplication().statusBarOrientation {
-        case .Portrait, .PortraitUpsideDown, .Unknown:
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
             return CGSize(width: view.bounds.width, height: view.bounds.height / 3)
-        case .LandscapeLeft, .LandscapeRight:
-            return CGSize(width: view.bounds.width / 3, height: view.bounds.height)
+        } else {
+            return CGSize(width: view.bounds.width / 3, height: view.bounds.height / 3)
         }
     }
     
     /// popoverの方向
     private var popoverDirection: UIPopoverArrowDirection {
-        switch UIApplication.sharedApplication().statusBarOrientation {
-        case .Portrait, .PortraitUpsideDown, .Unknown:
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
             return [.Up, .Down]
-        case .LandscapeLeft, .LandscapeRight:
+        } else {
             return [.Left, .Right]
         }
     }
@@ -93,43 +91,28 @@ final class ViewController: UIViewController,UITableViewDelegate , UIGestureReco
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        selectedCellIndexPath = nil
-        setupView()
         updateDate()
         setupTable()
         setupCollection()
+
     }
     
-    /// 画面回転時の処理
-    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
-        coordinator.animateAlongsideTransition(nil) { [weak self] _ in
-            guard let guardSelf = self else { return }
-            guardSelf.setupView()
-            guardSelf.dayTimeTableView.reloadData()
-            if let TimeLineLayout = guardSelf.timeLineCollectionView.collectionViewLayout as? TimeLineLayout{
-                TimeLineLayout.updateLayout()
-            }
-            if let indexPath = guardSelf.selectedCellIndexPath {
-                let sourceView = guardSelf.timeLineCollectionView.cellForItemAtIndexPath(indexPath)
-                guard let guardSourceView = sourceView else { return }
-                guardSelf.presentPopover(guardSourceView)
-
-            }
-        }
+    /// オートレイアウト確定後にviewを設定
+    override func viewDidLayoutSubviews() {
+        setupView()
     }
     
     // MARK: - プライベート関数
     
     /// 初期値を設定
     private func setupView() {
-        switch UIApplication.sharedApplication().statusBarOrientation {
-        case .Portrait, .PortraitUpsideDown, .Unknown:
-            dayTimeTableView.rowHeight = self.view.frame.size.height / 16
-            dayTimeWidthLayoutConstraint.constant = self.view.frame.size.width / 4
-        case .LandscapeLeft, .LandscapeRight:
-            dayTimeTableView.rowHeight = self.view.frame.size.height / 10
-            dayTimeWidthLayoutConstraint.constant = self.view.frame.size.width / 4
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 16
+            dayTimeWidthLayoutConstraint.constant = UIScreen.mainScreen().bounds.size.width / 4
+            print(dayTimeWidthLayoutConstraint.constant)
+        }else if UIDevice.currentDevice().userInterfaceIdiom == .Pad{
+            dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 10
+            dayTimeWidthLayoutConstraint.constant = UIScreen.mainScreen().bounds.size.width / 4
         }
     }
     

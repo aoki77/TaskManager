@@ -247,7 +247,7 @@ final class EditViewController: UITableViewController {
         case .Portrait, .PortraitUpsideDown, .Unknown:
             viewController.preferredContentSize = CGSizeMake(UIScreen.mainScreen().bounds.width / 2, UIScreen.mainScreen().bounds.height / 5)
         case .LandscapeLeft, .LandscapeRight:
-            viewController.preferredContentSize = CGSizeMake(UIScreen.mainScreen().bounds.width / 5, UIScreen.mainScreen().bounds.height / 2)
+            viewController.preferredContentSize = CGSizeMake(UIScreen.mainScreen().bounds.width / 5, UIScreen.mainScreen().bounds.height / 4)
         }
         
         let popoverController = viewController.popoverPresentationController

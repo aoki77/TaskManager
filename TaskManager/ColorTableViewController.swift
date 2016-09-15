@@ -36,18 +36,17 @@ final class ColorTableViewController: UITableViewController {
     // MARK: - プライベート関数
     
     private func setupContents() {
-        // 縦向きか横向きか判定してサイズを変更
-        switch UIApplication.sharedApplication().statusBarOrientation {
-        case .Portrait, .PortraitUpsideDown, .Unknown:
+        // iPhoneかiPadか判定してサイズを変更
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
             tableView.bounds.size = CGSize(width: UIScreen.mainScreen().bounds.width / 2,
-                                                height: UIScreen.mainScreen().bounds.height / 5)
-        case .LandscapeLeft, .LandscapeRight:
+                                           height: UIScreen.mainScreen().bounds.height / 5)
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad{
             tableView.bounds.size = CGSize(width: UIScreen.mainScreen().bounds.width / 5,
-                                                height: UIScreen.mainScreen().bounds.height / 2)
+                                           height: UIScreen.mainScreen().bounds.height / 4)
         }
         
         // セルの高さを設定
-        let rect = self.tableView.bounds
+        let rect = tableView.bounds.size
         tableView.rowHeight = (rect.height / CGFloat(columnNum))
         
         // セル名の登録
@@ -81,7 +80,7 @@ final class ColorTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         // 左端までセルの線を延ばす
-        self.tableView.layoutMargins = UIEdgeInsetsZero
+        tableView.layoutMargins = UIEdgeInsetsZero
 
         // 色を設定する関数の呼び出し
         cell.backgroundColor = colors[indexPath.row]

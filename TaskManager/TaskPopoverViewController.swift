@@ -39,7 +39,7 @@ final class TaskPopoverViewController: UIViewController {
     /// 各種コンテンツの初期設定
     private func setupContents() {
         // ボタン
-        editButton.backgroundColor = UIColor.blueColor()
+        editButton.backgroundColor = .blueColor()
         editButton.layer.masksToBounds = true
         editButton.layer.cornerRadius = 20.0
         editButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
