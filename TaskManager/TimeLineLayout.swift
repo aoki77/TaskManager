@@ -78,7 +78,7 @@ final class TimeLineLayout: UICollectionViewLayout {
             layoutData.append(attributes)
             
             // y座標を更新
-            point.y += cellHeight(collectionView!)
+            point.y += cellHeight(guardCollectionView)
             
             // 24行（24時間分）作成するため、24回に一回行を切り替える
             if (count + 1) % rowMaxCount == 0 {
