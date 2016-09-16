@@ -74,7 +74,6 @@ final class ColorTableViewController: UITableViewController {
     
     /// セルの選択時に呼び出される
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        print("Num: \(indexPath.row)")
         delegate?.colorButtonChanged(colors[indexPath.row], newText: texts[indexPath.row], newNum: indexPath.row)
     }
     

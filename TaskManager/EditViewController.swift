@@ -61,6 +61,36 @@ final class EditViewController: UITableViewController {
     /// 選択されたデータ
     var cellData: TaskDate?
     
+    
+    override func viewWillAppear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(EditViewController.rotated), name: UIDeviceOrientationDidChangeNotification, object: nil)
+        let horizontal = self.traitCollection.horizontalSizeClass
+        if horizontal == UIUserInterfaceSizeClass.Regular {
+            self.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+        }
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(EditViewController.rotated), name: UIDeviceOrientationDidChangeNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func rotated() {
+        if UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) {
+            let horizontal = self.traitCollection.horizontalSizeClass
+            if horizontal == UIUserInterfaceSizeClass.Regular {
+                self.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+            }
+        }
+        if UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation) {
+            //
+        }
+    }
+    
+    
+    
+    
+    
     // MARK: - ライフサイクル関数
     
     override func viewDidLoad() {

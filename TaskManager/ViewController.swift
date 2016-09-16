@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-final class ViewController: UIViewController,UITableViewDelegate , UIGestureRecognizerDelegate {
+final class ViewController: UIViewController,UITableViewDelegate , UIGestureRecognizerDelegate, UISplitViewControllerDelegate {
     
     // MARK: - アウトレット
     
@@ -87,6 +87,8 @@ final class ViewController: UIViewController,UITableViewDelegate , UIGestureReco
         }
     }
     
+    
+    
     // MARK: - ライフサイクル関数
     
     override func viewDidLoad() {
@@ -94,7 +96,7 @@ final class ViewController: UIViewController,UITableViewDelegate , UIGestureReco
         updateDate()
         setupTable()
         setupCollection()
-
+        
     }
     
     /// オートレイアウト確定後にviewを設定
@@ -109,8 +111,7 @@ final class ViewController: UIViewController,UITableViewDelegate , UIGestureReco
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
             dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 16
             dayTimeWidthLayoutConstraint.constant = UIScreen.mainScreen().bounds.size.width / 4
-            print(dayTimeWidthLayoutConstraint.constant)
-        }else if UIDevice.currentDevice().userInterfaceIdiom == .Pad{
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 10
             dayTimeWidthLayoutConstraint.constant = UIScreen.mainScreen().bounds.size.width / 4
         }
