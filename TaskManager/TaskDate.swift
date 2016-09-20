@@ -8,7 +8,6 @@
 
 import RealmSwift
 
-
 class TaskDate: Object {
     dynamic var id = 0
     dynamic var title = ""
@@ -23,6 +22,4 @@ class TaskDate: Object {
     override static func primaryKey() -> String? {
         return "id"
     }
-    
-    
 }

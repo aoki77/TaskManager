@@ -17,7 +17,6 @@
 		5E4A5A191D5D9E3F00181359 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E4A5A171D5D9E3F00181359 /* LaunchScreen.storyboard */; };
 		5E4A5A241D5D9E3F00181359 /* TaskManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A231D5D9E3F00181359 /* TaskManagerTests.swift */; };
 		5E4A5A2F1D5D9E3F00181359 /* TaskManagerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A2E1D5D9E3F00181359 /* TaskManagerUITests.swift */; };
-		5E55C7461D8B86B3001E9024 /* BaseSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E55C7451D8B86B3001E9024 /* BaseSplitViewController.swift */; };
 		5E66EE1D1D618501006D55D6 /* TimeLineLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E66EE1C1D618501006D55D6 /* TimeLineLayout.swift */; };
 		5ED2D2581D82594A00197418 /* ColorTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED2D2571D82594A00197418 /* ColorTableViewController.swift */; };
 		5ED2D25A1D82595A00197418 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED2D2591D82595A00197418 /* EditViewController.swift */; };
@@ -66,7 +65,6 @@
 		5E4A5A2A1D5D9E3F00181359 /* TaskManagerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaskManagerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E4A5A2E1D5D9E3F00181359 /* TaskManagerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManagerUITests.swift; sourceTree = "<group>"; };
 		5E4A5A301D5D9E3F00181359 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5E55C7451D8B86B3001E9024 /* BaseSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSplitViewController.swift; sourceTree = "<group>"; };
 		5E66EE1C1D618501006D55D6 /* TimeLineLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLineLayout.swift; sourceTree = "<group>"; };
 		5ED2D2571D82594A00197418 /* ColorTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTableViewController.swift; sourceTree = "<group>"; };
 		5ED2D2591D82595A00197418 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
@@ -131,7 +129,6 @@
 				5ED2D2571D82594A00197418 /* ColorTableViewController.swift */,
 				5E3AC56D1D64089C00D446E1 /* TaskPopoverViewController.swift */,
 				5E4A5A101D5D9E3F00181359 /* ViewController.swift */,
-				5E55C7451D8B86B3001E9024 /* BaseSplitViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -483,7 +480,6 @@
 				5E66EE1D1D618501006D55D6 /* TimeLineLayout.swift in Sources */,
 				5E4A5A111D5D9E3F00181359 /* ViewController.swift in Sources */,
 				5E3AC56E1D64089C00D446E1 /* TaskPopoverViewController.swift in Sources */,
-				5E55C7461D8B86B3001E9024 /* BaseSplitViewController.swift in Sources */,
 				5E4A5A0F1D5D9E3F00181359 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

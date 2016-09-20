@@ -12,29 +12,10 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    
-    let initViewController: UIViewController = BaseSplitViewController()
-
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        
-        // UISplitViewControllerを生成
-        self.window!.rootViewController = UISplitViewController()
-        let SplitViewController = self.window!.rootViewController as! UISplitViewController
-        
-        // 左右に配置するViewControllerを生成
-        let master = ViewController()
-        let detail = EditViewController()
-        
-        // デリゲート先を設定する
-        SplitViewController.delegate = master
-        
-        // 入れ子にしたいViewControllerを追加
-        // 最初に追加したものが左、次が右に配置される
-        SplitViewController.addChildViewController(master)
-        SplitViewController.addChildViewController(detail)
-        
+
         return true
     }
 
@@ -62,4 +43,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
-

@@ -65,12 +65,26 @@ final class TaskPopoverViewController: UIViewController {
     
     // MARK: - アクション
     @IBAction func clickEditButton(sender: UIButton) {
-        let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: NSBundle.mainBundle())
-        let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
-        let editView: EditViewController = naviView.visibleViewController as! EditViewController
+        
+        // タイムスケジュール画面を生成
+        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        let mainNaviView = mainStoryboard.instantiateInitialViewController() as! UINavigationController
+        
+        // 編集画面を生成
+        let editStoryboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: NSBundle.mainBundle())
+        let editNaviView = editStoryboard.instantiateInitialViewController() as! UINavigationController
+        let editView: EditViewController = editNaviView.visibleViewController as! EditViewController
         editView.cellData = cellData
         
-        presentViewController(naviView, animated: true, completion: nil)
+        // splitViewControllerを生成
+        let splitView = UISplitViewController()
+        
+        // splitviewControllerのmasterとdetialのサイズを1:1にする
+        splitView.minimumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+        splitView.maximumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+        // spritViewControllerに各viewを追加
+        splitView.viewControllers = [mainNaviView, editNaviView]
+        
+        presentViewController(splitView, animated: false, completion: nil)
     }
-
 }
