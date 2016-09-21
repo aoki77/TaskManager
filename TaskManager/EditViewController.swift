@@ -60,6 +60,8 @@ final class EditViewController: UITableViewController {
     var selectTime: Int?
     /// 選択されたデータ
     var cellData: TaskDate?
+    /// アラートの通知フラグ
+    var alertFlag = false
     
     // MARK: - ライフサイクル関数
     
@@ -153,7 +155,6 @@ final class EditViewController: UITableViewController {
         setupPicker(finishPicker, date: guardCellData.finish_time)
         setupPicker(alertPicker, date: guardCellData.alert_time)
         currentDate = guardCellData.start_time
-        
     }
     
     /// ピッカーに入力された値をNSDate型に変換する
@@ -166,6 +167,7 @@ final class EditViewController: UITableViewController {
         let date = "\(year)-\(month)-\(day) \(hour)"
         let dateFormatter = NSDateFormatter()
         dateFormatter.locale = NSLocale(localeIdentifier: "en_US")
+        dateFormatter.timeZone = NSTimeZone.localTimeZone()
         dateFormatter.dateFormat = "yyyy-MM-dd HH"
         
         return dateFormatter.dateFromString(date)!
@@ -278,12 +280,14 @@ final class EditViewController: UITableViewController {
         var flg = true
         for task in tasks {
             // 開始日時が被っていいたらfalse
-            if  dateFormat(startPicker).compare(task.finish_time) == NSComparisonResult.OrderedAscending ||
+            if dateFormat(startPicker).compare(task.finish_time) == NSComparisonResult.OrderedAscending &&
+                dateFormat(startPicker).compare(task.start_time) == NSComparisonResult.OrderedDescending ||
                 dateFormat(startPicker).compare(task.finish_time) == NSComparisonResult.OrderedSame {
                 flg = false
             }
             // 終了日時が被っていたらfalse
             if dateFormat(finishPicker).compare(task.start_time) == NSComparisonResult.OrderedDescending &&
+                dateFormat(finishPicker).compare(task.finish_time) == NSComparisonResult.OrderedAscending ||
                 dateFormat(finishPicker).compare(task.start_time) == NSComparisonResult.OrderedSame {
                 flg = false
             }
@@ -301,8 +305,19 @@ final class EditViewController: UITableViewController {
             alert.addAction(defaultAction)
             presentViewController(alert, animated: true, completion: nil)
         }
-        
         return flg
+    }
+    
+    /// ローカル通知の内容を作成
+    private func alertRegistration(task: TaskDate) {
+        let notification: UILocalNotification = UILocalNotification()
+        notification.alertTitle = task.title
+        notification.alertBody = task.detail
+        notification.soundName = UILocalNotificationDefaultSoundName
+        notification.timeZone = NSTimeZone.localTimeZone()
+        notification.fireDate = task.alert_time
+        
+        UIApplication.sharedApplication().scheduleLocalNotification(notification)
     }
     
     // MARK: - UITableViewDelegate
@@ -358,6 +373,8 @@ final class EditViewController: UITableViewController {
                 editTable.endUpdates()
                 alertTitleLabel.hidden = false
                 alertLabel.hidden = false
+                
+                alertFlag = true
             } else if alertCheckCell.accessoryType == UITableViewCellAccessoryType.Checkmark {
                 alertCheckCell.accessoryType = UITableViewCellAccessoryType.None
                 alertShowFlag = false
@@ -366,6 +383,8 @@ final class EditViewController: UITableViewController {
                 editTable.endUpdates()
                 alertTitleLabel.hidden = true
                 alertLabel.hidden = true
+                
+                alertFlag = false
             }
         }
         
@@ -428,6 +447,9 @@ final class EditViewController: UITableViewController {
                     data.detail = detailText.text
                     data.complete_flag = false
                 }
+                if alertFlag{
+                    alertRegistration(data)
+                }
             } else {
                 //　その時間にデータが既にあるかどうかを確認
                 if checkDate() {
@@ -449,6 +471,9 @@ final class EditViewController: UITableViewController {
                         realm.add(task, update: true)
                     }
                     print("登録されました\(task)")
+                    if alertFlag {
+                        alertRegistration(task)
+                    }
                 }
             }
         }
