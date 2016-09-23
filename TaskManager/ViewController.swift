@@ -421,15 +421,27 @@ final class ViewController: UIViewController,UITableViewDelegate , UIGestureReco
             if dataFlg {
                 guard let guardCellData = cellData else { return }
                 if guardCellData.complete_flag {
+                    // タスク未完了の場合
                     try! realm.write {
                         guardCellData.complete_flag = false
                     }
                     timeLineCollectionView.reloadData()
                 } else {
+                    // タスク完了の場合
                     try! realm.write {
                         guardCellData.complete_flag = true
                     }
                     timeLineCollectionView.reloadData()
+                    
+                    // アラート通知を消す
+                    for notification: UILocalNotification in UIApplication.sharedApplication().scheduledLocalNotifications! {
+                        if let userInfo = notification.userInfo {
+                            let alertId = userInfo["alertId"] as! Int
+                            if alertId == guardCellData.id {
+                                UIApplication.sharedApplication().cancelLocalNotification(notification)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -507,7 +519,7 @@ extension ViewController: UICollectionViewDataSource {
     
     /// データを返す
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        // コレクションビューから識別子「TestCell」のセルを取得
+        // コレクションビューから識別子「collectionCell」のセルを取得
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath)
         // セルの背景色を白に設定
         cell.backgroundColor = .whiteColor()

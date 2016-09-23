@@ -136,13 +136,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GPn-uk-oIr">
-                                                    <rect key="frame" x="8" y="-86" width="584" height="216"/>
+                                                    <rect key="frame" x="0.0" y="-86" width="600" height="216"/>
                                                 </pickerView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="GPn-uk-oIr" firstAttribute="leading" secondItem="VsF-HO-1ZU" secondAttribute="leadingMargin" id="ALC-QG-zlu"/>
-                                                <constraint firstItem="GPn-uk-oIr" firstAttribute="centerX" secondItem="VsF-HO-1ZU" secondAttribute="centerX" id="Bai-jm-Oo0"/>
-                                                <constraint firstItem="GPn-uk-oIr" firstAttribute="centerY" secondItem="VsF-HO-1ZU" secondAttribute="centerY" id="tGy-DY-IUs"/>
+                                                <constraint firstItem="GPn-uk-oIr" firstAttribute="leading" secondItem="VsF-HO-1ZU" secondAttribute="leading" id="O5g-Fz-cqf"/>
+                                                <constraint firstAttribute="trailing" secondItem="GPn-uk-oIr" secondAttribute="trailing" id="dQG-cy-jv8"/>
+                                                <constraint firstItem="GPn-uk-oIr" firstAttribute="centerY" secondItem="VsF-HO-1ZU" secondAttribute="centerY" id="rve-QB-Mr9"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -182,13 +182,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1bY-x3-ncV">
-                                                    <rect key="frame" x="8" y="-86" width="584" height="216"/>
+                                                    <rect key="frame" x="0.0" y="-86" width="600" height="216"/>
                                                 </pickerView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="1bY-x3-ncV" firstAttribute="leading" secondItem="sSw-h2-xpU" secondAttribute="leadingMargin" id="9Q9-i9-Nim"/>
-                                                <constraint firstItem="1bY-x3-ncV" firstAttribute="centerY" secondItem="sSw-h2-xpU" secondAttribute="centerY" id="CHl-tC-qX4"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="1bY-x3-ncV" secondAttribute="trailing" id="vDu-aI-7wJ"/>
+                                                <constraint firstItem="1bY-x3-ncV" firstAttribute="leading" secondItem="sSw-h2-xpU" secondAttribute="leading" id="8OG-xP-lbE"/>
+                                                <constraint firstAttribute="trailing" secondItem="1bY-x3-ncV" secondAttribute="trailing" id="eX5-qC-f9k"/>
+                                                <constraint firstItem="1bY-x3-ncV" firstAttribute="centerY" secondItem="sSw-h2-xpU" secondAttribute="centerY" id="x1f-Vt-cCa"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -244,13 +244,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xh2-mU-9Ux">
-                                                    <rect key="frame" x="8" y="-86" width="584" height="216"/>
+                                                    <rect key="frame" x="0.0" y="-86" width="600" height="216"/>
                                                 </pickerView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="xh2-mU-9Ux" firstAttribute="centerX" secondItem="I77-sB-hfD" secondAttribute="centerX" id="2iJ-ym-EWX"/>
-                                                <constraint firstItem="xh2-mU-9Ux" firstAttribute="centerY" secondItem="I77-sB-hfD" secondAttribute="centerY" id="Khe-TF-ggo"/>
-                                                <constraint firstItem="xh2-mU-9Ux" firstAttribute="leading" secondItem="I77-sB-hfD" secondAttribute="leadingMargin" id="oPr-o4-FXb"/>
+                                                <constraint firstAttribute="trailing" secondItem="xh2-mU-9Ux" secondAttribute="trailing" id="IGx-Px-7gD"/>
+                                                <constraint firstItem="xh2-mU-9Ux" firstAttribute="leading" secondItem="I77-sB-hfD" secondAttribute="leading" id="cKi-HO-uXQ"/>
+                                                <constraint firstItem="xh2-mU-9Ux" firstAttribute="centerY" secondItem="I77-sB-hfD" secondAttribute="centerY" id="iml-t4-crd"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
