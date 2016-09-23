@@ -44,12 +44,20 @@
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z80-MD-B1g">
                                 <rect key="frame" x="510" y="550" width="60" height="40"/>
+                                <color key="backgroundColor" red="0.02071465171" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="60" id="24K-lO-qF2"/>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="MQv-bW-IhW"/>
                                     <constraint firstAttribute="height" constant="30" id="oGp-ZF-wLP"/>
                                 </constraints>
-                                <state key="normal" title="編集"/>
+                                <state key="normal" title="編集">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="20"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="oGp-ZF-wLP"/>
