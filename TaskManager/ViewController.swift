@@ -262,7 +262,7 @@ extension ViewController: UICollectionViewDataSource {
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         // コレクションビューから識別子「collectionCell」のセルを取得
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath)
-        // セルの背景色を赤に設定
+        // セルの背景色を白に設定
         cell.backgroundColor = .whiteColor()
         
         // セルの羅線の太さを設定
