@@ -119,14 +119,13 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     
     /// 初期値を設定
     private func setupView() {
-        switch UIApplication.sharedApplication().statusBarOrientation {
-        case .Portrait, .PortraitUpsideDown, .Unknown:
-            dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 12
-            dayTimeWidthLayoutConstraint.constant = self.view.frame.size.width / 4
-
-        case .LandscapeLeft, .LandscapeRight:
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 16
+            dayTimeWidthLayoutConstraint.constant = UIScreen.mainScreen().bounds.size.width / 4
+            print(dayTimeWidthLayoutConstraint.constant)
+        }else if UIDevice.currentDevice().userInterfaceIdiom == .Pad{
             dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 10
-            dayTimeWidthLayoutConstraint.constant = self.view.frame.size.width / 4
+            dayTimeWidthLayoutConstraint.constant = UIScreen.mainScreen().bounds.size.width / 4
         }
     }
     
@@ -208,12 +207,14 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     @IBAction func goTommorow(sender: AnyObject) {
         currentDate = nextDate
         updateDate()
+        timeLineCollectionView.reloadData()
     }
     
     /// 日付を昨日に更新
     @IBAction func goYesterday(sender: AnyObject) {
         currentDate = previousDate
         updateDate()
+        timeLineCollectionView.reloadData()
     }
     
     /// セル長押し時の処理
