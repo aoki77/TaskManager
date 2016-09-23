@@ -12,7 +12,7 @@ final class TimeLineLayout: UICollectionViewLayout {
     
     // MARK: - 定数プロパティ
     private let rowMaxCount = 24
-    
+
     private let columnNum = 4
     
     // MARK: - 変数プロパティ
