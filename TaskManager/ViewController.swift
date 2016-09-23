@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-final class ViewController: UIViewController,UITableViewDelegate , UIGestureRecognizerDelegate {
+final class ViewController: UIViewController, UITableViewDelegate , UIGestureRecognizerDelegate {
     
     // MARK: - アウトレット
     
@@ -487,7 +487,6 @@ extension ViewController: UICollectionViewDataSource {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // 行数
         let row = hourTime.count
-        
         // 列数
         let column = 3
         
