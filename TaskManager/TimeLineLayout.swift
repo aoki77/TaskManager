@@ -21,12 +21,10 @@ final class TimeLineLayout: UICollectionViewLayout {
     private var layoutData = [UICollectionViewLayoutAttributes]()
     
     /// 1列の高さ
-    var cellHeight = { (collection: UICollectionView) -> CGFloat in
-        let orientation: UIInterfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
-        switch (orientation) {
-        case .Portrait, .PortraitUpsideDown, .Unknown:
-            return collection.bounds.size.height / 12
-        case .LandscapeLeft, .LandscapeRight:
+    private var cellHeight = { (collection: UICollectionView) -> CGFloat in
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            return collection.bounds.size.height / 16
+        } else {
             return collection.bounds.size.height / 10
         }
     }
@@ -46,11 +44,12 @@ final class TimeLineLayout: UICollectionViewLayout {
     /// コレクションビューのサイズを返す
     override func collectionViewContentSize() -> CGSize {
         
+        guard let guardCollectionView = collectionView else { return CGSize(width: 0, height: 0) }
         // 4つあるカラムのうちコレクションビューで使用するカラムは3つ
         let allWidth = (UIScreen.mainScreen().bounds.size.width / CGFloat(columnNum)) * CGFloat(3)
         
         // 全体の高さ
-        let allHeight = CGFloat(rowMaxCount) * cellHeight(collectionView!)
+        let allHeight = CGFloat(rowMaxCount) * cellHeight(guardCollectionView)
         
         return CGSize(width:allWidth, height:allHeight)
     }
@@ -77,7 +76,7 @@ final class TimeLineLayout: UICollectionViewLayout {
             layoutData.append(attributes)
             
             // y座標を更新
-            point.y += cellHeight(collectionView!)
+            point.y += cellHeight(guardCollectionView)
             
             // 24行（24時間分）作成するため、24回に一回行を切り替える
             if (count + 1) % rowMaxCount == 0 {
