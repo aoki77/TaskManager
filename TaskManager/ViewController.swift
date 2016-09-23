@@ -94,7 +94,6 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         updateDate()
         setupTable()
         setupCollection()
-
     }
     
     /// オートレイアウト確定後にviewを設定
@@ -176,6 +175,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         next.taskNum = taskNum
         next.modalPresentationStyle = .Popover
         next.preferredContentSize = popoverSize
+        
         if let popoverViewController = presentedViewController {
             let animated: Bool = false
             // popoverを閉じる
@@ -495,8 +495,10 @@ extension ViewController: UICollectionViewDataSource {
     
     /// データを返す
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
         // コレクションビューから識別子「TestCell」のセルを取得
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath)
+        
         // セルの背景色を白に設定
         cell.backgroundColor = .whiteColor()
         
