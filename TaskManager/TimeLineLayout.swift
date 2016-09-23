@@ -47,7 +47,7 @@ final class TimeLineLayout: UICollectionViewLayout {
         guard let guardCollectionView = collectionView else { return CGSize(width: 0, height: 0) }
         // 4つあるカラムのうちコレクションビューで使用するカラムは3つ
         let allWidth = (UIScreen.mainScreen().bounds.size.width / CGFloat(columnNum)) * CGFloat(3)
-        
+
         // 全体の高さ
         let allHeight = CGFloat(rowMaxCount) * cellHeight(guardCollectionView)
         
