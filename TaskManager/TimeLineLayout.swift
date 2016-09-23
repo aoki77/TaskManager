@@ -58,13 +58,13 @@ final class TimeLineLayout: UICollectionViewLayout {
     // MARK: -プライベート関数
     
     private func layoutDataSetup() {
+        guard let guardCollectionView = collectionView else { return }
+        // レイアウトデータの中身を削除
         layoutData.removeAll()
         // 1列の幅
         let columnWidth = UIScreen.mainScreen().bounds.size.width / CGFloat(columnNum)
         // コレクションの座標
         var point = CGPoint(x: 0,y: 0)
-        
-        guard let guardCollectionView = collectionView else { return }
         
         // 要素数分ループをする
         for count in 0 ..< guardCollectionView.numberOfItemsInSection(0) {
