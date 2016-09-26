@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="nzr-LT-M8E">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="DaR-0x-8f8">
+            <objects>
+                <navigationController id="nzr-LT-M8E" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="lID-6J-jnL">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="A8E-ox-y1D" kind="relationship" relationship="rootViewController" id="Jkz-oP-tNP"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fCf-K8-ugn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-274" y="213"/>
+        </scene>
+        <!--Calendar View Controller-->
+        <scene sceneID="rec-0J-hFP">
+            <objects>
+                <viewController id="A8E-ox-y1D" customClass="CalendarViewController" customModule="TaskManager" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jWJ-m8-uBd"/>
+                        <viewControllerLayoutGuide type="bottom" id="olc-P0-c46"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="6ht-Kw-TjW">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="q2U-vT-9iz">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="3Tj-mc-4FP" customClass="CalendarLayout" customModule="TaskManager" customModuleProvider="target">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" restorationIdentifier="cell" id="8oD-aG-jaX" customClass="CalendarCell" customModule="TaskManager" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="64" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="q2U-vT-9iz" firstAttribute="leading" secondItem="6ht-Kw-TjW" secondAttribute="leading" id="XzR-7R-wT2"/>
+                            <constraint firstItem="q2U-vT-9iz" firstAttribute="top" secondItem="6ht-Kw-TjW" secondAttribute="top" id="gad-7J-zDY"/>
+                            <constraint firstItem="q2U-vT-9iz" firstAttribute="bottom" secondItem="olc-P0-c46" secondAttribute="top" id="obT-Du-60s"/>
+                            <constraint firstAttribute="trailing" secondItem="q2U-vT-9iz" secondAttribute="trailing" id="tGj-ET-YJv"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="B84-rv-Yhp"/>
+                    <connections>
+                        <outlet property="calendatCollectionView" destination="q2U-vT-9iz" id="EHU-w5-iEX"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RFQ-Wi-ugH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="425" y="213"/>
+        </scene>
+    </scenes>
+</document>

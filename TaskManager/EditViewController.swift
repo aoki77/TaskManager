@@ -683,7 +683,7 @@ extension EditViewController: UIPickerViewDelegate {
         case 2:
             return "\(days[row])日"
         case 3:
-            return " \(hours[row])時"
+            return "\(hours[row])時"
         case 4:
             return "\(mins[row])分"
         default:

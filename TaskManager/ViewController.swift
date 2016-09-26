@@ -18,7 +18,8 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     @IBOutlet weak private var tommorowButton: UIButton!
     @IBOutlet weak private var yesterdayButton: UIButton!
     @IBOutlet weak private var dayTimeTableView: UITableView!
-    @IBOutlet weak private var dayTimeWidthLayoutConstraint: NSLayoutConstraint!    
+    @IBOutlet weak private var dayTimeWidthLayoutConstraint: NSLayoutConstraint!
+    
     // MARK: - 定数プロパティ
     
     /// カレンダー
