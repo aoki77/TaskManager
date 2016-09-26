@@ -47,7 +47,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="poE-Yd-zSN">
-                                <rect key="frame" x="0.0" y="100" width="100" height="500"/>
+                                <rect key="frame" x="0.0" y="104" width="100" height="496"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="dZG-6l-uWq"/>
@@ -57,7 +57,7 @@
                                 </userDefinedRuntimeAttributes>
                             </tableView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="uva-gM-9iG">
-                                <rect key="frame" x="100" y="100" width="500" height="500"/>
+                                <rect key="frame" x="100" y="104" width="500" height="496"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="0Js-YR-Vwz" customClass="TimeLineLayout" customModule="TaskManager" customModuleProvider="target">
                                     <size key="itemSize" width="50" height="50"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -79,16 +79,16 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="poE-Yd-zSN" firstAttribute="bottom" secondItem="uva-gM-9iG" secondAttribute="bottom" id="46O-kd-jcO"/>
+                            <constraint firstItem="uva-gM-9iG" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="1KU-wj-JTF"/>
+                            <constraint firstItem="poE-Yd-zSN" firstAttribute="top" secondItem="uva-gM-9iG" secondAttribute="top" id="6la-rG-wxE"/>
                             <constraint firstItem="x0X-H4-Ioy" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="7Ha-Z4-3aG"/>
                             <constraint firstAttribute="trailing" secondItem="uva-gM-9iG" secondAttribute="trailing" id="AGv-Dc-uaO"/>
                             <constraint firstItem="x0X-H4-Ioy" firstAttribute="top" secondItem="anu-D2-DYK" secondAttribute="top" id="Auv-qh-f8L"/>
-                            <constraint firstItem="poE-Yd-zSN" firstAttribute="top" secondItem="uva-gM-9iG" secondAttribute="top" id="DSU-I0-uiR"/>
                             <constraint firstItem="Dnj-QF-cgK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Gmt-ph-SFH"/>
-                            <constraint firstItem="poE-Yd-zSN" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="36" id="Qmu-F0-H46"/>
+                            <constraint firstItem="poE-Yd-zSN" firstAttribute="top" secondItem="Dnj-QF-cgK" secondAttribute="bottom" constant="10" id="ILw-tg-LOQ"/>
                             <constraint firstItem="x0X-H4-Ioy" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Rf4-QI-bM1"/>
                             <constraint firstItem="Dnj-QF-cgK" firstAttribute="leading" secondItem="poE-Yd-zSN" secondAttribute="leading" id="XZZ-L8-3UT"/>
-                            <constraint firstItem="poE-Yd-zSN" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="btw-WV-TWC"/>
+                            <constraint firstItem="poE-Yd-zSN" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="bqk-7p-woN"/>
                             <constraint firstItem="uva-gM-9iG" firstAttribute="trailing" secondItem="anu-D2-DYK" secondAttribute="trailing" id="mx0-t4-mg2"/>
                             <constraint firstItem="x0X-H4-Ioy" firstAttribute="top" secondItem="Dnj-QF-cgK" secondAttribute="top" id="oDe-i0-Qzw"/>
                             <constraint firstItem="uva-gM-9iG" firstAttribute="leading" secondItem="poE-Yd-zSN" secondAttribute="trailing" id="oIT-g5-ZK0"/>

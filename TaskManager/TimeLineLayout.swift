@@ -34,7 +34,6 @@ final class TimeLineLayout: UICollectionViewLayout {
     /// レイアウトを準備するメソッド
     override func prepareLayout() {
         layoutDataSetup()
-
     }
     
     /// レイアウトを返す
@@ -42,7 +41,7 @@ final class TimeLineLayout: UICollectionViewLayout {
         return layoutData
     }
     
-    /// 全体サイズを返す
+    /// コレクションビューのサイズを返す
     override func collectionViewContentSize() -> CGSize {
         
         guard let guardCollectionView = collectionView else { return CGSize(width: 0, height: 0) }

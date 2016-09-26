@@ -18,8 +18,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     @IBOutlet weak private var tommorowButton: UIButton!
     @IBOutlet weak private var yesterdayButton: UIButton!
     @IBOutlet weak private var dayTimeTableView: UITableView!
-    @IBOutlet weak private var dayTimeWidthLayoutConstraint: NSLayoutConstraint!
-    
+    @IBOutlet weak private var dayTimeWidthLayoutConstraint: NSLayoutConstraint!    
     // MARK: - 定数プロパティ
     
     /// カレンダー
@@ -94,8 +93,9 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         updateDate()
         setupTable()
         setupCollection()
+        
     }
-    
+
     /// オートレイアウト確定後にviewを設定
     override func viewDidLayoutSubviews() {
         setupView()
@@ -113,6 +113,15 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
             dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 10
             dayTimeWidthLayoutConstraint.constant = UIScreen.mainScreen().bounds.size.width / 4
         }
+    }
+    
+    /// 日付を更新
+    private func updateDate() {
+        nextDate = calendar.dateByAddingUnit(.Day, value: 1, toDate: currentDate, options: NSCalendarOptions())!
+        previousDate = calendar.dateByAddingUnit(.Day, value: -1, toDate: currentDate, options: NSCalendarOptions())!
+        
+        // 日付ラベルの設定
+        dateLabel.text = dateFormatter.stringFromDate(currentDate)
     }
     
     /// テーブルの設定
@@ -154,17 +163,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         // collectionにrecognizerを設定
         timeLineCollectionView.addGestureRecognizer(longPressGestureRecognizer)
     }
-    
-    /// 日付を更新
-    private func updateDate() {
-        nextDate = calendar.dateByAddingUnit(.Day, value: 1, toDate: currentDate, options: NSCalendarOptions())!
-        previousDate = calendar.dateByAddingUnit(.Day, value: -1, toDate: currentDate, options: NSCalendarOptions())!
-        
-        // 日付ラベルの設定
-        dateLabel.text = dateFormatter.stringFromDate(currentDate)
-    }
 
-    
     /// popover処理
     private func presentPopover(sourceView: UICollectionViewCell) {
         let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
@@ -177,9 +176,8 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         next.preferredContentSize = popoverSize
         
         if let popoverViewController = presentedViewController {
-            let animated: Bool = false
             // popoverを閉じる
-            popoverViewController.dismissViewControllerAnimated(animated, completion: nil)
+            popoverViewController.dismissViewControllerAnimated(false, completion: nil)
         }
         
         if let popoverController = next.popoverPresentationController {
@@ -528,7 +526,7 @@ extension ViewController: UITableViewDataSource {
         
         // セルの羅線の太さを設定
         cell.layer.borderWidth = 0.5
-        
+
         // セルに値を設定
         cell.textLabel?.text = "\(hourTime[indexPath.row])"
         
