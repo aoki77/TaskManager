@@ -7,13 +7,17 @@
 //
 import UIKit
 
-class CalendarLayout: UICollectionViewLayout {
+class CalendarLayout: UICollectionViewFlowLayout {
     
     // MARK: - 定数プロパティ
     
     private let columnNum = 3
 
     private let week = 7
+    
+    var currentMonth = NSDate()
+    
+    //var currentCalendar = NSCalendar?
     
     // MARK: - 変数プロパティ
     
@@ -26,7 +30,6 @@ class CalendarLayout: UICollectionViewLayout {
     /// レイアウトを準備するメソッド
     override func prepareLayout() {
         layoutDataSetup()
-        print("kita")
     }
     
     /// レイアウトを返す
@@ -39,12 +42,8 @@ class CalendarLayout: UICollectionViewLayout {
         
         guard let guardCollectionView = collectionView else { return CGSize(width: 0, height: 0) }
         
-        //
-        let allWidth = UIScreen.mainScreen().bounds.size.width
-        let statusBarHeight: CGFloat = UIApplication.sharedApplication().statusBarFrame.height
-        //let navBarHeight = CalendarViewController.navigationController?.navigationBar.frame.size.height
         
-        let navBarHeight = guardCollectionView.frame.size.height
+        let allWidth = UIScreen.mainScreen().bounds.size.width
         
         // 全体の高さ
         let allHeight = guardCollectionView.bounds.size.height
@@ -56,7 +55,6 @@ class CalendarLayout: UICollectionViewLayout {
     // MARK: -プライベート関数
     
     private func layoutDataSetup() {
-        print("kitenai")
         guard let guardCollectionView = collectionView else { return }
         // レイアウトデータの中身を削除
         layoutData.removeAll()
@@ -66,6 +64,7 @@ class CalendarLayout: UICollectionViewLayout {
         
         // 1列の幅
         let columnWidth = guardCollectionView.bounds.size.width / CGFloat(week)
+        
         //セルの高さ
         let columnHeight = guardCollectionView.bounds.size.height / (CGFloat(weekRange.length) + 1.0)
         
@@ -90,10 +89,7 @@ class CalendarLayout: UICollectionViewLayout {
         // 日付のセクションの座標を決定
         for count in 0 ..< guardCollectionView.numberOfItemsInSection(1) {
             let indexPath = NSIndexPath(forItem:count, inSection:1)
-            
-           
-            
-            print(indexPath.row)
+
             // レイアウトの配列に位置とサイズを登録する。
             let frame = CGRect(x: point2.x, y: point2.y, width:columnWidth, height: columnHeight)
             let attributes = UICollectionViewLayoutAttributes(forCellWithIndexPath: indexPath)
@@ -104,7 +100,6 @@ class CalendarLayout: UICollectionViewLayout {
             point2.x += columnWidth
             
             if (count + 1) % week == 0 {
-                print("kiteruyo")
                 point2.x = 0
                 point2.y += columnHeight
             }
@@ -115,7 +110,7 @@ class CalendarLayout: UICollectionViewLayout {
     private func firstDate() -> NSDate {
         
         // 選択されている日付の月の初日を取得
-        let components = NSCalendar.currentCalendar().components([.Year, .Month, .Day], fromDate: NSDate())
+        let components = NSCalendar.currentCalendar().components([.Year, .Month, .Day], fromDate: currentMonth)
         components.day = 1
         
         // 取得した初日の日付をNSDateに変換
@@ -123,5 +118,4 @@ class CalendarLayout: UICollectionViewLayout {
         
         return firstDateMonth
     }
-
 }
