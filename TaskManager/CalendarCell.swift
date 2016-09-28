@@ -23,7 +23,6 @@ final class CalendarCell: UICollectionViewCell {
     
     // MARK: - プライベート関数
     private func setupLabel() {
-        calenderLabel = UILabel(frame: CGRectMake(0, 0, self.frame.width, self.frame.height))
         calenderLabel.font = UIFont(name: "HiraKakuProN-W3", size: 12)
         calenderLabel.textAlignment = NSTextAlignment.Center
     }

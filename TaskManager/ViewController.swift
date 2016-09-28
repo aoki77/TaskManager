@@ -402,6 +402,17 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         timeLineCollectionView.reloadData()
     }
     
+    ///
+    @IBAction func backCalendar(sender: AnyObject) {
+        // カレンダー画面を生成
+        let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: NSBundle.mainBundle())
+        let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+        let calendarView = calendarNaviView.visibleViewController as! CalendarViewController
+        calendarView.currentMonth = currentDate
+        presentViewController(calendarNaviView, animated: true, completion: nil)
+        
+    }
+    
     /// セル長押し時の処理
     func cellLongPressed(sender : UILongPressGestureRecognizer){
         // 押された位置でcellのpathを取得

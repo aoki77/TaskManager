@@ -18,7 +18,10 @@ final class CalendarViewController: UIViewController {
     // MARK: - 定数プロパティ
     
     /// 一週間
-    private let week: Int = 7
+    private let week = 7
+    
+    /// 日付のカラムの行数
+    private let columnNum = 6
     
     /// 曜日
     private let dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"]
@@ -31,13 +34,12 @@ final class CalendarViewController: UIViewController {
     /// 表示されている月の日付の配列
     private var currentMonthDate = [NSDate]()
     
-    private var allDays: Int?
+    // MARK: - ライフサイクル関数
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupContents()
         updateCurrentMonth()
-
     }
     
     // MARK: - プライベート関数
@@ -51,19 +53,6 @@ final class CalendarViewController: UIViewController {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy/MM"
         CalendarNavItem.title = dateFormatter.stringFromDate(currentMonth)
-        
-    }
-    
-    /// 月ごとのセルの数を返すメソッド
-    private func daysAcquisition() -> Int {
-        
-        // 当月が何週あるかを取得
-        let weekRange = NSCalendar.currentCalendar().rangeOfUnit(.WeekOfMonth, inUnit: .Month, forDate: firstDate())
-        
-        // 当月の週の数 × 一週間
-        allDays = weekRange.length * week
-        
-        return weekRange.length * week
     }
     
     /// 月の初日を取得
@@ -81,6 +70,7 @@ final class CalendarViewController: UIViewController {
     
     /// 表記する日にちの取得
     private func dateForCellAtIndexPath(num: Int) {
+        
         // 月の初日が一週間を日曜を開始するとした際の経過した日数を取得する
         let firstDay = NSCalendar.currentCalendar().ordinalityOfUnit(.Day, inUnit: .WeekOfMonth, forDate: firstDate())
         
@@ -96,8 +86,7 @@ final class CalendarViewController: UIViewController {
     
     /// カレンダーの日付の表記変更
     private func conversionDateFormat(indexPath: NSIndexPath) -> String {
-        guard let guardAllDays = allDays else { return "error" }
-        dateForCellAtIndexPath(guardAllDays)
+        dateForCellAtIndexPath(columnNum * week)
         let formatter: NSDateFormatter = NSDateFormatter()
         formatter.dateFormat = "d"
         return formatter.stringFromDate(currentMonthDate[indexPath.row])
@@ -121,16 +110,11 @@ final class CalendarViewController: UIViewController {
         return calendar.dateByAddingComponents(dateComponents, toDate: currentMonth, options: NSCalendarOptions(rawValue: 0))!
     }
     
-    func setMonth() -> NSDate {
-        return currentMonth
-    }
-    
     // MARK: - アクション
     
     @IBAction func clickNextMonth(sender: UIBarButtonItem) {
         currentMonthDate.removeAll()
         currentMonth = nextMonth()
-        CalendarLayout().currentMonth = currentMonth
         updateCurrentMonth()
         calendarCollectionView.reloadData()
     }
@@ -138,11 +122,9 @@ final class CalendarViewController: UIViewController {
     @IBAction func clickLastMonth(sender: UIBarButtonItem) {
         currentMonthDate.removeAll()
         currentMonth = lastMonth()
-        CalendarLayout().currentMonth = currentMonth
         updateCurrentMonth()
         calendarCollectionView.reloadData()
     }
-    
 }
 
 // MARK: - UICollectionViewDataSource
@@ -163,7 +145,7 @@ extension CalendarViewController: UICollectionViewDataSource {
             return week
         } else {
             // 月によって表示を変える処理を書く
-            return daysAcquisition()
+            return columnNum * week
         }
     }
     
@@ -173,17 +155,14 @@ extension CalendarViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("calendarCell", forIndexPath: indexPath) as! CalendarCell
         
         // セクションによってテキストと色を変更する
-        switch(indexPath.section) {
-        case 0:
+        if indexPath.section == 0 {
             cell.backgroundColor = UIColor.blueColor()
             cell.calenderLabel.text = dayOfWeek[indexPath.row]
             cell.calenderLabel.textColor = .whiteColor()
-        case 1:
+        } else if indexPath.section == 1 {
             cell.backgroundColor = .whiteColor()
-            print(conversionDateFormat(indexPath))
             cell.calenderLabel.text = conversionDateFormat(indexPath)
-        default:
-            break
+            cell.calenderLabel.textColor = .blackColor()
         }
         cell.layer.borderWidth = 0.5
         cell.layer.borderColor = UIColor.grayColor().CGColor

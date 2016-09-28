@@ -95,7 +95,13 @@
                             <constraint firstItem="x0X-H4-Ioy" firstAttribute="bottom" secondItem="Dnj-QF-cgK" secondAttribute="bottom" id="spw-Ns-hoK"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="rT3-Sk-435"/>
+                    <navigationItem key="navigationItem" id="rT3-Sk-435">
+                        <barButtonItem key="leftBarButtonItem" title="Back" id="8Qt-bf-e7R">
+                            <connections>
+                                <action selector="backCalendar:" destination="BYZ-38-t0r" id="xbJ-85-bbd"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="dateLabel" destination="x0X-H4-Ioy" id="H8e-hd-SrN"/>
                         <outlet property="dayTimeTableView" destination="poE-Yd-zSN" id="4ok-ms-clr"/>

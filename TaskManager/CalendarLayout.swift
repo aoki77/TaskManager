@@ -5,6 +5,7 @@
 //  Created by 青木孝乃輔 on 2016/09/26.
 //  Copyright © 2016年 青木孝乃輔. All rights reserved.
 //
+
 import UIKit
 
 class CalendarLayout: UICollectionViewFlowLayout {
@@ -15,15 +16,13 @@ class CalendarLayout: UICollectionViewFlowLayout {
 
     private let week = 7
     
-    var currentMonth = NSDate()
-    
-    //var currentCalendar = NSCalendar?
+    /// 日付の行の数
+    private let rowNum = 6
     
     // MARK: - 変数プロパティ
     
     /// レイアウト配列
     private var layoutData = [UICollectionViewLayoutAttributes]()
-    private var layoutData2 = [UICollectionViewLayoutAttributes]()
     
     // MARK: - ライフサイクル関数
     
@@ -42,7 +41,7 @@ class CalendarLayout: UICollectionViewFlowLayout {
         
         guard let guardCollectionView = collectionView else { return CGSize(width: 0, height: 0) }
         
-        
+        // 全体の幅
         let allWidth = UIScreen.mainScreen().bounds.size.width
         
         // 全体の高さ
@@ -51,22 +50,20 @@ class CalendarLayout: UICollectionViewFlowLayout {
         return CGSize(width:allWidth, height:allHeight)
     }
     
-    
     // MARK: -プライベート関数
     
     private func layoutDataSetup() {
+        
         guard let guardCollectionView = collectionView else { return }
+        
         // レイアウトデータの中身を削除
         layoutData.removeAll()
-        
-        // 当月が何週あるかを取得
-        let weekRange = NSCalendar.currentCalendar().rangeOfUnit(.WeekOfMonth, inUnit: .Month, forDate: firstDate())
         
         // 1列の幅
         let columnWidth = guardCollectionView.bounds.size.width / CGFloat(week)
         
         //セルの高さ
-        let columnHeight = guardCollectionView.bounds.size.height / (CGFloat(weekRange.length) + 1.0)
+        let columnHeight = guardCollectionView.bounds.size.height / CGFloat(rowNum + 1)
         
         // コレクションの座標
         var point = CGPoint(x: 0,y: 0)
@@ -86,6 +83,7 @@ class CalendarLayout: UICollectionViewFlowLayout {
         }
         
         var point2 = CGPoint(x: 0,y: columnHeight)
+        
         // 日付のセクションの座標を決定
         for count in 0 ..< guardCollectionView.numberOfItemsInSection(1) {
             let indexPath = NSIndexPath(forItem:count, inSection:1)
@@ -104,18 +102,5 @@ class CalendarLayout: UICollectionViewFlowLayout {
                 point2.y += columnHeight
             }
         }
-    }
-    
-    /// 月の初日を取得
-    private func firstDate() -> NSDate {
-        
-        // 選択されている日付の月の初日を取得
-        let components = NSCalendar.currentCalendar().components([.Year, .Month, .Day], fromDate: currentMonth)
-        components.day = 1
-        
-        // 取得した初日の日付をNSDateに変換
-        let firstDateMonth = NSCalendar.currentCalendar().dateFromComponents(components)!
-        
-        return firstDateMonth
     }
 }
