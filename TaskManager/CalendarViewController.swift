@@ -27,10 +27,34 @@ final class CalendarViewController: UIViewController {
     private let dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"]
     
     /// 年月のフォーマッター
-    private let dateFormatterMonth: NSDateFormatter = {
+    private let dateFormatterYearMonth: NSDateFormatter = {
         let dateFormatter = NSDateFormatter()
         dateFormatter.locale = NSLocale(localeIdentifier: "en_US")
         dateFormatter.dateFormat = "yyyy/MM"
+        return dateFormatter
+    }()
+    
+    /// 年のフォーマッター
+    private let dateFormatterYear: NSDateFormatter = {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US")
+        dateFormatter.dateFormat = "yyyy"
+        return dateFormatter
+    }()
+    
+    /// 月のフォーマッター
+    private let dateFormatterMonth: NSDateFormatter = {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US")
+        dateFormatter.dateFormat = "MM"
+        return dateFormatter
+    }()
+    
+    /// 日のフォーマッター
+    private let dateFormatterDay: NSDateFormatter = {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US")
+        dateFormatter.dateFormat = "d"
         return dateFormatter
     }()
     
@@ -58,7 +82,7 @@ final class CalendarViewController: UIViewController {
     }
     
     private func updateCurrentMonth() {
-        CalendarNavItem.title = dateFormatterMonth.stringFromDate(currentMonth)
+        CalendarNavItem.title = dateFormatterYearMonth.stringFromDate(currentMonth)
     }
     
     /// 月の初日を取得
@@ -93,9 +117,7 @@ final class CalendarViewController: UIViewController {
     /// カレンダーの日付の表記変更
     private func conversionDateFormat(indexPath: NSIndexPath) -> String {
         dateForCellAtIndexPath(columnNum * week)
-        let formatter: NSDateFormatter = NSDateFormatter()
-        formatter.dateFormat = "d"
-        return formatter.stringFromDate(currentMonthDate[indexPath.row])
+        return dateFormatterDay.stringFromDate(currentMonthDate[indexPath.row])
     }
     
     /// 翌月を返す
@@ -118,7 +140,7 @@ final class CalendarViewController: UIViewController {
     
     /// セルの背景色を変更する
     private func cellColorChange(cell: CalendarCell, indexPath: NSIndexPath) {
-        if dateFormatterMonth.stringFromDate(currentMonthDate[indexPath.row]).compare(dateFormatterMonth.stringFromDate(currentMonth)) != NSComparisonResult.OrderedSame {
+        if dateFormatterYearMonth.stringFromDate(currentMonthDate[indexPath.row]).compare(dateFormatterYearMonth.stringFromDate(currentMonth)) != NSComparisonResult.OrderedSame {
             cell.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
         } else if indexPath.row % 7 == 0 {
             cell.backgroundColor = UIColor(red: 1.0, green: 0.8, blue: 1.0, alpha: 1.0)
@@ -137,6 +159,13 @@ final class CalendarViewController: UIViewController {
             cell.calenderLabel.textColor = .blueColor()
         } else {
             cell.calenderLabel.textColor = .blackColor()
+        }
+        
+        // 該当日が祝日かどうかを判定してboolを返す
+        let holidayFlg = CalculateCalendarLogic().judgeJapaneseHoliday(Int(dateFormatterYear.stringFromDate(currentMonthDate[indexPath.row]))!, month: Int(dateFormatterMonth.stringFromDate(currentMonthDate[indexPath.row]))!, day: Int(dateFormatterDay.stringFromDate(currentMonthDate[indexPath.row]))!)
+        
+        if holidayFlg {
+            cell.calenderLabel.textColor = .redColor()
         }
     }
 
