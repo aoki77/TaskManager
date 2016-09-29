@@ -26,6 +26,14 @@ final class CalendarViewController: UIViewController {
     /// 曜日
     private let dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"]
     
+    /// 年月のフォーマッター
+    private let dateFormatterMonth: NSDateFormatter = {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US")
+        dateFormatter.dateFormat = "yyyy/MM"
+        return dateFormatter
+    }()
+    
     // MARK: - 変数プロパティ
     
     /// 現在の月
@@ -50,9 +58,7 @@ final class CalendarViewController: UIViewController {
     }
     
     private func updateCurrentMonth() {
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "yyyy/MM"
-        CalendarNavItem.title = dateFormatter.stringFromDate(currentMonth)
+        CalendarNavItem.title = dateFormatterMonth.stringFromDate(currentMonth)
     }
     
     /// 月の初日を取得
@@ -110,8 +116,32 @@ final class CalendarViewController: UIViewController {
         return calendar.dateByAddingComponents(dateComponents, toDate: currentMonth, options: NSCalendarOptions(rawValue: 0))!
     }
     
-    // MARK: - アクション
+    /// セルの背景色を変更する
+    private func cellColorChange(cell: CalendarCell, indexPath: NSIndexPath) {
+        if dateFormatterMonth.stringFromDate(currentMonthDate[indexPath.row]).compare(dateFormatterMonth.stringFromDate(currentMonth)) != NSComparisonResult.OrderedSame {
+            cell.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
+        } else if indexPath.row % 7 == 0 {
+            cell.backgroundColor = UIColor(red: 1.0, green: 0.8, blue: 1.0, alpha: 1.0)
+        } else if (indexPath.row + 1) % 7 == 0 {
+            cell.backgroundColor = UIColor(red: 0.8, green: 1.0, blue: 1.0, alpha: 1.0)
+        } else {
+            cell.backgroundColor = .whiteColor()
+        }
+    }
     
+    /// カレンダーのテキストの色を変更する
+    private func textColorChange(cell: CalendarCell, indexPath: NSIndexPath) {
+        if indexPath.row % 7 == 0 {
+            cell.calenderLabel.textColor = .redColor()
+        } else if (indexPath.row + 1) % 7 == 0 {
+            cell.calenderLabel.textColor = .blueColor()
+        } else {
+            cell.calenderLabel.textColor = .blackColor()
+        }
+    }
+
+    // MARK: - アクション
+
     @IBAction func clickNextMonth(sender: UIBarButtonItem) {
         currentMonthDate.removeAll()
         currentMonth = nextMonth()
@@ -156,16 +186,16 @@ extension CalendarViewController: UICollectionViewDataSource {
         
         // セクションによってテキストと色を変更する
         if indexPath.section == 0 {
-            cell.backgroundColor = UIColor.blueColor()
+            cell.backgroundColor = UIColor(red: 0.8, green: 1.0, blue: 0.8, alpha: 1.0)
             cell.calenderLabel.text = dayOfWeek[indexPath.row]
-            cell.calenderLabel.textColor = .whiteColor()
-        } else if indexPath.section == 1 {
-            cell.backgroundColor = .whiteColor()
-            cell.calenderLabel.text = conversionDateFormat(indexPath)
             cell.calenderLabel.textColor = .blackColor()
+        } else if indexPath.section == 1 {
+            cell.calenderLabel.text = conversionDateFormat(indexPath)
+            textColorChange(cell, indexPath: indexPath)
+            cellColorChange(cell, indexPath: indexPath)
         }
         cell.layer.borderWidth = 0.5
-        cell.layer.borderColor = UIColor.grayColor().CGColor
+        cell.layer.borderColor = UIColor(white: 0.9, alpha: 1.0).CGColor
         return cell
     }
 }
