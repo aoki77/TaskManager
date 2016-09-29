@@ -19,6 +19,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     @IBOutlet weak private var yesterdayButton: UIButton!
     @IBOutlet weak private var dayTimeTableView: UITableView!
     @IBOutlet weak private var dayTimeWidthLayoutConstraint: NSLayoutConstraint!
+    @IBOutlet weak private var backButton: UIBarButtonItem!
     
     // MARK: - 定数プロパティ
     
@@ -82,6 +83,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupContents()
         updateDate()
         setupTable()
         setupCollection()
@@ -94,6 +96,16 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     }
     
     // MARK: - プライベート関数
+    
+    /// コンテンツを設定
+    private func setupContents() {
+        
+        // iPadの場合はバックボタンを無効化する
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            backButton.enabled = false
+            backButton.tintColor = .clearColor()
+        }
+    }
     
     /// 初期値を設定
     private func setupView() {

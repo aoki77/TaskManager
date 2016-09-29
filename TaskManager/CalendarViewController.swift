@@ -237,12 +237,29 @@ extension CalendarViewController: UICollectionViewDelegate {
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
         if indexPath.section == 1 {
-            // タイムスケジュール画面に戻る
-            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
-            let mainView = naviView.visibleViewController as! ViewController
+            
+            // タイムスケジュール画面を生成
+            let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let mainNaviView = mainStoryboard.instantiateInitialViewController() as! UINavigationController
+            let mainView = mainNaviView.visibleViewController as! ViewController
+            
             mainView.currentDate = currentMonthDate[indexPath.row]
-            presentViewController(naviView, animated: true, completion: nil)
+            
+            // カレンダー画面を生成
+            let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: NSBundle.mainBundle())
+            let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+            
+            // splitViewControllerを生成
+            let splitView = UISplitViewController()
+            
+            // splitviewControllerのmasterとdetialのサイズを1:1にする
+            splitView.minimumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+            splitView.maximumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+            
+            // spritViewControllerに各viewを追加
+            splitView.viewControllers = [calendarNaviView, mainNaviView]
+            
+            presentViewController(splitView, animated: false, completion: nil)
         }
 
     }

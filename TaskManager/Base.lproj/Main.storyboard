@@ -103,6 +103,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="backButton" destination="8Qt-bf-e7R" id="SUj-Vd-JDc"/>
                         <outlet property="dateLabel" destination="x0X-H4-Ioy" id="H8e-hd-SrN"/>
                         <outlet property="dayTimeTableView" destination="poE-Yd-zSN" id="4ok-ms-clr"/>
                         <outlet property="dayTimeWidthLayoutConstraint" destination="dZG-6l-uWq" id="OSy-Zs-Vz3"/>
