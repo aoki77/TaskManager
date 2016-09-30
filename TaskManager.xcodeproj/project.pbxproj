@@ -20,7 +20,6 @@
 		5E4A5A241D5D9E3F00181359 /* TaskManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A231D5D9E3F00181359 /* TaskManagerTests.swift */; };
 		5E4A5A2F1D5D9E3F00181359 /* TaskManagerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A2E1D5D9E3F00181359 /* TaskManagerUITests.swift */; };
 		5E66EE1D1D618501006D55D6 /* TimeLineLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E66EE1C1D618501006D55D6 /* TimeLineLayout.swift */; };
-		5E781A2F1D9CE8800000B547 /* CalculateCalendarLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E781A2E1D9CE8800000B547 /* CalculateCalendarLogic.swift */; };
 		5E789A391D98B04F009E35F2 /* Calendar.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E789A381D98B04F009E35F2 /* Calendar.storyboard */; };
 		5E789A3B1D98B163009E35F2 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E789A3A1D98B163009E35F2 /* CalendarViewController.swift */; };
 		5ED2D2581D82594A00197418 /* ColorTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED2D2571D82594A00197418 /* ColorTableViewController.swift */; };
@@ -75,7 +74,6 @@
 		5E66EE1C1D618501006D55D6 /* TimeLineLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLineLayout.swift; sourceTree = "<group>"; };
 		5E781A291D9CDACD0000B547 /* Pods_TaskManagerTests.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_TaskManagerTests.framework; path = "Pods/../build/Debug-iphoneos/Pods_TaskManagerTests.framework"; sourceTree = "<group>"; };
 		5E781A2A1D9CDACD0000B547 /* Pods_TaskManagerUITests.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_TaskManagerUITests.framework; path = "Pods/../build/Debug-iphoneos/Pods_TaskManagerUITests.framework"; sourceTree = "<group>"; };
-		5E781A2E1D9CE8800000B547 /* CalculateCalendarLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CalculateCalendarLogic.swift; path = ../Pods/CalculateCalendarLogic/CalculateCalendarLogic/CalculateCalendarLogic.swift; sourceTree = "<group>"; };
 		5E789A381D98B04F009E35F2 /* Calendar.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Calendar.storyboard; sourceTree = "<group>"; };
 		5E789A3A1D98B163009E35F2 /* CalendarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		5ED2D2571D82594A00197418 /* ColorTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTableViewController.swift; sourceTree = "<group>"; };
@@ -185,7 +183,6 @@
 				5E4A5A0E1D5D9E3F00181359 /* AppDelegate.swift */,
 				5E3389141D6E726A00C77815 /* Controllers */,
 				5E3389151D6E72D700C77815 /* Extensions */,
-				5E781A2D1D9CE7ED0000B547 /* Library */,
 				5E4A5A121D5D9E3F00181359 /* Main.storyboard */,
 				5E789A381D98B04F009E35F2 /* Calendar.storyboard */,
 				5ED2D25D1D825A7700197418 /* Edit.storyboard */,
@@ -213,14 +210,6 @@
 				5E4A5A301D5D9E3F00181359 /* Info.plist */,
 			);
 			path = TaskManagerUITests;
-			sourceTree = "<group>";
-		};
-		5E781A2D1D9CE7ED0000B547 /* Library */ = {
-			isa = PBXGroup;
-			children = (
-				5E781A2E1D9CE8800000B547 /* CalculateCalendarLogic.swift */,
-			);
-			name = Library;
 			sourceTree = "<group>";
 		};
 		8B3B1DFAE94138EC3F0AF5FF /* Frameworks */ = {
@@ -502,7 +491,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E781A2F1D9CE8800000B547 /* CalculateCalendarLogic.swift in Sources */,
 				5E789A3B1D98B163009E35F2 /* CalendarViewController.swift in Sources */,
 				5ED2D25C1D82598A00197418 /* TaskDate.swift in Sources */,
 				5ED2D25A1D82595A00197418 /* EditViewController.swift in Sources */,
