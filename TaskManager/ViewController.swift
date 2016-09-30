@@ -18,7 +18,9 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     @IBOutlet weak private var tommorowButton: UIButton!
     @IBOutlet weak private var yesterdayButton: UIButton!
     @IBOutlet weak private var dayTimeTableView: UITableView!
-    @IBOutlet weak private var dayTimeWidthLayoutConstraint: NSLayoutConstraint!    
+    @IBOutlet weak private var dayTimeWidthLayoutConstraint: NSLayoutConstraint!
+    @IBOutlet weak private var backButton: UIBarButtonItem!
+    
     // MARK: - 定数プロパティ
     
     /// カレンダー
@@ -81,6 +83,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupContents()
         updateDate()
         setupTable()
         setupCollection()
@@ -93,6 +96,16 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     }
     
     // MARK: - プライベート関数
+    
+    /// コンテンツを設定
+    private func setupContents() {
+        
+        // iPadの場合はバックボタンを無効化する
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            backButton.enabled = false
+            backButton.tintColor = .clearColor()
+        }
+    }
     
     /// 初期値を設定
     private func setupView() {
@@ -399,6 +412,17 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         currentDate = previousDate
         updateDate()
         timeLineCollectionView.reloadData()
+    }
+    
+    ///
+    @IBAction func backCalendar(sender: AnyObject) {
+        // カレンダー画面を生成
+        let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: NSBundle.mainBundle())
+        let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+        let calendarView = calendarNaviView.visibleViewController as! CalendarViewController
+        calendarView.currentMonth = currentDate
+        presentViewController(calendarNaviView, animated: true, completion: nil)
+        
     }
     
     /// セル長押し時の処理

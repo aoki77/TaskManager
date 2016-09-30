@@ -65,7 +65,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" restorationIdentifier="cell" reuseIdentifier="cell" id="ogF-8m-kxO" customClass="CustomCell" customModule="TaskManager" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" restorationIdentifier="cell" reuseIdentifier="cell" id="ogF-8m-kxO">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -95,8 +95,15 @@
                             <constraint firstItem="x0X-H4-Ioy" firstAttribute="bottom" secondItem="Dnj-QF-cgK" secondAttribute="bottom" id="spw-Ns-hoK"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="rT3-Sk-435"/>
+                    <navigationItem key="navigationItem" id="rT3-Sk-435">
+                        <barButtonItem key="leftBarButtonItem" title="Back" id="8Qt-bf-e7R">
+                            <connections>
+                                <action selector="backCalendar:" destination="BYZ-38-t0r" id="xbJ-85-bbd"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="backButton" destination="8Qt-bf-e7R" id="SUj-Vd-JDc"/>
                         <outlet property="dateLabel" destination="x0X-H4-Ioy" id="H8e-hd-SrN"/>
                         <outlet property="dayTimeTableView" destination="poE-Yd-zSN" id="4ok-ms-clr"/>
                         <outlet property="dayTimeWidthLayoutConstraint" destination="dZG-6l-uWq" id="OSy-Zs-Vz3"/>

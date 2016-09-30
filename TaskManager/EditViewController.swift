@@ -386,6 +386,21 @@ final class EditViewController: UITableViewController {
             alertFlag = false
         }
     }
+    
+    /// viewを二つ渡すとspitViewにする
+    private func presentSplitView(leftView: UIViewController, rightView: UIViewController) {
+        // splitViewControllerを生成
+        let splitView = UISplitViewController()
+        
+        // splitviewControllerのmasterとdetialのサイズを1:1にする
+        splitView.minimumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+        splitView.maximumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+        
+        // spritViewControllerに各viewを追加
+        splitView.viewControllers = [leftView, rightView]
+        
+        presentViewController(splitView, animated: false, completion: nil)
+    }
 
     // MARK: - UITableViewDelegate
 
@@ -525,23 +540,34 @@ final class EditViewController: UITableViewController {
             }
         }
         
-        // タイムスケジュール画面に戻る
-        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
-        let mainView = naviView.visibleViewController as! ViewController
+        // タイムスケジュール画面を生成
+        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let mainNaviView = mainStoryboard.instantiateInitialViewController() as! UINavigationController
+        let mainView = mainNaviView.visibleViewController as! ViewController
         guard let guardCurrentDate = currentDate else { return }
         mainView.currentDate = guardCurrentDate
-        presentViewController(naviView, animated: true, completion: nil)
+        
+        let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
+        let CalendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+        
+        presentSplitView(CalendarNaviView, rightView: mainNaviView)
+
     }
+    
     
     /// タイムスケジュール画面に戻る
     @IBAction func returnTimeLine(sender: UIBarButtonItem) {
-        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
-        let mainView = naviView.visibleViewController as! ViewController
+        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let mainNaviView = mainStoryboard.instantiateInitialViewController() as! UINavigationController
+        let mainView = mainNaviView.visibleViewController as! ViewController
         guard let guardCurrentDate = currentDate else { return }
         mainView.currentDate = guardCurrentDate
-        presentViewController(naviView, animated: true, completion: nil)
+        
+        let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
+        let CalendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+        
+        presentSplitView(CalendarNaviView, rightView: mainNaviView)
+
     }
     
     /// 削除ボタンを押した時の処理
@@ -564,12 +590,16 @@ final class EditViewController: UITableViewController {
             }
             
             /// タイムスケジュール画面に戻る
-            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
-            let mainView = naviView.visibleViewController as! ViewController
+            let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let mainNaviView = mainStoryboard.instantiateInitialViewController() as! UINavigationController
+            let mainView = mainNaviView.visibleViewController as! ViewController
             guard let guardCurrentDate = currentDate else { return }
             mainView.currentDate = guardCurrentDate
-            presentViewController(naviView, animated: true, completion: nil)
+            
+            let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
+            let CalendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+            
+            presentSplitView(CalendarNaviView, rightView: mainNaviView)
             
         } else {
             /// 削除するデータがない時にアラートを出す
@@ -683,7 +713,7 @@ extension EditViewController: UIPickerViewDelegate {
         case 2:
             return "\(days[row])日"
         case 3:
-            return " \(hours[row])時"
+            return "\(hours[row])時"
         case 4:
             return "\(mins[row])分"
         default:

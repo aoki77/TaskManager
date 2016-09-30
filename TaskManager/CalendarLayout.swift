@@ -1,34 +1,28 @@
 //
-//  TimeLineLayout.swift
+//  calendarLayout.swift
 //  TaskManager
 //
-//  Created by 青木孝乃輔 on 2016/08/15.
+//  Created by 青木孝乃輔 on 2016/09/26.
 //  Copyright © 2016年 青木孝乃輔. All rights reserved.
 //
 
 import UIKit
 
-final class TimeLineLayout: UICollectionViewLayout {
+class CalendarLayout: UICollectionViewFlowLayout {
     
     // MARK: - 定数プロパティ
     
-    private let rowMaxCount = 24
-    
     private let columnNum = 3
+
+    private let week = 7
+    
+    /// 日付の行の数
+    private let rowNum = 6
     
     // MARK: - 変数プロパティ
     
     /// レイアウト配列
     private var layoutData = [UICollectionViewLayoutAttributes]()
-    
-    /// 1列の高さ
-    private var cellHeight = { (collection: UICollectionView) -> CGFloat in
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return collection.bounds.size.height / 16
-        } else {
-            return collection.bounds.size.height / 10
-        }
-    }
     
     // MARK: - ライフサイクル関数
     
@@ -46,12 +40,12 @@ final class TimeLineLayout: UICollectionViewLayout {
     override func collectionViewContentSize() -> CGSize {
         
         guard let guardCollectionView = collectionView else { return CGSize(width: 0, height: 0) }
-
-        // 4つあるカラムのうちコレクションビューで使用するカラムは3つ
-        let allWidth = guardCollectionView.bounds.size.width
-
+        
+        // 全体の幅
+        let allWidth = UIScreen.mainScreen().bounds.size.width
+        
         // 全体の高さ
-        let allHeight = CGFloat(rowMaxCount) * cellHeight(guardCollectionView)
+        let allHeight = guardCollectionView.bounds.size.height
         
         return CGSize(width:allWidth, height:allHeight)
     }
@@ -59,32 +53,53 @@ final class TimeLineLayout: UICollectionViewLayout {
     // MARK: -プライベート関数
     
     private func layoutDataSetup() {
-
+        
         guard let guardCollectionView = collectionView else { return }
+        
         // レイアウトデータの中身を削除
         layoutData.removeAll()
+        
         // 1列の幅
-        let columnWidth = guardCollectionView.bounds.size.width  / CGFloat(columnNum)
+        let columnWidth = guardCollectionView.bounds.size.width / CGFloat(week)
+        
+        //セルの高さ
+        let columnHeight = guardCollectionView.bounds.size.height / CGFloat(rowNum + 1)
+        
         // コレクションの座標
         var point = CGPoint(x: 0,y: 0)
         
-        // 要素数分ループをする
+        // 曜日のセクションの座標を決定
         for count in 0 ..< guardCollectionView.numberOfItemsInSection(0) {
             let indexPath = NSIndexPath(forItem:count, inSection:0)
             
             // レイアウトの配列に位置とサイズを登録する。
-            let frame = CGRect(x: point.x, y: point.y, width:columnWidth, height: cellHeight(guardCollectionView))
+            let frame = CGRect(x: point.x, y: point.y, width:columnWidth, height: columnHeight)
             let attributes = UICollectionViewLayoutAttributes(forCellWithIndexPath: indexPath)
             attributes.frame = frame
             layoutData.append(attributes)
             
-            // y座標を更新
-            point.y += cellHeight(guardCollectionView)
+            // x座標を更新
+            point.x += columnWidth
+        }
+        
+        var point2 = CGPoint(x: 0,y: columnHeight)
+        
+        // 日付のセクションの座標を決定
+        for count in 0 ..< guardCollectionView.numberOfItemsInSection(1) {
+            let indexPath = NSIndexPath(forItem:count, inSection:1)
+
+            // レイアウトの配列に位置とサイズを登録する。
+            let frame = CGRect(x: point2.x, y: point2.y, width:columnWidth, height: columnHeight)
+            let attributes = UICollectionViewLayoutAttributes(forCellWithIndexPath: indexPath)
+            attributes.frame = frame
+            layoutData.append(attributes)
             
-            // 24行（24時間分）作成するため、24回に一回行を切り替える
-            if (count + 1) % rowMaxCount == 0 {
-                point.x += columnWidth
-                point.y = 0
+            // x座標を更新
+            point2.x += columnWidth
+            
+            if (count + 1) % week == 0 {
+                point2.x = 0
+                point2.y += columnHeight
             }
         }
     }
