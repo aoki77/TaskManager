@@ -73,16 +73,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
             return CGSize(width: view.bounds.width, height: view.bounds.height / 3)
         } else {
-            return CGSize(width: view.bounds.width / 3, height: view.bounds.height / 3)
-        }
-    }
-    
-    /// popoverの方向
-    private var popoverDirection: UIPopoverArrowDirection {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return [.Up, .Down]
-        } else {
-            return [.Left, .Right]
+            return CGSize(width: view.bounds.width / 1.5, height: view.bounds.height / 3)
         }
     }
     
@@ -108,10 +99,9 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
             dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 16
             dayTimeWidthLayoutConstraint.constant = UIScreen.mainScreen().bounds.size.width / 4
-            print(dayTimeWidthLayoutConstraint.constant)
-        }else if UIDevice.currentDevice().userInterfaceIdiom == .Pad{
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 10
-            dayTimeWidthLayoutConstraint.constant = UIScreen.mainScreen().bounds.size.width / 4
+            dayTimeWidthLayoutConstraint.constant = view.bounds.size.width / 4
         }
     }
     
@@ -174,7 +164,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         next.taskNum = taskNum
         next.modalPresentationStyle = .Popover
         next.preferredContentSize = popoverSize
-        
+
         if let popoverViewController = presentedViewController {
             // popoverを閉じる
             popoverViewController.dismissViewControllerAnimated(false, completion: nil)
@@ -183,7 +173,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         if let popoverController = next.popoverPresentationController {
             popoverController.delegate = self
             // 出す向き
-            popoverController.permittedArrowDirections = popoverDirection
+            popoverController.permittedArrowDirections = [.Up, .Down]
             
             // どこから出た感じにするか
             popoverController.sourceView = sourceView
@@ -462,17 +452,37 @@ extension ViewController: UICollectionViewDelegate {
             guard let guardSourceView = sourceView else { return }
             self.presentPopover(guardSourceView)
         } else {
-            // 編集画面へ飛ばす
-            let storyboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: NSBundle.mainBundle())
-            let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
-            let editView: EditViewController = naviView.visibleViewController as! EditViewController
+            // タイムスケジュール画面を生成
+            let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            let mainNaviView = mainStoryboard.instantiateInitialViewController() as! UINavigationController
+            let mainView: ViewController = mainNaviView.visibleViewController as! ViewController
+            
+            // 日付を送る
+            mainView.currentDate = currentDate
+
+            // 編集画面を生成
+            let editStoryboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: NSBundle.mainBundle())
+            let editNaviView = editStoryboard.instantiateInitialViewController() as! UINavigationController
+            let editView: EditViewController = editNaviView.visibleViewController as! EditViewController
+            
+            // タスク番号を送る
             editView.taskNum = taskNum
-            // 日時を送る処理を書く
+            
+            // 日時を送る
             editView.currentDate = currentDate
             let selectTime:Int = setTime(indexPath)
             editView.selectTime = selectTime
             
-            presentViewController(naviView, animated: true, completion: nil)
+            // splitViewControllerを生成
+            let splitView = UISplitViewController()
+            
+            // splitviewControllerのmasterとdetialのサイズを1:1にする
+            splitView.minimumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+            splitView.maximumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+            // spritViewControllerに各viewを追加
+            splitView.viewControllers = [mainNaviView, editNaviView]
+            
+            presentViewController(splitView, animated: false, completion: nil)
         }
     }
 }

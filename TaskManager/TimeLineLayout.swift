@@ -12,8 +12,8 @@ final class TimeLineLayout: UICollectionViewLayout {
     
     // MARK: - 定数プロパティ
     private let rowMaxCount = 24
-
-    private let columnNum = 4
+    
+    private let columnNum = 3
     
     // MARK: - 変数プロパティ
     
@@ -45,8 +45,9 @@ final class TimeLineLayout: UICollectionViewLayout {
     override func collectionViewContentSize() -> CGSize {
         
         guard let guardCollectionView = collectionView else { return CGSize(width: 0, height: 0) }
+
         // 4つあるカラムのうちコレクションビューで使用するカラムは3つ
-        let allWidth = (UIScreen.mainScreen().bounds.size.width / CGFloat(columnNum)) * CGFloat(3)
+        let allWidth = guardCollectionView.bounds.size.width
 
         // 全体の高さ
         let allHeight = CGFloat(rowMaxCount) * cellHeight(guardCollectionView)
@@ -57,11 +58,12 @@ final class TimeLineLayout: UICollectionViewLayout {
     // MARK: -プライベート関数
     
     private func layoutDataSetup() {
+
         guard let guardCollectionView = collectionView else { return }
         // レイアウトデータの中身を削除
         layoutData.removeAll()
         // 1列の幅
-        let columnWidth = UIScreen.mainScreen().bounds.size.width / CGFloat(columnNum)
+        let columnWidth = guardCollectionView.bounds.size.width  / CGFloat(columnNum)
         // コレクションの座標
         var point = CGPoint(x: 0,y: 0)
         
@@ -84,12 +86,5 @@ final class TimeLineLayout: UICollectionViewLayout {
                 point.y = 0
             }
         }
-    }
-    
-    // MARK: - パブリック関数
-    
-    func updateLayout() {
-        layoutDataSetup()
-        invalidateLayout()
     }
 }
