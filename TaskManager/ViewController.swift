@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-final class ViewController: UIViewController, UITableViewDelegate , UIGestureRecognizerDelegate {
+final class ViewController: UIViewController, UITableViewDelegate {
     
     // MARK: - アウトレット
     
@@ -87,7 +87,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         updateDate()
         setupTable()
         setupCollection()
-        
+        setupSwipe()
     }
 
     /// オートレイアウト確定後にviewを設定
@@ -116,6 +116,21 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
             dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 10
             dayTimeWidthLayoutConstraint.constant = view.bounds.size.width / 4
         }
+    }
+    
+    /// スワイプされた時の設定
+    private func setupSwipe() {
+        /// 右から左へスワイプをされた時
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(goTommorow(_:)))
+        swipeLeft.delegate = self
+        swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(swipeLeft)
+        
+        /// 左から右へスワイプされた時
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(goYesterday(_:)))
+        swipeRight.delegate = self
+        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(swipeRight)
     }
     
     /// 日付を更新
@@ -422,51 +437,6 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         let calendarView = calendarNaviView.visibleViewController as! CalendarViewController
         calendarView.currentMonth = currentDate
         presentViewController(calendarNaviView, animated: true, completion: nil)
-        
-    }
-    
-    /// セル長押し時の処理
-    func cellLongPressed(sender : UILongPressGestureRecognizer){
-        // 押された位置でcellのpathを取得
-        let point = sender.locationInView(timeLineCollectionView)
-        let indexPath = timeLineCollectionView.indexPathForItemAtPoint(point)
-        
-        if sender.state == UIGestureRecognizerState.Began{
-            // セルが長押しされたときの処理
-            print("\(indexPath!.row + 1)が長押しされました")
-            
-            guard let guardIndexPath = indexPath else { return }
-            // 完了か未完了かを把握して変更する処理
-            let taskNum = selectTaskNum(guardIndexPath)
-            let dataFlg = selectDate(taskNum, indexPath: guardIndexPath)
-            let realm = realmMigrations()
-            if dataFlg {
-                guard let guardCellData = cellData else { return }
-                if guardCellData.complete_flag {
-                    // タスク未完了の場合
-                    try! realm.write {
-                        guardCellData.complete_flag = false
-                    }
-                    timeLineCollectionView.reloadData()
-                } else {
-                    // タスク完了の場合
-                    try! realm.write {
-                        guardCellData.complete_flag = true
-                    }
-                    timeLineCollectionView.reloadData()
-                    
-                    // アラート通知を消す
-                    for notification: UILocalNotification in UIApplication.sharedApplication().scheduledLocalNotifications! {
-                        if let userInfo = notification.userInfo {
-                            let alertId = userInfo["alertId"] as! Int
-                            if alertId == guardCellData.id {
-                                UIApplication.sharedApplication().cancelLocalNotification(notification)
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -606,5 +576,52 @@ extension ViewController: UIPopoverPresentationControllerDelegate {
     /// ポップオーバーが閉じられた際にindexpathを削除
     func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController) {
         selectedCellIndexPath = nil
+    }
+}
+
+extension ViewController: UIGestureRecognizerDelegate {
+    
+    /// セル長押し時の処理
+    func cellLongPressed(sender : UILongPressGestureRecognizer){
+        // 押された位置でcellのpathを取得
+        let point = sender.locationInView(timeLineCollectionView)
+        let indexPath = timeLineCollectionView.indexPathForItemAtPoint(point)
+        
+        if sender.state == UIGestureRecognizerState.Began{
+            // セルが長押しされたときの処理
+            print("\(indexPath!.row + 1)が長押しされました")
+            
+            guard let guardIndexPath = indexPath else { return }
+            // 完了か未完了かを把握して変更する処理
+            let taskNum = selectTaskNum(guardIndexPath)
+            let dataFlg = selectDate(taskNum, indexPath: guardIndexPath)
+            let realm = realmMigrations()
+            if dataFlg {
+                guard let guardCellData = cellData else { return }
+                if guardCellData.complete_flag {
+                    // タスク未完了の場合
+                    try! realm.write {
+                        guardCellData.complete_flag = false
+                    }
+                    timeLineCollectionView.reloadData()
+                } else {
+                    // タスク完了の場合
+                    try! realm.write {
+                        guardCellData.complete_flag = true
+                    }
+                    timeLineCollectionView.reloadData()
+                    
+                    // アラート通知を消す
+                    for notification: UILocalNotification in UIApplication.sharedApplication().scheduledLocalNotifications! {
+                        if let userInfo = notification.userInfo {
+                            let alertId = userInfo["alertId"] as! Int
+                            if alertId == guardCellData.id {
+                                UIApplication.sharedApplication().cancelLocalNotification(notification)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

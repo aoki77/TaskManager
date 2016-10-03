@@ -72,6 +72,7 @@ final class CalendarViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupContents()
+        setupSwipe()
         updateCurrentMonth()
     }
     
@@ -80,6 +81,21 @@ final class CalendarViewController: UIViewController {
     private func setupContents() {
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
+    }
+    
+    /// スワイプされた時の設定
+    private func setupSwipe() {
+        /// 右から左へスワイプをされた時
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeNextMonth))
+        swipeLeft.delegate = self
+        swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
+        calendarCollectionView.addGestureRecognizer(swipeLeft)
+        
+        /// 左から右へスワイプされた時
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeLastMonth))
+        swipeRight.delegate = self
+        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
+        calendarCollectionView.addGestureRecognizer(swipeRight)
     }
     
     private func updateCurrentMonth() {
@@ -169,22 +185,6 @@ final class CalendarViewController: UIViewController {
             cell.calenderLabel.textColor = .redColor()
         }
     }
-
-    // MARK: - アクション
-
-    @IBAction func clickNextMonth(sender: UIBarButtonItem) {
-        currentMonthDate.removeAll()
-        currentMonth = nextMonth()
-        updateCurrentMonth()
-        calendarCollectionView.reloadData()
-    }
-    
-    @IBAction func clickLastMonth(sender: UIBarButtonItem) {
-        currentMonthDate.removeAll()
-        currentMonth = lastMonth()
-        updateCurrentMonth()
-        calendarCollectionView.reloadData()
-    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -262,8 +262,26 @@ extension CalendarViewController: UICollectionViewDelegate {
             
             presentViewController(splitView, animated: false, completion: nil)
         }
-
     }
-    
 }
 
+// MARK : - UIGestureRecognizerDelegate
+
+extension CalendarViewController: UIGestureRecognizerDelegate {
+    
+    /// 翌月を呼び出す
+    func swipeNextMonth() {
+        currentMonthDate.removeAll()
+        currentMonth = nextMonth()
+        updateCurrentMonth()
+        calendarCollectionView.reloadData()
+    }
+    
+    /// 昨月を呼び出す
+    func swipeLastMonth() {
+        currentMonthDate.removeAll()
+        currentMonth = lastMonth()
+        updateCurrentMonth()
+        calendarCollectionView.reloadData()
+    }
+}
