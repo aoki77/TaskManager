@@ -185,6 +185,12 @@ final class CalendarViewController: UIViewController {
             cell.calenderLabel.textColor = .redColor()
         }
     }
+    
+    // MARK: - アクション
+    
+    @IBAction func clickFacebook(sender: AnyObject) {
+        presentViewController(FacebookViewController(), animated:false, completion: nil)
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -265,6 +271,16 @@ extension CalendarViewController: UICollectionViewDelegate {
     }
 }
 
+// MARK: - UIPopoverPresentationControllerDelegate
+
+extension CalendarViewController: UIPopoverPresentationControllerDelegate {
+    
+    /// popoverをiPhoneに対応させる
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .None
+    }
+}
+
 // MARK : - UIGestureRecognizerDelegate
 
 extension CalendarViewController: UIGestureRecognizerDelegate {
@@ -283,5 +299,6 @@ extension CalendarViewController: UIGestureRecognizerDelegate {
         currentMonth = lastMonth()
         updateCurrentMonth()
         calendarCollectionView.reloadData()
+
     }
 }

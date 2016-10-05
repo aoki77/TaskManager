@@ -144,7 +144,9 @@ final class ViewController: UIViewController, UITableViewDelegate {
     
     /// テーブルの設定
     private func setupTable() {
-        dayTimeTableView.separatorInset = UIEdgeInsetsZero
+        
+        // テーブルのセルをクリック禁止にする
+        dayTimeTableView.allowsSelection = false
         
         // セル名の登録をおこなう.
         dayTimeTableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "tableCell")
@@ -429,7 +431,7 @@ final class ViewController: UIViewController, UITableViewDelegate {
         timeLineCollectionView.reloadData()
     }
     
-    ///
+    /// カレンダー画面に戻る
     @IBAction func backCalendar(sender: AnyObject) {
         // カレンダー画面を生成
         let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: NSBundle.mainBundle())

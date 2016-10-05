@@ -19,6 +19,8 @@
 		5E4A5A191D5D9E3F00181359 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E4A5A171D5D9E3F00181359 /* LaunchScreen.storyboard */; };
 		5E4A5A241D5D9E3F00181359 /* TaskManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A231D5D9E3F00181359 /* TaskManagerTests.swift */; };
 		5E4A5A2F1D5D9E3F00181359 /* TaskManagerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A2E1D5D9E3F00181359 /* TaskManagerUITests.swift */; };
+		5E6012281DA2071100F2C223 /* FB-f-Logo__blue_29.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E6012271DA2071100F2C223 /* FB-f-Logo__blue_29.png */; };
+		5E60122C1DA23B4F00F2C223 /* FacebookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E60122B1DA23B4F00F2C223 /* FacebookViewController.swift */; };
 		5E66EE1D1D618501006D55D6 /* TimeLineLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E66EE1C1D618501006D55D6 /* TimeLineLayout.swift */; };
 		5E789A391D98B04F009E35F2 /* Calendar.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E789A381D98B04F009E35F2 /* Calendar.storyboard */; };
 		5E789A3B1D98B163009E35F2 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E789A3A1D98B163009E35F2 /* CalendarViewController.swift */; };
@@ -71,6 +73,11 @@
 		5E4A5A2A1D5D9E3F00181359 /* TaskManagerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaskManagerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E4A5A2E1D5D9E3F00181359 /* TaskManagerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManagerUITests.swift; sourceTree = "<group>"; };
 		5E4A5A301D5D9E3F00181359 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5E4BF1961DA37707001CF71E /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../Library/Developer/Xcode/DerivedData/TaskManager-bqyqbvpnqwbghwckgagzmowsbmzj/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
+		5E4BF1971DA37707001CF71E /* CalculateCalendarLogic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CalculateCalendarLogic.framework; path = "../Library/Developer/Xcode/DerivedData/TaskManager-bqyqbvpnqwbghwckgagzmowsbmzj/Build/Products/Debug-iphonesimulator/CalculateCalendarLogic/CalculateCalendarLogic.framework"; sourceTree = "<group>"; };
+		5E4BF1981DA37707001CF71E /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = "../Library/Developer/Xcode/DerivedData/TaskManager-bqyqbvpnqwbghwckgagzmowsbmzj/Build/Products/Debug-iphonesimulator/SwiftyJSON/SwiftyJSON.framework"; sourceTree = "<group>"; };
+		5E6012271DA2071100F2C223 /* FB-f-Logo__blue_29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FB-f-Logo__blue_29.png"; sourceTree = "<group>"; };
+		5E60122B1DA23B4F00F2C223 /* FacebookViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacebookViewController.swift; sourceTree = "<group>"; };
 		5E66EE1C1D618501006D55D6 /* TimeLineLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLineLayout.swift; sourceTree = "<group>"; };
 		5E781A291D9CDACD0000B547 /* Pods_TaskManagerTests.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_TaskManagerTests.framework; path = "Pods/../build/Debug-iphoneos/Pods_TaskManagerTests.framework"; sourceTree = "<group>"; };
 		5E781A2A1D9CDACD0000B547 /* Pods_TaskManagerUITests.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_TaskManagerUITests.framework; path = "Pods/../build/Debug-iphoneos/Pods_TaskManagerUITests.framework"; sourceTree = "<group>"; };
@@ -140,6 +147,7 @@
 				5E3AC56D1D64089C00D446E1 /* TaskPopoverViewController.swift */,
 				5E4A5A101D5D9E3F00181359 /* ViewController.swift */,
 				5E789A3A1D98B163009E35F2 /* CalendarViewController.swift */,
+				5E60122B1DA23B4F00F2C223 /* FacebookViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -183,6 +191,7 @@
 				5E4A5A0E1D5D9E3F00181359 /* AppDelegate.swift */,
 				5E3389141D6E726A00C77815 /* Controllers */,
 				5E3389151D6E72D700C77815 /* Extensions */,
+				5E6012261DA206E100F2C223 /* Photo */,
 				5E4A5A121D5D9E3F00181359 /* Main.storyboard */,
 				5E789A381D98B04F009E35F2 /* Calendar.storyboard */,
 				5ED2D25D1D825A7700197418 /* Edit.storyboard */,
@@ -212,9 +221,20 @@
 			path = TaskManagerUITests;
 			sourceTree = "<group>";
 		};
+		5E6012261DA206E100F2C223 /* Photo */ = {
+			isa = PBXGroup;
+			children = (
+				5E6012271DA2071100F2C223 /* FB-f-Logo__blue_29.png */,
+			);
+			name = Photo;
+			sourceTree = "<group>";
+		};
 		8B3B1DFAE94138EC3F0AF5FF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5E4BF1961DA37707001CF71E /* Alamofire.framework */,
+				5E4BF1971DA37707001CF71E /* CalculateCalendarLogic.framework */,
+				5E4BF1981DA37707001CF71E /* SwiftyJSON.framework */,
 				5E781A291D9CDACD0000B547 /* Pods_TaskManagerTests.framework */,
 				5E781A2A1D9CDACD0000B547 /* Pods_TaskManagerUITests.framework */,
 				5ED2D26F1D825BA500197418 /* Realm.framework */,
@@ -341,6 +361,7 @@
 				5E789A391D98B04F009E35F2 /* Calendar.storyboard in Resources */,
 				5ED2D25E1D825A7700197418 /* Edit.storyboard in Resources */,
 				5E4A5A191D5D9E3F00181359 /* LaunchScreen.storyboard in Resources */,
+				5E6012281DA2071100F2C223 /* FB-f-Logo__blue_29.png in Resources */,
 				5E4A5A161D5D9E3F00181359 /* Assets.xcassets in Resources */,
 				5E4A5A141D5D9E3F00181359 /* Main.storyboard in Resources */,
 				5E3F7BA11D6FBF520045334A /* TaskPop.storyboard in Resources */,
@@ -494,6 +515,7 @@
 				5E789A3B1D98B163009E35F2 /* CalendarViewController.swift in Sources */,
 				5ED2D25C1D82598A00197418 /* TaskDate.swift in Sources */,
 				5ED2D25A1D82595A00197418 /* EditViewController.swift in Sources */,
+				5E60122C1DA23B4F00F2C223 /* FacebookViewController.swift in Sources */,
 				5ED2D2581D82594A00197418 /* ColorTableViewController.swift in Sources */,
 				5E3308DF1D98C36F00F92D80 /* CalendarCell.swift in Sources */,
 				5E66EE1D1D618501006D55D6 /* TimeLineLayout.swift in Sources */,
