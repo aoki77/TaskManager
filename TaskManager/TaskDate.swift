@@ -18,6 +18,8 @@ class TaskDate: Object {
     dynamic var detail = ""
     dynamic var task_no = 0
     dynamic var complete_flag = false
+    dynamic var facebook_id = 0
+    dynamic var facebook_flag = false
 
     override static func primaryKey() -> String? {
         return "id"

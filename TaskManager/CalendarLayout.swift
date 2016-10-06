@@ -42,7 +42,7 @@ class CalendarLayout: UICollectionViewFlowLayout {
         guard let guardCollectionView = collectionView else { return CGSize(width: 0, height: 0) }
         
         // 全体の幅
-        let allWidth = UIScreen.mainScreen().bounds.size.width
+        let allWidth = guardCollectionView.bounds.size.width
         
         // 全体の高さ
         let allHeight = guardCollectionView.bounds.size.height

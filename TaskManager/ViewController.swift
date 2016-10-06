@@ -89,7 +89,7 @@ final class ViewController: UIViewController, UITableViewDelegate {
         setupCollection()
         setupSwipe()
     }
-
+    
     /// オートレイアウト確定後にviewを設定
     override func viewDidLayoutSubviews() {
         setupView()
@@ -183,7 +183,7 @@ final class ViewController: UIViewController, UITableViewDelegate {
         // collectionにrecognizerを設定
         timeLineCollectionView.addGestureRecognizer(longPressGestureRecognizer)
     }
-
+    
     /// popover処理
     private func presentPopover(sourceView: UICollectionViewCell) {
         let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
@@ -194,7 +194,7 @@ final class ViewController: UIViewController, UITableViewDelegate {
         next.taskNum = taskNum
         next.modalPresentationStyle = .Popover
         next.preferredContentSize = popoverSize
-
+        
         if let popoverViewController = presentedViewController {
             // popoverを閉じる
             popoverViewController.dismissViewControllerAnimated(false, completion: nil)
@@ -228,7 +228,7 @@ final class ViewController: UIViewController, UITableViewDelegate {
     
     /// DB内にデータがある時間のセルを重要度に応じて色を変更する
     private func dateCheck(cell: UICollectionViewCell, indexPath: NSIndexPath) {
-        let realm = realmMigrations()
+        let realm = db().realmMigrations()
         let tasks = realm.objects(TaskDate)
         let dateformatter = NSDateFormatter()
         dateformatter.dateFormat = "yyyy/MM/dd"
@@ -322,7 +322,7 @@ final class ViewController: UIViewController, UITableViewDelegate {
     
     /// クリックされたセルに合うデータがある場合は、cellDateに入れてtrueを返す
     private func selectDate(taskNum: Int, indexPath: NSIndexPath) -> Bool {
-        let realm = realmMigrations()
+        let realm = db().realmMigrations()
         let tasks = realm.objects(TaskDate)
         let dateformatter = NSDateFormatter()
         let hourFormatter = NSDateFormatter()
@@ -402,19 +402,6 @@ final class ViewController: UIViewController, UITableViewDelegate {
         return 0
     }
     
-    /// マイグレーション
-    private func realmMigrations() -> Realm {
-        // Realmのインスタンスを取得
-        let config = Realm.Configuration(
-            schemaVersion: 4,
-            migrationBlock: { migration, oldSchemaVersion in
-                if (oldSchemaVersion < 1) {}
-        })
-        Realm.Configuration.defaultConfiguration = config
-        let realm = try! Realm()
-        return realm
-    }
-    
     // MARK: - アクション
     
     /// 日付を翌日に更新
@@ -467,7 +454,7 @@ extension ViewController: UICollectionViewDelegate {
             
             // 日付を送る
             mainView.currentDate = currentDate
-
+            
             // 編集画面を生成
             let editStoryboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: NSBundle.mainBundle())
             let editNaviView = editStoryboard.instantiateInitialViewController() as! UINavigationController
@@ -511,7 +498,7 @@ extension ViewController: UICollectionViewDataSource {
     
     /// データを返す
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-
+        
         // コレクションビューから識別子「collectionCell」のセルを取得
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath)
         
@@ -544,7 +531,7 @@ extension ViewController: UITableViewDataSource {
         
         // セルの羅線の太さを設定
         cell.layer.borderWidth = 0.5
-
+        
         // セルに値を設定
         cell.textLabel?.text = "\(hourTime[indexPath.row])"
         
@@ -597,7 +584,7 @@ extension ViewController: UIGestureRecognizerDelegate {
             // 完了か未完了かを把握して変更する処理
             let taskNum = selectTaskNum(guardIndexPath)
             let dataFlg = selectDate(taskNum, indexPath: guardIndexPath)
-            let realm = realmMigrations()
+            let realm = db().realmMigrations()
             if dataFlg {
                 guard let guardCellData = cellData else { return }
                 if guardCellData.complete_flag {

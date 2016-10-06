@@ -9,6 +9,7 @@
 import UIKit
 import WebKit
 import Alamofire
+import SwiftyJSON
 
 final class FacebookViewController: UIViewController, UIWebViewDelegate {
     
@@ -22,17 +23,12 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
     
     private let clientSecret = "59af9b0fe53ecdd4799128f1dd35bd65"
     
-    // MARK: - 変数プロパティ
-    
-    var accessToken: String?
-    
     //MARK: - ライフサイクル関数
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupContents()
         requestWebView()
-        
     }
     
     // MARK: - プライベート関数
@@ -52,11 +48,7 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
     
     private func requestWebView() {
         
-        let url2: NSURL = NSURL(string: "https://www.facebook.com/dialog/oauth?client_id=\(clientId)&redirect_uri=\(redirectUri)")!
-        
-        Alamofire.request(.GET, url2).responseString { string in
-            print(string.result)
-        }
+        let url2: NSURL = NSURL(string: "https://www.facebook.com/dialog/oauth?client_id=\(clientId)&scope=user_events&redirect_uri=\(redirectUri)&scope=manage_pages,user_events")!
         
         // リクエストを作成
         let request: NSURLRequest = NSURLRequest(URL: url2)
@@ -68,12 +60,11 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
         
     }
     
-    // プロパティ変更時
+    /// プロパティ変更時
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         if keyPath == "loading"{
             if webView.loading == false {
                 let str: NSString = webView.URL!.absoluteString
-                print(str)
                 let range = str.rangeOfString("code=").location + str.rangeOfString("code=").length
                 let code = str.substringFromIndex(range)
                 
@@ -85,9 +76,17 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
                     var token: NSString = nsString.substringFromIndex(firstRange)
                     let lastRange = token.rangeOfString("&expires=").location
                     token = token.substringToIndex(lastRange)
-                    print(token)
-                    self.accessToken = String(token)
                     
+                    Alamofire.request(.GET, "https://graph.facebook.com/me?fields=events&access_token=\(token)").responseJSON { str2 in
+                        
+                        // facebookから受け取ったデータを登録
+                        db().selectData(JSON(str2.result.value!))
+                        
+                        // カレンダー画面を生成
+                        let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: NSBundle.mainBundle())
+                        let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+                        self.presentViewController(calendarNaviView, animated: true, completion: nil)
+                    }
                 }
             }
         }

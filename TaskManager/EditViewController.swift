@@ -306,7 +306,7 @@ final class EditViewController: UITableViewController {
     
     /// 入力したタスクの時間が他と被っているかを確認
     private func checkDate() -> Bool {
-        let realm = try! Realm()
+        let realm = db().realmMigrations()
         guard let guardTaskNum = taskNum else { return false }
         let tasks = realm.objects(TaskDate).filter("task_no == \(guardTaskNum)")
         var flg = true
@@ -497,7 +497,7 @@ final class EditViewController: UITableViewController {
             presentViewController(alert, animated: true, completion: nil)
             
         } else {
-            let realm = try! Realm()
+            let realm = db().realmMigrations()
             if let data = cellData {
                 // 更新
                 try! realm.write {
@@ -584,7 +584,7 @@ final class EditViewController: UITableViewController {
             }
             
             // データを削除する
-            let realm = try! Realm()
+            let realm = db().realmMigrations()
             try! realm.write {
                 realm.delete(deleteDate)
             }
