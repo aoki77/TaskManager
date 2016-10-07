@@ -24,7 +24,6 @@ class db {
     /// facebookと同期した際にfacebook側のデータがあるかどうかを確認
     func selectData(json: JSON) {
         let realm = realmMigrations()
-        print(realm.objects(TaskDate))
         
         for i in 0 ... json.count {
             var updateFlg = true
@@ -42,7 +41,6 @@ class db {
             
             // 既にタスクが存在していた場合は更新する
             let tasks = realm.objects(TaskDate).filter("facebook_id == \(json["events"]["data"][i]["id"].stringValue)")
-            //print(tasks)
             
             // 一致するものが存在していた場合はデータを更新する
             for task in tasks {

@@ -234,7 +234,6 @@ final class ViewController: UIViewController, UITableViewDelegate {
         dateformatter.dateFormat = "yyyy/MM/dd"
         let hourFormatter = NSDateFormatter()
         hourFormatter.dateFormat = "HH"
-        
         for task in tasks {
             let path = selectIndexPath(task)
             // 日付が同じデータのみを抽出
@@ -338,7 +337,7 @@ final class ViewController: UIViewController, UITableViewDelegate {
             num = 48
         }
         guard let guardNum = num else { return false }
-        for task in tasks{
+        for task in tasks {
             if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(currentDate)) == NSComparisonResult.OrderedSame {
                 let schedulePeriod: Int?
                 if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(task.finish_time)) == NSComparisonResult.OrderedSame {
