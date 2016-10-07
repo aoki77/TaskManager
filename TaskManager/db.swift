@@ -23,6 +23,7 @@ class db {
     
     /// facebookと同期した際にfacebook側のデータがあるかどうかを確認
     func selectData(json: JSON) {
+        
         let realm = realmMigrations()
         for i in 0 ..< json["events"]["data"].count {
             
