@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4E2F1797C57B34C3111EDCCA /* Pods_TaskManagerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13741DF03AA0B9200D1CCA55 /* Pods_TaskManagerUITests.framework */; };
+		5E32E17D1DA73B0200E4E4C2 /* DateComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E32E17C1DA73B0200E4E4C2 /* DateComparison.swift */; };
 		5E3308DF1D98C36F00F92D80 /* CalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3308DE1D98C36F00F92D80 /* CalendarCell.swift */; };
 		5E3308E11D98FD9000F92D80 /* CalendarLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3308E01D98FD9000F92D80 /* CalendarLayout.swift */; };
 		5E34E1B41DA5F52A003483A1 /* db.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E34E1B31DA5F52A003483A1 /* db.swift */; };
@@ -57,6 +58,7 @@
 		1873BEB19900A200470E200A /* Pods-TaskManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TaskManager.release.xcconfig"; path = "Pods/Target Support Files/Pods-TaskManager/Pods-TaskManager.release.xcconfig"; sourceTree = "<group>"; };
 		291C808B014AC38F4504255F /* Pods_TaskManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TaskManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DB140E13AC82948CCB0F9DB /* Pods-TaskManagerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TaskManagerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TaskManagerTests/Pods-TaskManagerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5E32E17C1DA73B0200E4E4C2 /* DateComparison.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateComparison.swift; sourceTree = "<group>"; };
 		5E3308DE1D98C36F00F92D80 /* CalendarCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarCell.swift; sourceTree = "<group>"; };
 		5E3308E01D98FD9000F92D80 /* CalendarLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarLayout.swift; sourceTree = "<group>"; };
 		5E34E1B31DA5F52A003483A1 /* db.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = db.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				5E3308E01D98FD9000F92D80 /* CalendarLayout.swift */,
 				5E3308DE1D98C36F00F92D80 /* CalendarCell.swift */,
 				5E34E1B31DA5F52A003483A1 /* db.swift */,
+				5E32E17C1DA73B0200E4E4C2 /* DateComparison.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -526,6 +529,7 @@
 				5E34E1B61DA5F625003483A1 /* ViewController.swift in Sources */,
 				5E3308E11D98FD9000F92D80 /* CalendarLayout.swift in Sources */,
 				5E3AC56E1D64089C00D446E1 /* TaskPopoverViewController.swift in Sources */,
+				5E32E17D1DA73B0200E4E4C2 /* DateComparison.swift in Sources */,
 				5E4A5A0F1D5D9E3F00181359 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

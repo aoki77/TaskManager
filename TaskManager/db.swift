@@ -24,8 +24,8 @@ class db {
     /// facebookと同期した際にfacebook側のデータがあるかどうかを確認
     func selectData(json: JSON) {
         let realm = realmMigrations()
-        
-        for i in 0 ... json.count {
+        for i in 0 ..< json["events"]["data"].count {
+            
             var updateFlg = true
             
             let startTime = isoDateFormatter.dateFromString(json["events"]["data"][i]["start_time"].stringValue)
@@ -35,7 +35,6 @@ class db {
             if endTime == nil {
                 endTime = startTime
             }
-            
             guard let guardStartTime = startTime else { return }
             guard let guardEndtTime = endTime else { return }
             
@@ -44,35 +43,51 @@ class db {
             
             // 一致するものが存在していた場合はデータを更新する
             for task in tasks {
-                try! realm.write {
-                    task.title = json["events"]["data"][i]["name"].stringValue
-                    task.start_time = guardStartTime
-                    task.finish_time = guardEndtTime
-                    task.detail = json["events"]["data"][i]["description"].stringValue
+                if task.facebook_id == Int(json["events"]["data"][i]["id"].stringValue) {
+                    try! realm.write {
+                        task.title = json["events"]["data"][i]["name"].stringValue
+                        task.start_time = guardStartTime
+                        task.finish_time = guardEndtTime
+                        task.detail = json["events"]["data"][i]["description"].stringValue
+                    }
+                    updateFlg = false
                 }
-                updateFlg = false
             }
             
             if updateFlg {
-                // 新規登録
-                let task = TaskDate()
-                var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
-                try! realm.write {
-                    task.id = maxId + 1
-                    task.title = json["events"]["data"][i]["name"].stringValue
-                    task.start_time = guardStartTime
-                    task.finish_time = guardEndtTime
-                    task.alert_time = guardStartTime
-                    //task.alert_time =
-                    task.color = 2
-                    task.detail = json["events"]["data"][i]["description"].stringValue
-                    task.task_no = 1
-                    //task.complete_flag = false
-                    task.facebook_id = Int(json["events"]["data"][i]["id"].stringValue)!
-                    task.facebook_flag = true
-                    realm.add(task, update: true)
+                var taskNo = 0
+                
+                // どのタスクの列が空いているかを確認
+                if DateComparison().dateComparison(guardStartTime, finishDate: guardEndtTime, taskNum: 1) {
+                    taskNo = 1
+                } else if DateComparison().dateComparison(guardStartTime, finishDate: guardEndtTime, taskNum: 2) {
+                    taskNo = 2
+                } else if DateComparison().dateComparison(guardStartTime, finishDate: guardEndtTime, taskNum: 3) {
+                    taskNo = 3
                 }
-                print("登録完了 \(task)")
+                
+                // 3のタスクが全て埋まっていた場合は登録しない
+                if taskNo != 0 {
+                    
+                    // 新規登録
+                    let task = TaskDate()
+                    var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
+                    try! realm.write {
+                        task.id = maxId + 1
+                        task.title = json["events"]["data"][i]["name"].stringValue
+                        task.start_time = guardStartTime
+                        task.finish_time = guardEndtTime
+                        task.alert_time = guardStartTime
+                        task.color = 2
+                        task.detail = json["events"]["data"][i]["description"].stringValue
+                        task.task_no = taskNo
+                        //task.complete_flag = false
+                        task.facebook_id = Int(json["events"]["data"][i]["id"].stringValue)!
+                        task.facebook_flag = true
+                        realm.add(task, update: true)
+                    }
+                    print("登録完了 \(task)")
+                }
             }
         }
     }

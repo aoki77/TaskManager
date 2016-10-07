@@ -306,27 +306,13 @@ final class EditViewController: UITableViewController {
     
     /// 入力したタスクの時間が他と被っているかを確認
     private func checkDate() -> Bool {
-        let realm = db().realmMigrations()
+        
         guard let guardTaskNum = taskNum else { return false }
-        let tasks = realm.objects(TaskDate).filter("task_no == \(guardTaskNum)")
-        var flg = true
-        for task in tasks {
-            // 開始日時が被っていいたらfalse
-            if dateFormat(startPicker).compare(task.finish_time) == NSComparisonResult.OrderedAscending &&
-                dateFormat(startPicker).compare(task.start_time) == NSComparisonResult.OrderedDescending ||
-                dateFormat(startPicker).compare(task.finish_time) == NSComparisonResult.OrderedSame {
-                flg = false
-            }
-            // 終了日時が被っていたらfalse
-            if dateFormat(finishPicker).compare(task.start_time) == NSComparisonResult.OrderedDescending &&
-                dateFormat(finishPicker).compare(task.finish_time) == NSComparisonResult.OrderedAscending ||
-                dateFormat(finishPicker).compare(task.start_time) == NSComparisonResult.OrderedSame {
-                flg = false
-            }
-        }
+        
+        let flg = DateComparison().dateComparison(dateFormat(startPicker), finishDate: dateFormat(finishPicker), taskNum: guardTaskNum)
         
         // 被っている場合はアラートを出す
-        if flg == false {
+        if  flg == false {
             // 終了時間が開始時間よりも前の場合にアラートを出す
             let alert: UIAlertController = UIAlertController(title: "既にタスクが存在します", message: "", preferredStyle:  UIAlertControllerStyle.Alert)
             let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:{
