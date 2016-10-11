@@ -13,6 +13,11 @@ import SwiftyJSON
 
 class db {
     
+    // MARK: - 定数プロパティ
+    
+    /// アラート用のテキストを格納した配列
+    private let alert = ["高", "中", "低"]
+    
     /// ISO 8601の日付文字列をNSDateに変換するフォーマッター
     private let isoDateFormatter: NSDateFormatter = {
         let dateFormatter = NSDateFormatter()
@@ -20,6 +25,8 @@ class db {
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         return dateFormatter
     }()
+    
+    // MARK: - スタティック関数
     
     /// facebookと同期した際にfacebook側のデータがあるかどうかを確認
     func selectData(json: JSON) {
@@ -45,11 +52,18 @@ class db {
             // 一致するものが存在していた場合はデータを更新する
             for task in tasks {
                 if task.facebook_id == Int(json["events"]["data"][i]["id"].stringValue) {
+                    
+                    // 重要度をコメントで設定していた場合はその重要度に応じた数字をもらってくる
+                    let importance = checkImportance(json["events"]["data"][i]["description"].stringValue)
+                    
                     try! realm.write {
                         task.title = json["events"]["data"][i]["name"].stringValue
                         task.start_time = guardStartTime
                         task.finish_time = guardEndtTime
                         task.detail = json["events"]["data"][i]["description"].stringValue
+                        if importance != 3 {
+                            task.color = importance
+                        }
                     }
                     updateFlg = false
                 }
@@ -69,7 +83,10 @@ class db {
                 
                 // 3のタスクが全て埋まっていた場合は登録しない
                 if taskNo != 0 {
-                    
+                    var importance = checkImportance(json["events"]["data"][i]["description"].stringValue)
+                    if importance == 3 {
+                        importance = 2
+                    }
                     // 新規登録
                     let task = TaskDate()
                     var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
@@ -79,10 +96,10 @@ class db {
                         task.start_time = guardStartTime
                         task.finish_time = guardEndtTime
                         task.alert_time = guardStartTime
-                        task.color = 2
+                        task.color = importance
                         task.detail = json["events"]["data"][i]["description"].stringValue
                         task.task_no = taskNo
-                        //task.complete_flag = false
+                        task.complete_flag = false
                         task.facebook_id = Int(json["events"]["data"][i]["id"].stringValue)!
                         task.facebook_flag = true
                         realm.add(task, update: true)
@@ -104,5 +121,17 @@ class db {
         Realm.Configuration.defaultConfiguration = config
         let realm = try! Realm()
         return realm
+    }
+    
+    // MARK : - プライベート関数
+    
+    /// コメント欄に書いて有る重要度を調べて値を返す（重要度が書かれていなかった場合は「3」を返す）。
+    func checkImportance(detial: String) -> Int {
+        for i in 0 ... 2 {
+            if detial.containsString("#重要度:\(alert[i])") {
+                return i
+            }
+        }
+        return 3
     }
 }
