@@ -77,12 +77,6 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
                     let lastRange = token.rangeOfString("&expires=").location
                     token = token.substringToIndex(lastRange)
                     
-                    let url = "https://graph.facebook.com/me/events?access_token=\(token)&name=wawon&start_time=\(NSData())&finish_time=\(NSData())&description=kakikukeko"
-                    
-                    let encodedUrl = url.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-
-                    Alamofire.request(.POST, encodedUrl)
-                    
                     Alamofire.request(.GET, "https://graph.facebook.com/me?fields=events&access_token=\(token)").responseJSON { str2 in
                         
                         // facebookから受け取ったデータを登録
