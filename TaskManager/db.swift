@@ -56,11 +56,15 @@ class db {
                     // 重要度をコメントで設定していた場合はその重要度に応じた数字をもらってくる
                     let importance = checkImportance(json["events"]["data"][i]["description"].stringValue)
                     
+                    // アラートをコメントで設定していた場合はそのアラートの日付をもらってくる
+                    let complete = checkComplete(json["events"]["data"][i]["description"].stringValue)
+                    
                     try! realm.write {
                         task.title = json["events"]["data"][i]["name"].stringValue
                         task.start_time = guardStartTime
                         task.finish_time = guardEndtTime
                         task.detail = json["events"]["data"][i]["description"].stringValue
+                        task.complete_flag = complete
                         if importance != 3 {
                             task.color = importance
                         }
@@ -87,6 +91,10 @@ class db {
                     if importance == 3 {
                         importance = 2
                     }
+                    
+                    // アラートが設定されているかどうかをチェックし、設定されていた場合は値ももらってくる
+                    let complete = checkComplete(json["events"]["data"][i]["description"].stringValue)
+                    
                     // 新規登録
                     let task = TaskDate()
                     var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
@@ -99,9 +107,12 @@ class db {
                         task.color = importance
                         task.detail = json["events"]["data"][i]["description"].stringValue
                         task.task_no = taskNo
-                        task.complete_flag = false
+                        task.complete_flag = complete
                         task.facebook_id = Int(json["events"]["data"][i]["id"].stringValue)!
                         task.facebook_flag = true
+                        
+                        
+                        
                         realm.add(task, update: true)
                     }
                     print("登録完了 \(task)")
@@ -133,5 +144,19 @@ class db {
             }
         }
         return 3
+    }
+    
+    /// コメント欄から達成済みかどうかを調べて値を返す
+    func checkComplete(complete: String) -> Bool {
+        
+        var flg = false
+        
+        //１行ごとに文字列を抜き出す
+        complete.enumerateLines { line, stop in
+            if line.containsString("#達成") || line.containsString("#完了") || line.containsString("#終了") {
+                flg = true
+            }
+        }
+        return flg
     }
 }
