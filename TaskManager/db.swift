@@ -31,6 +31,9 @@ class db {
     /// facebookと同期した際にfacebook側のデータがあるかどうかを確認
     func selectData(json: JSON) {
         
+        // facebook側で削除されたデータがあった場合はアプリ側も削除
+        checkDeleteDate(json)
+        
         let realm = realmMigrations()
         for i in 0 ..< json["events"]["data"].count {
             
@@ -111,8 +114,6 @@ class db {
                         task.facebook_id = Int(json["events"]["data"][i]["id"].stringValue)!
                         task.facebook_flag = true
                         
-                        
-                        
                         realm.add(task, update: true)
                     }
                     print("登録完了 \(task)")
@@ -136,8 +137,32 @@ class db {
     
     // MARK : - プライベート関数
     
+    // アプリとfacebookのタスクを比べ、facebook側でタスクが削除されていた場合はアプリ側も削除する
+    private func checkDeleteDate(json: JSON) {
+        
+        let realm = realmMigrations()
+        let tasks = realm.objects(TaskDate).filter("facebook_flag == true")
+        
+        for task in tasks {
+            var flg = true
+            // facebook側と一致するIDがあるかどうかを確認
+            for i in 0 ..< json["events"]["data"].count {
+                if task.facebook_id == Int(json["events"]["data"][i]["id"].stringValue) {
+                    flg = false
+                    break
+                }
+                // 一致するIDがなければfacebook側で削除されたと判断し、アプリ側も削除
+                if (i + 1) == json["events"]["data"].count && flg {
+                    try! realm.write {
+                        realm.delete(task)
+                    }
+                }
+            }
+        }
+    }
+    
     /// コメント欄に書いて有る重要度を調べて値を返す（重要度が書かれていなかった場合は「3」を返す）。
-    func checkImportance(detial: String) -> Int {
+    private func checkImportance(detial: String) -> Int {
         for i in 0 ... 2 {
             if detial.containsString("#重要度:\(alert[i])") {
                 return i
@@ -147,7 +172,7 @@ class db {
     }
     
     /// コメント欄から達成済みかどうかを調べて値を返す
-    func checkComplete(complete: String) -> Bool {
+    private func checkComplete(complete: String) -> Bool {
         
         var flg = false
         
