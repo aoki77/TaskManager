@@ -8,6 +8,7 @@
 
 import UIKit
 import CalculateCalendarLogic
+import RealmSwift
 
 final class CalendarViewController: UIViewController {
     
@@ -15,6 +16,7 @@ final class CalendarViewController: UIViewController {
     
     @IBOutlet weak var calendarCollectionView: UICollectionView!
     @IBOutlet weak var CalendarNavItem: UINavigationItem!
+    @IBOutlet weak var facebookButton: UIButton!
     
     // MARK: - 定数プロパティ
     
@@ -79,8 +81,34 @@ final class CalendarViewController: UIViewController {
     // MARK: - プライベート関数
     
     private func setupContents() {
+        
+
+        
+        if checkLoginFacebook() {
+            facebookButton.alpha = 0.5
+        }
+        
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
+        
+        // UILongPressGestureRecognizerインスタンス作成
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressedFacebook(_:)))
+        // facebookButtonに長押しのジェスチャーを設定
+        facebookButton.addGestureRecognizer(longPressGesture)
+        
+    }
+    
+    /// フェイスブックにログインしている状態かどうかを判定する
+    private func checkLoginFacebook() -> Bool {
+        let realm = db().realmMigrations()
+        let tokens = realm.objects(AccessToken)
+        var flg = true
+        for tokenData in tokens {
+            if tokenData.access_flg == true {
+                flg = false
+            }
+        }
+        return flg
     }
     
     /// スワイプされた時の設定
@@ -188,8 +216,32 @@ final class CalendarViewController: UIViewController {
     
     // MARK: - アクション
     
+    /// facebookボタンがタップされた時の処理
     @IBAction func clickFacebook(sender: AnyObject) {
         presentViewController(FacebookViewController(), animated:false, completion: nil)
+    }
+    
+    /// facebookボタンが長押しされた時の処理
+    func longPressedFacebook(sender : UILongPressGestureRecognizer) {
+        let alert: UIAlertController = UIAlertController(title: "ログアウト", message: "facebookとの連携を解除しますか？", preferredStyle:  UIAlertControllerStyle.Alert)
+        /// OKボタンが押された時の処理
+        let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:{
+            (action: UIAlertAction!) -> Void in
+            FacebookLogout().facebookLogout()
+            self.facebookButton.alpha = 0.5
+            self.facebookButton.reloadInputViews()
+        })
+        /// キャンセルボタンが押された時の処理
+        let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertActionStyle.Cancel, handler:{
+            (action: UIAlertAction!) -> Void in
+        })
+        
+        /// アラートのアクションを追加
+        alert.addAction(defaultAction)
+        alert.addAction(cancelAction)
+        
+        // アラートを表示
+        presentViewController(alert, animated: true, completion: nil)
     }
 }
 

@@ -97,7 +97,7 @@ class db {
                     
                     // アラートが設定されているかどうかをチェックし、設定されていた場合は値ももらってくる
                     let complete = checkComplete(json["events"]["data"][i]["description"].stringValue)
-                    
+                    let test = json["events"]["data"][i]["id"].stringValue
                     // 新規登録
                     let task = TaskDate()
                     var maxId: Int { return try! Realm().objects(TaskDate).sorted("id").last?.id ?? 0 }
@@ -126,7 +126,7 @@ class db {
     func realmMigrations() -> Realm {
         // Realmのインスタンスを取得
         let config = Realm.Configuration(
-            schemaVersion: 7,
+            schemaVersion: 10,
             migrationBlock: { migration, oldSchemaVersion in
                 if (oldSchemaVersion < 1) {}
         })

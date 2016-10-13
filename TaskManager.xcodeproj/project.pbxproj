@@ -14,6 +14,8 @@
 		5E34E1B41DA5F52A003483A1 /* db.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E34E1B31DA5F52A003483A1 /* db.swift */; };
 		5E34E1B61DA5F625003483A1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E34E1B51DA5F625003483A1 /* ViewController.swift */; };
 		5E3AC56E1D64089C00D446E1 /* TaskPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3AC56D1D64089C00D446E1 /* TaskPopoverViewController.swift */; };
+		5E3C37761DAF20A5005D3996 /* AccessToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C37751DAF20A5005D3996 /* AccessToken.swift */; };
+		5E3C37B41DAF5402005D3996 /* FacebookLogout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C37B31DAF5402005D3996 /* FacebookLogout.swift */; };
 		5E3F7BA11D6FBF520045334A /* TaskPop.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E3F7BA01D6FBF520045334A /* TaskPop.storyboard */; };
 		5E4A5A0F1D5D9E3F00181359 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A0E1D5D9E3F00181359 /* AppDelegate.swift */; };
 		5E4A5A141D5D9E3F00181359 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E4A5A121D5D9E3F00181359 /* Main.storyboard */; };
@@ -64,6 +66,8 @@
 		5E34E1B31DA5F52A003483A1 /* db.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = db.swift; sourceTree = "<group>"; };
 		5E34E1B51DA5F625003483A1 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5E3AC56D1D64089C00D446E1 /* TaskPopoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskPopoverViewController.swift; sourceTree = "<group>"; };
+		5E3C37751DAF20A5005D3996 /* AccessToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccessToken.swift; sourceTree = "<group>"; };
+		5E3C37B31DAF5402005D3996 /* FacebookLogout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacebookLogout.swift; sourceTree = "<group>"; };
 		5E3F7BA01D6FBF520045334A /* TaskPop.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = TaskPop.storyboard; sourceTree = "<group>"; };
 		5E4A5A0B1D5D9E3F00181359 /* TaskManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E4A5A0E1D5D9E3F00181359 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -160,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				5E66EE1C1D618501006D55D6 /* TimeLineLayout.swift */,
+				5E3C37B31DAF5402005D3996 /* FacebookLogout.swift */,
 				5E3308E01D98FD9000F92D80 /* CalendarLayout.swift */,
 				5E3308DE1D98C36F00F92D80 /* CalendarCell.swift */,
 				5E34E1B31DA5F52A003483A1 /* db.swift */,
@@ -194,6 +199,7 @@
 			isa = PBXGroup;
 			children = (
 				5ED2D25B1D82598A00197418 /* TaskDate.swift */,
+				5E3C37751DAF20A5005D3996 /* AccessToken.swift */,
 				5E4A5A0E1D5D9E3F00181359 /* AppDelegate.swift */,
 				5E3389141D6E726A00C77815 /* Controllers */,
 				5E3389151D6E72D700C77815 /* Extensions */,
@@ -518,7 +524,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E3C37761DAF20A5005D3996 /* AccessToken.swift in Sources */,
 				5E789A3B1D98B163009E35F2 /* CalendarViewController.swift in Sources */,
+				5E3C37B41DAF5402005D3996 /* FacebookLogout.swift in Sources */,
 				5ED2D25C1D82598A00197418 /* TaskDate.swift in Sources */,
 				5ED2D25A1D82595A00197418 /* EditViewController.swift in Sources */,
 				5E60122C1DA23B4F00F2C223 /* FacebookViewController.swift in Sources */,

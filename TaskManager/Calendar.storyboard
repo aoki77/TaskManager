@@ -88,6 +88,7 @@
                     <connections>
                         <outlet property="CalendarNavItem" destination="B84-rv-Yhp" id="ZhI-2l-AY2"/>
                         <outlet property="calendarCollectionView" destination="q2U-vT-9iz" id="crZ-0g-u63"/>
+                        <outlet property="facebookButton" destination="EX8-0o-dmf" id="V3r-PC-Iqo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RFQ-Wi-ugH" userLabel="First Responder" sceneMemberID="firstResponder"/>
