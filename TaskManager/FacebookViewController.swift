@@ -154,6 +154,10 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
             presentViewController(guardNextNaviView, animated: false, completion: nil)
         }
         
+        let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
+        let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+        presentViewController(calendarNaviView, animated: false, completion: nil)
+        
     }
 
 /// プロパティ変更時

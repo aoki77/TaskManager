@@ -17,6 +17,7 @@
 		5E3C37761DAF20A5005D3996 /* AccessToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C37751DAF20A5005D3996 /* AccessToken.swift */; };
 		5E3C37B41DAF5402005D3996 /* FacebookLogout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C37B31DAF5402005D3996 /* FacebookLogout.swift */; };
 		5E3F7BA11D6FBF520045334A /* TaskPop.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E3F7BA01D6FBF520045334A /* TaskPop.storyboard */; };
+		5E4282391DB0D76D00CB30F7 /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4282381DB0D76D00CB30F7 /* StartViewController.swift */; };
 		5E4A5A0F1D5D9E3F00181359 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A5A0E1D5D9E3F00181359 /* AppDelegate.swift */; };
 		5E4A5A141D5D9E3F00181359 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E4A5A121D5D9E3F00181359 /* Main.storyboard */; };
 		5E4A5A161D5D9E3F00181359 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E4A5A151D5D9E3F00181359 /* Assets.xcassets */; };
@@ -69,6 +70,7 @@
 		5E3C37751DAF20A5005D3996 /* AccessToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccessToken.swift; sourceTree = "<group>"; };
 		5E3C37B31DAF5402005D3996 /* FacebookLogout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacebookLogout.swift; sourceTree = "<group>"; };
 		5E3F7BA01D6FBF520045334A /* TaskPop.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = TaskPop.storyboard; sourceTree = "<group>"; };
+		5E4282381DB0D76D00CB30F7 /* StartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
 		5E4A5A0B1D5D9E3F00181359 /* TaskManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E4A5A0E1D5D9E3F00181359 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5E4A5A131D5D9E3F00181359 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 				5E34E1B51DA5F625003483A1 /* ViewController.swift */,
 				5E789A3A1D98B163009E35F2 /* CalendarViewController.swift */,
 				5E60122B1DA23B4F00F2C223 /* FacebookViewController.swift */,
+				5E4282381DB0D76D00CB30F7 /* StartViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -525,6 +528,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E3C37761DAF20A5005D3996 /* AccessToken.swift in Sources */,
+				5E4282391DB0D76D00CB30F7 /* StartViewController.swift in Sources */,
 				5E789A3B1D98B163009E35F2 /* CalendarViewController.swift in Sources */,
 				5E3C37B41DAF5402005D3996 /* FacebookLogout.swift in Sources */,
 				5ED2D25C1D82598A00197418 /* TaskDate.swift in Sources */,
