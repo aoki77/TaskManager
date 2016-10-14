@@ -50,11 +50,11 @@ class db {
             guard let guardEndtTime = endTime else { return }
             
             // 既にタスクが存在していた場合は更新する
-            let tasks = realm.objects(TaskDate).filter("facebook_id == \(json["events"]["data"][i]["id"].stringValue)")
+            let tasks = realm.objects(TaskDate).filter("facebook_id == '\(json["events"]["data"][i]["id"].stringValue)'")
             
             // 一致するものが存在していた場合はデータを更新する
             for task in tasks {
-                if task.facebook_id == Int(json["events"]["data"][i]["id"].stringValue) {
+                if task.facebook_id == json["events"]["data"][i]["id"].stringValue {
                     
                     // 重要度をコメントで設定していた場合はその重要度に応じた数字をもらってくる
                     let importance = checkImportance(json["events"]["data"][i]["description"].stringValue)
@@ -111,7 +111,7 @@ class db {
                         task.detail = json["events"]["data"][i]["description"].stringValue
                         task.task_no = taskNo
                         task.complete_flag = complete
-                        task.facebook_id = Int(json["events"]["data"][i]["id"].stringValue)!
+                        task.facebook_id = json["events"]["data"][i]["id"].stringValue
                         task.facebook_flag = true
                         
                         realm.add(task, update: true)
@@ -126,7 +126,7 @@ class db {
     func realmMigrations() -> Realm {
         // Realmのインスタンスを取得
         let config = Realm.Configuration(
-            schemaVersion: 10,
+            schemaVersion: 1,
             migrationBlock: { migration, oldSchemaVersion in
                 if (oldSchemaVersion < 1) {}
         })
@@ -147,7 +147,7 @@ class db {
             var flg = true
             // facebook側と一致するIDがあるかどうかを確認
             for i in 0 ..< json["events"]["data"].count {
-                if task.facebook_id == Int(json["events"]["data"][i]["id"].stringValue) {
+                if task.facebook_id == json["events"]["data"][i]["id"].stringValue {
                     flg = false
                     break
                 }

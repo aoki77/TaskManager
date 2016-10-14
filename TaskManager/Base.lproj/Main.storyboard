@@ -101,12 +101,23 @@
                                 <action selector="backCalendar:" destination="BYZ-38-t0r" id="xbJ-85-bbd"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" image="FB-f-Logo__blue_29.png" style="plain" id="oJx-HI-wAQ">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="e0P-jf-qPc">
+                                <rect key="frame" x="551" y="7" width="29" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="FB-f-Logo__blue_29.png"/>
+                                <connections>
+                                    <action selector="clickFacebook:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Xs6-Vp-Ii5"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="backButton" destination="8Qt-bf-e7R" id="SUj-Vd-JDc"/>
                         <outlet property="dateLabel" destination="x0X-H4-Ioy" id="H8e-hd-SrN"/>
                         <outlet property="dayTimeTableView" destination="poE-Yd-zSN" id="4ok-ms-clr"/>
                         <outlet property="dayTimeWidthLayoutConstraint" destination="dZG-6l-uWq" id="OSy-Zs-Vz3"/>
+                        <outlet property="facebookButton" destination="e0P-jf-qPc" id="PKQ-RO-zgc"/>
                         <outlet property="timeLineCollectionView" destination="uva-gM-9iG" id="l1U-o6-R1F"/>
                         <outlet property="tommorowButton" destination="anu-D2-DYK" id="gW1-IV-9ac"/>
                         <outlet property="yesterdayButton" destination="Dnj-QF-cgK" id="Xfw-dL-3TB"/>
@@ -133,4 +144,7 @@
             <point key="canvasLocation" x="-450" y="297"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="FB-f-Logo__blue_29.png" width="29" height="29"/>
+    </resources>
 </document>

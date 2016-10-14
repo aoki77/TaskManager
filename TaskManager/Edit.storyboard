@@ -326,6 +326,7 @@
                         <outlet property="alertLabel" destination="jwW-pT-h9a" id="Gda-JE-nNh"/>
                         <outlet property="alertPicker" destination="xh2-mU-9Ux" id="m1C-vH-Guz"/>
                         <outlet property="alertTitleLabel" destination="o5O-Ec-5EH" id="PLQ-NS-iJy"/>
+                        <outlet property="backButton" destination="l9K-j3-tIG" id="hr1-Go-hvz"/>
                         <outlet property="colorSelectButton" destination="ilV-We-K9p" id="dZG-i7-XHE"/>
                         <outlet property="deleteButton" destination="aXX-LG-Koc" id="nRG-aL-y0O"/>
                         <outlet property="detailPlaceHolderLabel" destination="6XG-u7-Izc" id="50d-17-4Ou"/>

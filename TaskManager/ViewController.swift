@@ -20,6 +20,7 @@ final class ViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak private var dayTimeTableView: UITableView!
     @IBOutlet weak private var dayTimeWidthLayoutConstraint: NSLayoutConstraint!
     @IBOutlet weak private var backButton: UIBarButtonItem!
+    @IBOutlet weak var facebookButton: UIButton!
     
     // MARK: - 定数プロパティ
     
@@ -93,6 +94,7 @@ final class ViewController: UIViewController, UITableViewDelegate {
     /// オートレイアウト確定後にviewを設定
     override func viewDidLayoutSubviews() {
         setupView()
+        splitCheck()
     }
     
     // MARK: - プライベート関数
@@ -102,8 +104,7 @@ final class ViewController: UIViewController, UITableViewDelegate {
         
         // iPadの場合はバックボタンを無効化する
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            backButton.enabled = false
-            backButton.tintColor = .clearColor()
+            
         }
     }
     
@@ -116,6 +117,27 @@ final class ViewController: UIViewController, UITableViewDelegate {
             dayTimeTableView.rowHeight = timeLineCollectionView.bounds.size.height / 10
             dayTimeWidthLayoutConstraint.constant = view.bounds.size.width / 4
         }
+    }
+    
+    /// splitViewかどうかを判定し、処理をする
+    private func splitCheck() {
+        // iPadかどうか、更に配置されたviewがsplitの右か左かで判断
+        print(self.view.bounds.width == UIScreen.mainScreen().bounds.width / 2)
+        print(UIDevice.currentDevice().userInterfaceIdiom == .Pad)
+        print(self.splitViewController?.viewControllers[1] == self.navigationController)
+        // splitViewの左に表示されていた場合
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad && self.splitViewController?.viewControllers[0] == self.navigationController {
+            // facebookボタンを無効化
+            facebookButton.enabled = false
+            facebookButton.hidden = true
+            
+        // splitViewの右に表示されていた場合
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad && self.splitViewController?.viewControllers[1] == self.navigationController {
+            //　バックボタンを無効化
+            backButton.enabled = false
+            backButton.tintColor = .clearColor()
+        }
+        
     }
     
     /// スワイプされた時の設定
@@ -419,12 +441,41 @@ final class ViewController: UIViewController, UITableViewDelegate {
     
     /// カレンダー画面に戻る
     @IBAction func backCalendar(sender: AnyObject) {
-        // カレンダー画面を生成
-        let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: NSBundle.mainBundle())
+        // タイムスケジュール画面を生成
+        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let mainNaviView = mainStoryboard.instantiateInitialViewController() as! UINavigationController
+        let mainView = mainNaviView.visibleViewController as! ViewController
+        mainView.currentDate = currentDate
+        
+        let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
         let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
         let calendarView = calendarNaviView.visibleViewController as! CalendarViewController
         calendarView.currentMonth = currentDate
-        presentViewController(calendarNaviView, animated: true, completion: nil)
+        
+        let splitView = UISplitViewController()
+        
+        // splitviewControllerのmasterとdetialのサイズを1:1にする
+        splitView.minimumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+        splitView.maximumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+        
+        // spritViewControllerに各viewを追加
+        splitView.viewControllers = [calendarNaviView, mainNaviView]
+        
+        presentViewController(splitView, animated: false, completion: nil)
+    }
+    
+    /// facebookボタンがタップされた時の処理
+    @IBAction func clickFacebook(sender: UIButton) {
+        let nextView = FacebookViewController()
+        
+        // facebookログインを終えた後、この画面に戻ってこれるようにインスタンスを生成
+        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
+        let mainView = naviView.visibleViewController as! ViewController
+        mainView.currentDate = currentDate
+        nextView.nextNaviView = naviView
+        
+        presentViewController(nextView, animated:false, completion: nil)
     }
 }
 

@@ -73,16 +73,33 @@ final class CalendarViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // DBファイルのfileURLを取得
+//        if let fileURL = Realm.Configuration.defaultConfiguration.fileURL {
+//            try! NSFileManager.defaultManager().removeItemAtURL(fileURL)
+//        }
+        
         setupContents()
         setupSwipe()
         updateCurrentMonth()
     }
     
+    /// オートレイアウト確定後にviewを設定
+    override func viewDidLayoutSubviews() {
+       splitCheck()
+    }
+    
     // MARK: - プライベート関数
     
+    /// 画面分割されているかどうかを判定し、分割されていた場合は必要のないボタンを非表示にする
+    private func splitCheck() {
+         // viewの横幅が全画面と同じサイズかどうか、iPadかどうかで判断
+        if self.view.bounds.width == UIScreen.mainScreen().bounds.width / 2 && UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            facebookButton.hidden = true
+        }
+    }
+    
     private func setupContents() {
-        
-
         
         if checkLoginFacebook() {
             facebookButton.alpha = 0.5
@@ -218,30 +235,42 @@ final class CalendarViewController: UIViewController {
     
     /// facebookボタンがタップされた時の処理
     @IBAction func clickFacebook(sender: AnyObject) {
-        presentViewController(FacebookViewController(), animated:false, completion: nil)
+        let nextView = FacebookViewController()
+        
+        // facebookログインを終えた後、この画面に戻ってこれるようにインスタンスを生成
+        let storyboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
+        let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
+        let calendarView = naviView.visibleViewController as! CalendarViewController
+        calendarView.currentMonth = currentMonth
+        nextView.nextNaviView = naviView
+
+        presentViewController(nextView, animated:false, completion: nil)
     }
     
     /// facebookボタンが長押しされた時の処理
     func longPressedFacebook(sender : UILongPressGestureRecognizer) {
-        let alert: UIAlertController = UIAlertController(title: "ログアウト", message: "facebookとの連携を解除しますか？", preferredStyle:  UIAlertControllerStyle.Alert)
-        /// OKボタンが押された時の処理
-        let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:{
-            (action: UIAlertAction!) -> Void in
-            FacebookLogout().facebookLogout()
-            self.facebookButton.alpha = 0.5
-            self.facebookButton.reloadInputViews()
-        })
-        /// キャンセルボタンが押された時の処理
-        let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertActionStyle.Cancel, handler:{
-            (action: UIAlertAction!) -> Void in
-        })
-        
-        /// アラートのアクションを追加
-        alert.addAction(defaultAction)
-        alert.addAction(cancelAction)
-        
-        // アラートを表示
-        presentViewController(alert, animated: true, completion: nil)
+        // facebookログイン状態の時のみログアウトのアラートを出す
+        if checkLoginFacebook() == false {
+            let alert: UIAlertController = UIAlertController(title: "ログアウト", message: "facebookとの連携を解除しますか？", preferredStyle:  UIAlertControllerStyle.Alert)
+            /// OKボタンが押された時の処理
+            let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:{
+                (action: UIAlertAction!) -> Void in
+                FacebookLogout().facebookLogout()
+                self.facebookButton.alpha = 0.5
+                self.facebookButton.reloadInputViews()
+            })
+            /// キャンセルボタンが押された時の処理
+            let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertActionStyle.Cancel, handler:{
+                (action: UIAlertAction!) -> Void in
+            })
+            
+            /// アラートのアクションを追加
+            alert.addAction(defaultAction)
+            alert.addAction(cancelAction)
+            
+            // アラートを表示
+            presentViewController(alert, animated: true, completion: nil)
+        }
     }
 }
 
@@ -254,7 +283,7 @@ extension CalendarViewController: UICollectionViewDataSource {
         // 曜日と一ヶ月の日付を表示する2つのセクションを用意する
         return 2
     }
-
+    
     /// セクションごとのセルの総数を決定する
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // Section毎にCellの総数を変更
@@ -301,12 +330,13 @@ extension CalendarViewController: UICollectionViewDelegate {
             let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let mainNaviView = mainStoryboard.instantiateInitialViewController() as! UINavigationController
             let mainView = mainNaviView.visibleViewController as! ViewController
-            
             mainView.currentDate = currentMonthDate[indexPath.row]
             
             // カレンダー画面を生成
             let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: NSBundle.mainBundle())
             let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+            let calendarView = calendarNaviView.visibleViewController as! CalendarViewController
+            calendarView.currentMonth = currentMonth
             
             // splitViewControllerを生成
             let splitView = UISplitViewController()
@@ -351,6 +381,6 @@ extension CalendarViewController: UIGestureRecognizerDelegate {
         currentMonth = lastMonth()
         updateCurrentMonth()
         calendarCollectionView.reloadData()
-
+        
     }
 }

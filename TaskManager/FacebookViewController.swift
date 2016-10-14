@@ -24,6 +24,11 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
     
     private let clientSecret = "59af9b0fe53ecdd4799128f1dd35bd65"
     
+    // MARK: - 変数プロパティ
+    
+    /// 画面の遷移先のnavigationControllerが入る
+    var nextNaviView: UINavigationController?
+    
     // MARK: - ライフサイクル関数
     
     override func viewDidLoad() {
@@ -68,14 +73,9 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
     
     private func setFacebookDate(token: String) {
         Alamofire.request(.GET, "https://graph.facebook.com/me?fields=events&access_token=\(token)").responseJSON { str in
-            
             // facebookから受け取ったデータを登録
             db().selectData(JSON(str.result.value!))
-            
-            // カレンダー画面を生成
-            let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: NSBundle.mainBundle())
-            let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
-            self.presentViewController(calendarNaviView, animated: true, completion: nil)
+            self.nextView()
         }
     }
     
@@ -120,6 +120,14 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
         
     }
     
+    /// 次の画面に遷移する
+    private func nextView() {
+        // iPhoneかiPadで遷移方法を変える
+        
+            guard let guardNextNaviView = self.nextNaviView else { return }
+            self.presentViewController(guardNextNaviView, animated: true, completion: nil)
+    }
+    
     /// プロパティ変更時
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         if keyPath == "loading"{
@@ -144,11 +152,7 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
                             
                             // facebookから受け取ったデータを登録
                             db().selectData(JSON(str2.result.value!))
-                            
-                            // カレンダー画面を生成
-                            let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: NSBundle.mainBundle())
-                            let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
-                            self.presentViewController(calendarNaviView, animated: true, completion: nil)
+                            self.nextView()
                         }
                     }
                 }
