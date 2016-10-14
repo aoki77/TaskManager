@@ -122,9 +122,6 @@ final class ViewController: UIViewController, UITableViewDelegate {
     /// splitViewかどうかを判定し、処理をする
     private func splitCheck() {
         // iPadかどうか、更に配置されたviewがsplitの右か左かで判断
-        print(self.view.bounds.width == UIScreen.mainScreen().bounds.width / 2)
-        print(UIDevice.currentDevice().userInterfaceIdiom == .Pad)
-        print(self.splitViewController?.viewControllers[1] == self.navigationController)
         // splitViewの左に表示されていた場合
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad && self.splitViewController?.viewControllers[0] == self.navigationController {
             // facebookボタンを無効化
@@ -467,6 +464,7 @@ final class ViewController: UIViewController, UITableViewDelegate {
     /// facebookボタンがタップされた時の処理
     @IBAction func clickFacebook(sender: UIButton) {
         let nextView = FacebookViewController()
+        nextView.currentDate = currentDate
         
         // facebookログインを終えた後、この画面に戻ってこれるようにインスタンスを生成
         let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)

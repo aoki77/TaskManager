@@ -122,6 +122,10 @@ class db {
         }
     }
     
+    func accessDate() {
+        
+    }
+    
     /// マイグレーション
     func realmMigrations() -> Realm {
         // Realmのインスタンスを取得

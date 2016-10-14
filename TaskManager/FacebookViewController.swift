@@ -24,6 +24,8 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
     
     private let clientSecret = "59af9b0fe53ecdd4799128f1dd35bd65"
     
+    var currentDate: NSDate?
+    
     // MARK: - 変数プロパティ
     
     /// 画面の遷移先のnavigationControllerが入る
@@ -33,7 +35,6 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupContents()
         branchAccess()
     }
@@ -53,6 +54,7 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
         
     }
     
+    // アクセストークンがあるかどうかを判断する
     private func branchAccess() {
         let realm = db().realmMigrations()
         let tokens = realm.objects(AccessToken)
@@ -122,41 +124,67 @@ final class FacebookViewController: UIViewController, UIWebViewDelegate {
     
     /// 次の画面に遷移する
     private func nextView() {
-        // iPhoneかiPadで遷移方法を変える
+        // 現在の日付はタイムスケジュール画面からしか登録されないため、この分岐に入るのはタイムスケジュール画面からボタンを押した場合
+        if let date = currentDate {
+            
+            let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
+            let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+            let calendarView = calendarNaviView.visibleViewController as! CalendarViewController
+            calendarView.currentMonth = date
+            
+            let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let mainNaviView = mainStoryboard.instantiateInitialViewController() as! UINavigationController
+            let mainView = mainNaviView.visibleViewController as! ViewController
+            mainView.currentDate = date
+            
+            // splitViewControllerを生成
+            let splitView = UISplitViewController()
+            
+            // splitviewControllerのmasterとdetialのサイズを1:1にする
+            splitView.minimumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+            splitView.maximumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+            
+            // spritViewControllerに各viewを追加
+            splitView.viewControllers = [calendarNaviView, mainNaviView]
+            
+            presentViewController(splitView, animated: false, completion: nil)
+        }
         
-            guard let guardNextNaviView = self.nextNaviView else { return }
-            self.presentViewController(guardNextNaviView, animated: true, completion: nil)
+        if let guardNextNaviView = nextNaviView {
+            presentViewController(guardNextNaviView, animated: false, completion: nil)
+        }
+        
     }
-    
-    /// プロパティ変更時
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        if keyPath == "loading"{
-            if String(webView.URL).containsString("https://www.facebook.com/connect/login_success.html") {
-                if webView.loading == false {
-                    let str: NSString = webView.URL!.absoluteString
-                    let range = str.rangeOfString("code=").location + str.rangeOfString("code=").length
+
+/// プロパティ変更時
+override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    if keyPath == "loading"{
+        if String(webView.URL).containsString("https://www.facebook.com/connect/login_success.html") {
+            if webView.loading == false {
+                let str: NSString = webView.URL!.absoluteString
+                let range = str.rangeOfString("code=").location + str.rangeOfString("code=").length
+                
+                let code = str.substringFromIndex(range)
+                let url: NSURL = NSURL(string: "https://graph.facebook.com/oauth/access_token?client_id=\(clientId)&redirect_uri=\(redirectUri)&client_secret=\(clientSecret)&code=\(code)")!
+                
+                Alamofire.request(.GET, url).responseString { string in
+                    let nsString: NSString = string.description
+                    let firstRange = nsString.rangeOfString("token=").location + nsString.rangeOfString("token=").length
+                    var token: NSString = nsString.substringFromIndex(firstRange)
+                    let lastRange = token.rangeOfString("&expires=").location
+                    token = token.substringToIndex(lastRange)
                     
-                    let code = str.substringFromIndex(range)
-                    let url: NSURL = NSURL(string: "https://graph.facebook.com/oauth/access_token?client_id=\(clientId)&redirect_uri=\(redirectUri)&client_secret=\(clientSecret)&code=\(code)")!
+                    self.setAccessToken(token)
                     
-                    Alamofire.request(.GET, url).responseString { string in
-                        let nsString: NSString = string.description
-                        let firstRange = nsString.rangeOfString("token=").location + nsString.rangeOfString("token=").length
-                        var token: NSString = nsString.substringFromIndex(firstRange)
-                        let lastRange = token.rangeOfString("&expires=").location
-                        token = token.substringToIndex(lastRange)
+                    Alamofire.request(.GET, "https://graph.facebook.com/me?fields=events&access_token=\(token)").responseJSON { str2 in
                         
-                        self.setAccessToken(token)
-                        
-                        Alamofire.request(.GET, "https://graph.facebook.com/me?fields=events&access_token=\(token)").responseJSON { str2 in
-                            
-                            // facebookから受け取ったデータを登録
-                            db().selectData(JSON(str2.result.value!))
-                            self.nextView()
-                        }
+                        // facebookから受け取ったデータを登録
+                        db().selectData(JSON(str2.result.value!))
+                        self.nextView()
                     }
                 }
             }
         }
     }
+}
 }
