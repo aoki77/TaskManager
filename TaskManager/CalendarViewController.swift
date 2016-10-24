@@ -8,6 +8,7 @@
 
 import UIKit
 import CalculateCalendarLogic
+import RealmSwift
 
 final class CalendarViewController: UIViewController {
     
@@ -15,6 +16,7 @@ final class CalendarViewController: UIViewController {
     
     @IBOutlet weak var calendarCollectionView: UICollectionView!
     @IBOutlet weak var CalendarNavItem: UINavigationItem!
+    @IBOutlet weak var facebookButton: UIButton!
     
     // MARK: - 定数プロパティ
     
@@ -72,14 +74,67 @@ final class CalendarViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupContents()
+        setupSwipe()
         updateCurrentMonth()
+    }
+    
+    /// オートレイアウト確定後にviewを設定
+    override func viewDidLayoutSubviews() {
+       splitCheck()
     }
     
     // MARK: - プライベート関数
     
+    /// 画面分割されているかどうかを判定し、分割されていた場合は必要のないボタンを非表示にする
+    private func splitCheck() {
+         // viewの横幅が全画面と同じサイズかどうか、iPadかどうかで判断
+        if self.view.bounds.width == UIScreen.mainScreen().bounds.width / 2 && UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            facebookButton.hidden = true
+        }
+    }
+    
     private func setupContents() {
+        
+        if checkLoginFacebook() {
+            facebookButton.alpha = 0.5
+        }
+        
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
+        
+        // UILongPressGestureRecognizerインスタンス作成
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressedFacebook(_:)))
+        // facebookButtonに長押しのジェスチャーを設定
+        facebookButton.addGestureRecognizer(longPressGesture)
+        
+    }
+    
+    /// フェイスブックにログインしている状態かどうかを判定する
+    private func checkLoginFacebook() -> Bool {
+        let realm = db().realmMigrations()
+        let tokens = realm.objects(AccessToken)
+        var flg = true
+        for tokenData in tokens {
+            if tokenData.access_flg == true {
+                flg = false
+            }
+        }
+        return flg
+    }
+    
+    /// スワイプされた時の設定
+    private func setupSwipe() {
+        /// 右から左へスワイプをされた時
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeNextMonth))
+        swipeLeft.delegate = self
+        swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
+        calendarCollectionView.addGestureRecognizer(swipeLeft)
+        
+        /// 左から右へスワイプされた時
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeLastMonth))
+        swipeRight.delegate = self
+        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
+        calendarCollectionView.addGestureRecognizer(swipeRight)
     }
     
     private func updateCurrentMonth() {
@@ -169,21 +224,47 @@ final class CalendarViewController: UIViewController {
             cell.calenderLabel.textColor = .redColor()
         }
     }
-
+    
     // MARK: - アクション
+    
+    /// facebookボタンがタップされた時の処理
+    @IBAction func clickFacebook(sender: AnyObject) {
+        let nextView = FacebookViewController()
+        
+        // facebookログインを終えた後、この画面に戻ってこれるようにインスタンスを生成
+        let storyboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
+        let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
+        let calendarView = naviView.visibleViewController as! CalendarViewController
+        calendarView.currentMonth = currentMonth
+        nextView.nextNaviView = naviView
 
-    @IBAction func clickNextMonth(sender: UIBarButtonItem) {
-        currentMonthDate.removeAll()
-        currentMonth = nextMonth()
-        updateCurrentMonth()
-        calendarCollectionView.reloadData()
+        presentViewController(nextView, animated:false, completion: nil)
     }
     
-    @IBAction func clickLastMonth(sender: UIBarButtonItem) {
-        currentMonthDate.removeAll()
-        currentMonth = lastMonth()
-        updateCurrentMonth()
-        calendarCollectionView.reloadData()
+    /// facebookボタンが長押しされた時の処理
+    func longPressedFacebook(sender : UILongPressGestureRecognizer) {
+        // facebookログイン状態の時のみログアウトのアラートを出す
+        if checkLoginFacebook() == false {
+            let alert: UIAlertController = UIAlertController(title: "ログアウト", message: "facebookとの連携を解除しますか？", preferredStyle:  UIAlertControllerStyle.Alert)
+            /// OKボタンが押された時の処理
+            let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:{
+                (action: UIAlertAction!) -> Void in
+                FacebookLogout().facebookLogout()
+                self.facebookButton.alpha = 0.5
+                self.facebookButton.reloadInputViews()
+            })
+            /// キャンセルボタンが押された時の処理
+            let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertActionStyle.Cancel, handler:{
+                (action: UIAlertAction!) -> Void in
+            })
+            
+            /// アラートのアクションを追加
+            alert.addAction(defaultAction)
+            alert.addAction(cancelAction)
+            
+            // アラートを表示
+            presentViewController(alert, animated: true, completion: nil)
+        }
     }
 }
 
@@ -196,7 +277,7 @@ extension CalendarViewController: UICollectionViewDataSource {
         // 曜日と一ヶ月の日付を表示する2つのセクションを用意する
         return 2
     }
-
+    
     /// セクションごとのセルの総数を決定する
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // Section毎にCellの総数を変更
@@ -243,12 +324,13 @@ extension CalendarViewController: UICollectionViewDelegate {
             let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let mainNaviView = mainStoryboard.instantiateInitialViewController() as! UINavigationController
             let mainView = mainNaviView.visibleViewController as! ViewController
-            
             mainView.currentDate = currentMonthDate[indexPath.row]
             
             // カレンダー画面を生成
             let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: NSBundle.mainBundle())
             let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+            let calendarView = calendarNaviView.visibleViewController as! CalendarViewController
+            calendarView.currentMonth = currentMonth
             
             // splitViewControllerを生成
             let splitView = UISplitViewController()
@@ -262,8 +344,37 @@ extension CalendarViewController: UICollectionViewDelegate {
             
             presentViewController(splitView, animated: false, completion: nil)
         }
-
     }
-    
 }
 
+// MARK: - UIPopoverPresentationControllerDelegate
+
+extension CalendarViewController: UIPopoverPresentationControllerDelegate {
+    
+    /// popoverをiPhoneに対応させる
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .None
+    }
+}
+
+// MARK : - UIGestureRecognizerDelegate
+
+extension CalendarViewController: UIGestureRecognizerDelegate {
+    
+    /// 翌月を呼び出す
+    func swipeNextMonth() {
+        currentMonthDate.removeAll()
+        currentMonth = nextMonth()
+        updateCurrentMonth()
+        calendarCollectionView.reloadData()
+    }
+    
+    /// 昨月を呼び出す
+    func swipeLastMonth() {
+        currentMonthDate.removeAll()
+        currentMonth = lastMonth()
+        updateCurrentMonth()
+        calendarCollectionView.reloadData()
+        
+    }
+}

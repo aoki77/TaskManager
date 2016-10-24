@@ -27,7 +27,8 @@ final class EditViewController: UITableViewController {
     @IBOutlet weak private var detailPlaceHolderLabel: UILabel!
     @IBOutlet weak private var alertCheckCell: UITableViewCell!
     @IBOutlet weak private var alertTitleLabel: UILabel!
-    @IBOutlet weak var deleteButton: UIBarButtonItem!
+    @IBOutlet weak private var backButton: UIBarButtonItem!
+    @IBOutlet weak private var deleteButton: UIBarButtonItem!
     
     // MARK: - 定数プロパティ
     private let years = (2015...2030).map { $0 }
@@ -151,6 +152,12 @@ final class EditViewController: UITableViewController {
         setLabel(startPicker, label: startTimeLabel)
         setLabel(finishPicker, label: finishTimeLabel)
         setLabel(alertPicker, label: alertLabel)
+        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            backButton.enabled = false
+            backButton.tintColor = .clearColor()
+        }
+        
     }
     
     /// 既にタスクデータが存在している場合、データから値を取り出し初期値として入力、表示させる
@@ -306,27 +313,13 @@ final class EditViewController: UITableViewController {
     
     /// 入力したタスクの時間が他と被っているかを確認
     private func checkDate() -> Bool {
-        let realm = try! Realm()
+        
         guard let guardTaskNum = taskNum else { return false }
-        let tasks = realm.objects(TaskDate).filter("task_no == \(guardTaskNum)")
-        var flg = true
-        for task in tasks {
-            // 開始日時が被っていいたらfalse
-            if dateFormat(startPicker).compare(task.finish_time) == NSComparisonResult.OrderedAscending &&
-                dateFormat(startPicker).compare(task.start_time) == NSComparisonResult.OrderedDescending ||
-                dateFormat(startPicker).compare(task.finish_time) == NSComparisonResult.OrderedSame {
-                flg = false
-            }
-            // 終了日時が被っていたらfalse
-            if dateFormat(finishPicker).compare(task.start_time) == NSComparisonResult.OrderedDescending &&
-                dateFormat(finishPicker).compare(task.finish_time) == NSComparisonResult.OrderedAscending ||
-                dateFormat(finishPicker).compare(task.start_time) == NSComparisonResult.OrderedSame {
-                flg = false
-            }
-        }
+        
+        let flg = DateComparison().dateComparison(dateFormat(startPicker), finishDate: dateFormat(finishPicker), taskNum: guardTaskNum)
         
         // 被っている場合はアラートを出す
-        if flg == false {
+        if  flg == false {
             // 終了時間が開始時間よりも前の場合にアラートを出す
             let alert: UIAlertController = UIAlertController(title: "既にタスクが存在します", message: "", preferredStyle:  UIAlertControllerStyle.Alert)
             let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:{
@@ -497,7 +490,7 @@ final class EditViewController: UITableViewController {
             presentViewController(alert, animated: true, completion: nil)
             
         } else {
-            let realm = try! Realm()
+            let realm = db().realmMigrations()
             if let data = cellData {
                 // 更新
                 try! realm.write {
@@ -548,9 +541,11 @@ final class EditViewController: UITableViewController {
         mainView.currentDate = guardCurrentDate
         
         let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
-        let CalendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+        let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+        let calendarView = calendarNaviView.visibleViewController as! CalendarViewController
+        calendarView.currentMonth = guardCurrentDate
         
-        presentSplitView(CalendarNaviView, rightView: mainNaviView)
+        presentSplitView(calendarNaviView, rightView: mainNaviView)
 
     }
     
@@ -564,9 +559,11 @@ final class EditViewController: UITableViewController {
         mainView.currentDate = guardCurrentDate
         
         let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
-        let CalendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+        let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+        let calendarView = calendarNaviView.visibleViewController as! CalendarViewController
+        calendarView.currentMonth = guardCurrentDate
         
-        presentSplitView(CalendarNaviView, rightView: mainNaviView)
+        presentSplitView(calendarNaviView, rightView: mainNaviView)
 
     }
     
@@ -584,7 +581,7 @@ final class EditViewController: UITableViewController {
             }
             
             // データを削除する
-            let realm = try! Realm()
+            let realm = db().realmMigrations()
             try! realm.write {
                 realm.delete(deleteDate)
             }
@@ -597,9 +594,11 @@ final class EditViewController: UITableViewController {
             mainView.currentDate = guardCurrentDate
             
             let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
-            let CalendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+            let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
+            let calendarView = calendarNaviView.visibleViewController as! CalendarViewController
+            calendarView.currentMonth = guardCurrentDate
             
-            presentSplitView(CalendarNaviView, rightView: mainNaviView)
+            presentSplitView(calendarNaviView, rightView: mainNaviView)
             
         } else {
             /// 削除するデータがない時にアラートを出す

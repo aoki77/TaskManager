@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-final class ViewController: UIViewController, UITableViewDelegate , UIGestureRecognizerDelegate {
+final class ViewController: UIViewController, UITableViewDelegate {
     
     // MARK: - アウトレット
     
@@ -20,6 +20,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     @IBOutlet weak private var dayTimeTableView: UITableView!
     @IBOutlet weak private var dayTimeWidthLayoutConstraint: NSLayoutConstraint!
     @IBOutlet weak private var backButton: UIBarButtonItem!
+    @IBOutlet weak var facebookButton: UIButton!
     
     // MARK: - 定数プロパティ
     
@@ -87,12 +88,13 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         updateDate()
         setupTable()
         setupCollection()
-        
+        setupSwipe()
     }
-
+    
     /// オートレイアウト確定後にviewを設定
     override func viewDidLayoutSubviews() {
         setupView()
+        splitCheck()
     }
     
     // MARK: - プライベート関数
@@ -102,8 +104,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         
         // iPadの場合はバックボタンを無効化する
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            backButton.enabled = false
-            backButton.tintColor = .clearColor()
+            
         }
     }
     
@@ -118,6 +119,39 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         }
     }
     
+    /// splitViewかどうかを判定し、処理をする
+    private func splitCheck() {
+        // iPadかどうか、更に配置されたviewがsplitの右か左かで判断
+        // splitViewの左に表示されていた場合
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad && self.splitViewController?.viewControllers[0] == self.navigationController {
+            // facebookボタンを無効化
+            facebookButton.enabled = false
+            facebookButton.hidden = true
+            
+        // splitViewの右に表示されていた場合
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad && self.splitViewController?.viewControllers[1] == self.navigationController {
+            //　バックボタンを無効化
+            backButton.enabled = false
+            backButton.tintColor = .clearColor()
+        }
+        
+    }
+    
+    /// スワイプされた時の設定
+    private func setupSwipe() {
+        /// 右から左へスワイプをされた時
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(goTommorow(_:)))
+        swipeLeft.delegate = self
+        swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(swipeLeft)
+        
+        /// 左から右へスワイプされた時
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(goYesterday(_:)))
+        swipeRight.delegate = self
+        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
     /// 日付を更新
     private func updateDate() {
         nextDate = calendar.dateByAddingUnit(.Day, value: 1, toDate: currentDate, options: NSCalendarOptions())!
@@ -129,7 +163,9 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     
     /// テーブルの設定
     private func setupTable() {
-        dayTimeTableView.separatorInset = UIEdgeInsetsZero
+        
+        // テーブルのセルをクリック禁止にする
+        dayTimeTableView.allowsSelection = false
         
         // セル名の登録をおこなう.
         dayTimeTableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "tableCell")
@@ -166,7 +202,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         // collectionにrecognizerを設定
         timeLineCollectionView.addGestureRecognizer(longPressGestureRecognizer)
     }
-
+    
     /// popover処理
     private func presentPopover(sourceView: UICollectionViewCell) {
         let storyboard: UIStoryboard = UIStoryboard(name: "TaskPop", bundle: NSBundle.mainBundle())
@@ -177,7 +213,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         next.taskNum = taskNum
         next.modalPresentationStyle = .Popover
         next.preferredContentSize = popoverSize
-
+        
         if let popoverViewController = presentedViewController {
             // popoverを閉じる
             popoverViewController.dismissViewControllerAnimated(false, completion: nil)
@@ -211,13 +247,12 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     
     /// DB内にデータがある時間のセルを重要度に応じて色を変更する
     private func dateCheck(cell: UICollectionViewCell, indexPath: NSIndexPath) {
-        let realm = realmMigrations()
+        let realm = db().realmMigrations()
         let tasks = realm.objects(TaskDate)
         let dateformatter = NSDateFormatter()
         dateformatter.dateFormat = "yyyy/MM/dd"
         let hourFormatter = NSDateFormatter()
         hourFormatter.dateFormat = "HH"
-        
         for task in tasks {
             let path = selectIndexPath(task)
             // 日付が同じデータのみを抽出
@@ -305,7 +340,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
     
     /// クリックされたセルに合うデータがある場合は、cellDateに入れてtrueを返す
     private func selectDate(taskNum: Int, indexPath: NSIndexPath) -> Bool {
-        let realm = realmMigrations()
+        let realm = db().realmMigrations()
         let tasks = realm.objects(TaskDate)
         let dateformatter = NSDateFormatter()
         let hourFormatter = NSDateFormatter()
@@ -321,7 +356,7 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
             num = 48
         }
         guard let guardNum = num else { return false }
-        for task in tasks{
+        for task in tasks {
             if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(currentDate)) == NSComparisonResult.OrderedSame {
                 let schedulePeriod: Int?
                 if dateformatter.stringFromDate(task.start_time).compare(dateformatter.stringFromDate(task.finish_time)) == NSComparisonResult.OrderedSame {
@@ -385,19 +420,6 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         return 0
     }
     
-    /// マイグレーション
-    private func realmMigrations() -> Realm {
-        // Realmのインスタンスを取得
-        let config = Realm.Configuration(
-            schemaVersion: 4,
-            migrationBlock: { migration, oldSchemaVersion in
-                if (oldSchemaVersion < 1) {}
-        })
-        Realm.Configuration.defaultConfiguration = config
-        let realm = try! Realm()
-        return realm
-    }
-    
     // MARK: - アクション
     
     /// 日付を翌日に更新
@@ -414,59 +436,44 @@ final class ViewController: UIViewController, UITableViewDelegate , UIGestureRec
         timeLineCollectionView.reloadData()
     }
     
-    ///
+    /// カレンダー画面に戻る
     @IBAction func backCalendar(sender: AnyObject) {
-        // カレンダー画面を生成
-        let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: NSBundle.mainBundle())
+        // タイムスケジュール画面を生成
+        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let mainNaviView = mainStoryboard.instantiateInitialViewController() as! UINavigationController
+        let mainView = mainNaviView.visibleViewController as! ViewController
+        mainView.currentDate = currentDate
+        
+        let calendarStoryboard: UIStoryboard = UIStoryboard(name: "Calendar", bundle: nil)
         let calendarNaviView = calendarStoryboard.instantiateInitialViewController() as! UINavigationController
         let calendarView = calendarNaviView.visibleViewController as! CalendarViewController
         calendarView.currentMonth = currentDate
-        presentViewController(calendarNaviView, animated: true, completion: nil)
         
+        let splitView = UISplitViewController()
+        
+        // splitviewControllerのmasterとdetialのサイズを1:1にする
+        splitView.minimumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+        splitView.maximumPrimaryColumnWidth = UIScreen.mainScreen().bounds.size.width / 2
+        
+        // spritViewControllerに各viewを追加
+        splitView.viewControllers = [calendarNaviView, mainNaviView]
+        
+        presentViewController(splitView, animated: false, completion: nil)
     }
     
-    /// セル長押し時の処理
-    func cellLongPressed(sender : UILongPressGestureRecognizer){
-        // 押された位置でcellのpathを取得
-        let point = sender.locationInView(timeLineCollectionView)
-        let indexPath = timeLineCollectionView.indexPathForItemAtPoint(point)
+    /// facebookボタンがタップされた時の処理
+    @IBAction func clickFacebook(sender: UIButton) {
+        let nextView = FacebookViewController()
+        nextView.currentDate = currentDate
         
-        if sender.state == UIGestureRecognizerState.Began{
-            // セルが長押しされたときの処理
-            print("\(indexPath!.row + 1)が長押しされました")
-            
-            guard let guardIndexPath = indexPath else { return }
-            // 完了か未完了かを把握して変更する処理
-            let taskNum = selectTaskNum(guardIndexPath)
-            let dataFlg = selectDate(taskNum, indexPath: guardIndexPath)
-            let realm = realmMigrations()
-            if dataFlg {
-                guard let guardCellData = cellData else { return }
-                if guardCellData.complete_flag {
-                    // タスク未完了の場合
-                    try! realm.write {
-                        guardCellData.complete_flag = false
-                    }
-                    timeLineCollectionView.reloadData()
-                } else {
-                    // タスク完了の場合
-                    try! realm.write {
-                        guardCellData.complete_flag = true
-                    }
-                    timeLineCollectionView.reloadData()
-                    
-                    // アラート通知を消す
-                    for notification: UILocalNotification in UIApplication.sharedApplication().scheduledLocalNotifications! {
-                        if let userInfo = notification.userInfo {
-                            let alertId = userInfo["alertId"] as! Int
-                            if alertId == guardCellData.id {
-                                UIApplication.sharedApplication().cancelLocalNotification(notification)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // facebookログインを終えた後、この画面に戻ってこれるようにインスタンスを生成
+        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let naviView = storyboard.instantiateInitialViewController() as! UINavigationController
+        let mainView = naviView.visibleViewController as! ViewController
+        mainView.currentDate = currentDate
+        nextView.nextNaviView = naviView
+        
+        presentViewController(nextView, animated:false, completion: nil)
     }
 }
 
@@ -495,7 +502,7 @@ extension ViewController: UICollectionViewDelegate {
             
             // 日付を送る
             mainView.currentDate = currentDate
-
+            
             // 編集画面を生成
             let editStoryboard: UIStoryboard = UIStoryboard(name: "Edit", bundle: NSBundle.mainBundle())
             let editNaviView = editStoryboard.instantiateInitialViewController() as! UINavigationController
@@ -539,7 +546,7 @@ extension ViewController: UICollectionViewDataSource {
     
     /// データを返す
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-
+        
         // コレクションビューから識別子「collectionCell」のセルを取得
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath)
         
@@ -572,7 +579,7 @@ extension ViewController: UITableViewDataSource {
         
         // セルの羅線の太さを設定
         cell.layer.borderWidth = 0.5
-
+        
         // セルに値を設定
         cell.textLabel?.text = "\(hourTime[indexPath.row])"
         
@@ -606,5 +613,52 @@ extension ViewController: UIPopoverPresentationControllerDelegate {
     /// ポップオーバーが閉じられた際にindexpathを削除
     func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController) {
         selectedCellIndexPath = nil
+    }
+}
+
+extension ViewController: UIGestureRecognizerDelegate {
+    
+    /// セル長押し時の処理
+    func cellLongPressed(sender : UILongPressGestureRecognizer){
+        // 押された位置でcellのpathを取得
+        let point = sender.locationInView(timeLineCollectionView)
+        let indexPath = timeLineCollectionView.indexPathForItemAtPoint(point)
+        
+        if sender.state == UIGestureRecognizerState.Began{
+            // セルが長押しされたときの処理
+            print("\(indexPath!.row + 1)が長押しされました")
+            
+            guard let guardIndexPath = indexPath else { return }
+            // 完了か未完了かを把握して変更する処理
+            let taskNum = selectTaskNum(guardIndexPath)
+            let dataFlg = selectDate(taskNum, indexPath: guardIndexPath)
+            let realm = db().realmMigrations()
+            if dataFlg {
+                guard let guardCellData = cellData else { return }
+                if guardCellData.complete_flag {
+                    // タスク未完了の場合
+                    try! realm.write {
+                        guardCellData.complete_flag = false
+                    }
+                    timeLineCollectionView.reloadData()
+                } else {
+                    // タスク完了の場合
+                    try! realm.write {
+                        guardCellData.complete_flag = true
+                    }
+                    timeLineCollectionView.reloadData()
+                    
+                    // アラート通知を消す
+                    for notification: UILocalNotification in UIApplication.sharedApplication().scheduledLocalNotifications! {
+                        if let userInfo = notification.userInfo {
+                            let alertId = userInfo["alertId"] as! Int
+                            if alertId == guardCellData.id {
+                                UIApplication.sharedApplication().cancelLocalNotification(notification)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

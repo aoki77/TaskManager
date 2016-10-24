@@ -74,20 +74,21 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="title" id="B84-rv-Yhp">
-                        <barButtonItem key="leftBarButtonItem" title="Prev" id="Fhk-lI-D3t">
-                            <connections>
-                                <action selector="clickLastMonth:" destination="A8E-ox-y1D" id="VKr-2m-pWN"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Next" id="Nec-MK-3FK">
-                            <connections>
-                                <action selector="clickNextMonth:" destination="A8E-ox-y1D" id="EF4-G1-ZU1"/>
-                            </connections>
+                        <barButtonItem key="rightBarButtonItem" image="FB-f-Logo__blue_29.png" style="plain" id="HfB-LY-a4z">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="EX8-0o-dmf">
+                                <rect key="frame" x="551" y="7" width="29" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="FB-f-Logo__blue_29.png"/>
+                                <connections>
+                                    <action selector="clickFacebook:" destination="A8E-ox-y1D" eventType="touchUpInside" id="QuY-Ze-aWO"/>
+                                </connections>
+                            </button>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="CalendarNavItem" destination="B84-rv-Yhp" id="ZhI-2l-AY2"/>
                         <outlet property="calendarCollectionView" destination="q2U-vT-9iz" id="crZ-0g-u63"/>
+                        <outlet property="facebookButton" destination="EX8-0o-dmf" id="V3r-PC-Iqo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RFQ-Wi-ugH" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -95,4 +96,7 @@
             <point key="canvasLocation" x="425" y="213"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="FB-f-Logo__blue_29.png" width="29" height="29"/>
+    </resources>
 </document>

@@ -70,7 +70,8 @@ static void throwError(NSString *aggregateMethod) {
     try {
         throw;
     }
-    catch (realm::InvalidTransactionException const&) {
+    catch (realm::InvalidTransactionException const&)
+    {
         @throw RLMException(@"Cannot modify Results outside of a write transaction");
     }
     catch (realm::IncorrectThreadException const&) {
