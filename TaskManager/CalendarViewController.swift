@@ -73,12 +73,6 @@ final class CalendarViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // DBファイルのfileURLを取得
-//        if let fileURL = Realm.Configuration.defaultConfiguration.fileURL {
-//            try! NSFileManager.defaultManager().removeItemAtURL(fileURL)
-//        }
-        
         setupContents()
         setupSwipe()
         updateCurrentMonth()
