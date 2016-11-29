@@ -194,7 +194,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5E4A5A361D5D9E3F00181359 /* Build configuration list for PBXNativeTarget "TaskManagerTests" */;
 			buildPhases = (
-				0319645959F54725462FB55E /* [CP] Check Pods Manifest.lock */,
 				5E4A5A1B1D5D9E3F00181359 /* Sources */,
 				5E4A5A1C1D5D9E3F00181359 /* Frameworks */,
 				5E4A5A1D1D5D9E3F00181359 /* Resources */,
